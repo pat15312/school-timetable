@@ -64,6 +64,18 @@ export function Timetable({
   const currentSubject =
     currentEntry && p.subjects.find((s) => s.id === currentEntry.subjectId);
   const activeSubject = p.subjects.find((s) => s.id === tool);
+  const pickerDetails = (subject: Subject) => {
+    const name = (subject.shortName || subject.name).trim().toLowerCase();
+    const hasSameName = p.subjects.some(
+      (s) =>
+        s.id !== subject.id &&
+        (s.shortName || s.name).trim().toLowerCase() === name,
+    );
+    return hasSameName
+      ? [subject.teacher, subject.room].filter(Boolean).join(" · ") ||
+          "No default teacher or room"
+      : "";
+  };
   const count = p.entries.filter(
     (e) =>
       e.rotationIndex === currentWeek &&
@@ -296,12 +308,20 @@ export function Timetable({
                 } as CSSProperties
               }
               aria-pressed={tool === subject.id}
+              title={[subject.name, subject.teacher, subject.room]
+                .filter(Boolean)
+                .join(" · ")}
               onClick={() =>
                 setTool(tool === subject.id ? "select" : subject.id)
               }
             >
               <i style={{ background: subject.colour }} />
-              <span>{subject.shortName || subject.name}</span>
+              <span className="palette-subject-label">
+                <span>{subject.shortName || subject.name}</span>
+                {pickerDetails(subject) && (
+                  <small>{pickerDetails(subject)}</small>
+                )}
+              </span>
               {tool === subject.id && <Check size={14} />}
             </button>
           ))}
@@ -334,7 +354,11 @@ export function Timetable({
           {activeSubject ? (
             <>
               <span className="status-dot" />
-              Placing {activeSubject.name}
+              <span>
+                Placing {activeSubject.name}
+                {pickerDetails(activeSubject) &&
+                  ` · ${pickerDetails(activeSubject)}`}
+              </span>
               <button
                 onClick={() => setTool("select")}
                 aria-label="Stop placing subject"

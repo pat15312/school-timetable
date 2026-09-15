@@ -28,6 +28,8 @@ Playwright builds and tests the **production** site, including its service worke
 
 Layout checks also run in desktop and mobile WebKit, covering date/time field sizing, sticky navigation, and subject selection outlines across phone, tablet, and desktop widths.
 
+Subject duplication and reordering are tested in both browsers, including independent teacher/room defaults, saved order, calendar exports, and responsive controls in light and dark themes.
+
 To exercise date handling in a different host timezone:
 
 ```sh
@@ -66,6 +68,8 @@ Rotation indexes are zero based and independent of labels. All views use `getRot
 ## Editing
 
 Select a subject in the palette and tap multiple cells to place it quickly. Defaults for teacher and room remain linked to the subject. Switch to **Select**, choose a lesson, and use **Edit lesson** for explicit title, teacher, room, or note overrides. Uncheck an override to return to the subject default; an explicitly empty teacher/room suppresses that default.
+
+In **Subjects**, choose **Duplicate** to create another version with the same name and colour, then change its teacher or room before saving. The copy appears beside its source. Use the up/down arrows to reorder the library and timetable picker; editing keeps that order. Subjects with matching picker names show their teacher and room so you can select the right version.
 
 - Ctrl/⌘ C: copy selected entry
 - Ctrl/⌘ V: paste into selected cell (including another rotation week)

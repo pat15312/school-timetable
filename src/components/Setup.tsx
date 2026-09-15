@@ -6,6 +6,7 @@ import {
   ChevronDown,
   ChevronUp,
   Clock3,
+  Copy,
   Pencil,
   Plus,
   RotateCcw,
@@ -27,7 +28,7 @@ import {
 import { dateRange, formatDate, validDate, validTime } from "../domain/dates";
 import { getRotationLabel, getTeachingWeeks } from "../domain/rotation";
 import { standardPeriods } from "../domain/fixture";
-import { EmptyState, Field, Notice } from "./ui";
+import { EmptyState, Field, Modal, Notice } from "./ui";
 
 export interface SettingsProps {
   project: TimetableProject;
@@ -827,8 +828,37 @@ export function SubjectForm({
   );
 }
 
+type SubjectEditor =
+  | { kind: "new" }
+  | { kind: "edit"; subject: Subject }
+  | { kind: "duplicate"; subject: Subject; sourceId: string };
+
 export function Subjects({ project: p, update }: SettingsProps) {
-  const [editing, setEditing] = useState<Subject | "new" | null>(null);
+  const [editing, setEditing] = useState<SubjectEditor | null>(null);
+  const [announcement, setAnnouncement] = useState("");
+  const move = (subject: Subject, direction: -1 | 1) => {
+    update((current) => {
+      const index = current.subjects.findIndex((s) => s.id === subject.id);
+      const destination = index + direction;
+      if (
+        index < 0 ||
+        destination < 0 ||
+        destination >= current.subjects.length
+      )
+        return current;
+      const subjects = [...current.subjects];
+      [subjects[index], subjects[destination]] = [
+        subjects[destination],
+        subjects[index],
+      ];
+      return { ...current, subjects };
+    });
+    const position =
+      p.subjects.findIndex((s) => s.id === subject.id) + direction + 1;
+    setAnnouncement(
+      `${subject.name} moved to position ${position} of ${p.subjects.length}.`,
+    );
+  };
   return (
     <div className="settings-width">
       <div className="section-heading">
@@ -838,53 +868,88 @@ export function Subjects({ project: p, update }: SettingsProps) {
             <span className="count">{p.subjects.length}</span>
           </h2>
           <p className="muted">
-            Add each subject once, then use it throughout your timetable.
+            Duplicate a subject for a different teacher or room. Use the arrows
+            to set the order in your timetable picker.
           </p>
         </div>
         <button
           className="button secondary"
-          onClick={() => setEditing("new")}
+          onClick={() => setEditing({ kind: "new" })}
           disabled={p.subjects.length >= 100}
         >
           <Plus size={17} />
           Add subject
         </button>
       </div>
+      <span className="sr-only" role="status">
+        {announcement}
+      </span>
       {editing && (
-        <section className="panel inline-form">
-          <h3>
-            {editing === "new" ? "Add a subject" : `Edit ${editing.name}`}
-          </h3>
+        <Modal
+          title={
+            editing.kind === "new"
+              ? "Add a subject"
+              : `${editing.kind === "duplicate" ? "Duplicate" : "Edit"} ${editing.subject.name}`
+          }
+          onClose={() => setEditing(null)}
+        >
+          {editing.kind === "duplicate" && (
+            <p className="muted small subject-copy-hint">
+              Change the teacher or room for this copy, then save it to your
+              library.
+            </p>
+          )}
           <SubjectForm
-            key={editing === "new" ? "new" : editing.id}
-            subject={editing === "new" ? undefined : editing}
+            key={editing.kind === "new" ? "new" : editing.subject.id}
+            subject={editing.kind === "new" ? undefined : editing.subject}
             onCancel={() => setEditing(null)}
             onSave={(subject) => {
-              update((p) => ({
-                ...p,
-                subjects: [
-                  ...p.subjects.filter((s) => s.id !== subject.id),
+              update((current) => {
+                if (editing.kind === "edit")
+                  return {
+                    ...current,
+                    subjects: current.subjects.map((s) =>
+                      s.id === subject.id ? subject : s,
+                    ),
+                  };
+                if (current.subjects.length >= 100) return current;
+                const subjects = [...current.subjects];
+                const source =
+                  editing.kind === "duplicate"
+                    ? subjects.findIndex((s) => s.id === editing.sourceId)
+                    : -1;
+                subjects.splice(
+                  source < 0 ? subjects.length : source + 1,
+                  0,
                   subject,
-                ],
-              }));
+                );
+                return { ...current, subjects };
+              });
+              setAnnouncement(
+                `${subject.name} ${editing.kind === "duplicate" ? "duplicated" : "saved"}.`,
+              );
               setEditing(null);
             }}
           />
-        </section>
+        </Modal>
       )}
-      {!p.subjects.length && !editing ? (
+      {!p.subjects.length ? (
         <EmptyState
           title="What are you learning?"
           action="Add your first subject"
-          onAction={() => setEditing("new")}
+          onAction={() => setEditing({ kind: "new" })}
         >
           Give each subject a colour, and add its usual teacher and room. No
           more entering the same details twice.
         </EmptyState>
       ) : (
         <div className="subject-cards">
-          {p.subjects.map((subject) => (
-            <article className="subject-card" key={subject.id}>
+          {p.subjects.map((subject, index) => (
+            <article
+              className="subject-card"
+              key={subject.id}
+              aria-labelledby={`subject-${subject.id}`}
+            >
               <span
                 className="subject-initial"
                 style={{
@@ -894,25 +959,62 @@ export function Subjects({ project: p, update }: SettingsProps) {
               >
                 {(subject.shortName || subject.name).slice(0, 2)}
               </span>
-              <div>
-                <h3>{subject.name}</h3>
+              <div className="subject-details">
+                <h3 id={`subject-${subject.id}`}>{subject.name}</h3>
                 <p>
                   {[subject.teacher, subject.room]
                     .filter(Boolean)
                     .join(" · ") || "No default teacher or room"}
                 </p>
               </div>
-              <div className="row-actions">
+              <div className="row-actions subject-order">
+                <button
+                  className="icon-button"
+                  aria-label={`Move ${subject.name} up`}
+                  title="Move up"
+                  disabled={index === 0}
+                  onClick={() => move(subject, -1)}
+                >
+                  <ChevronUp size={17} />
+                </button>
+                <button
+                  className="icon-button"
+                  aria-label={`Move ${subject.name} down`}
+                  title="Move down"
+                  disabled={index === p.subjects.length - 1}
+                  onClick={() => move(subject, 1)}
+                >
+                  <ChevronDown size={17} />
+                </button>
+              </div>
+              <div className="row-actions subject-actions">
+                <button
+                  className="button text-button duplicate-subject"
+                  aria-label={`Duplicate ${subject.name}`}
+                  disabled={p.subjects.length >= 100}
+                  onClick={() =>
+                    setEditing({
+                      kind: "duplicate",
+                      subject: { ...subject, id: newId() },
+                      sourceId: subject.id,
+                    })
+                  }
+                >
+                  <Copy size={16} />
+                  Duplicate
+                </button>
                 <button
                   className="icon-button"
                   aria-label={`Edit ${subject.name}`}
-                  onClick={() => setEditing(subject)}
+                  title="Edit subject"
+                  onClick={() => setEditing({ kind: "edit", subject })}
                 >
                   <Pencil size={16} />
                 </button>
                 <button
                   className="icon-button"
                   aria-label={`Delete ${subject.name}`}
+                  title="Delete subject"
                   onClick={() => {
                     if (
                       window.confirm(
