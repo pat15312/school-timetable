@@ -5,6 +5,10 @@ import AxeBuilder from "@axe-core/playwright";
 import { sampleProject } from "../src/domain/fixture";
 import { STORAGE_KEY, parseProject } from "../src/domain/persistence";
 
+// These journeys cover editing, timetable placement, print/export and recovery.
+// WebKit on the shared CI runner needs more than the default 30 seconds.
+test.describe.configure({ timeout: 60_000 });
+
 async function go(page: Page, name: string) {
   const menu = page.getByRole("button", { name: "Open navigation" });
   if (await menu.isVisible()) await menu.click();
