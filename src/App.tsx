@@ -39,6 +39,7 @@ import {
 import { Timetable } from "./components/Timetable";
 import { Review } from "./components/Review";
 import { PrintView } from "./components/PrintView";
+import { ThemeControl } from "./components/ThemeControl";
 import { Modal, Notice, downloadFile } from "./components/ui";
 
 const STEPS = [
@@ -143,7 +144,8 @@ export default function App() {
       !p.setupComplete &&
       ["review", "print"].includes(next) &&
       !validateProject(p).errors.length
-    ) update((p) => ({ ...p, setupComplete: true }));
+    )
+      update((p) => ({ ...p, setupComplete: true }));
     window.scrollTo({ top: 0, behavior: "instant" });
     requestAnimationFrame(() => main.current?.focus({ preventScroll: true }));
   };
@@ -483,24 +485,27 @@ export default function App() {
               </strong>
             </span>
           </div>
-          <div
-            className={`save-status ${state.saveState === "error" ? "error" : ""}`}
-            role="status"
-          >
-            {state.saveState === "saved" ? (
-              <CheckCircle2 size={14} />
-            ) : (
-              <span className="status-dot" />
-            )}
-            <span>
-              {state.recoveryError
-                ? "Recovery needed"
-                : state.saveState === "saved"
-                  ? "Saved on this device"
-                  : state.saveState === "error"
-                    ? "Could not save"
-                    : "Saving…"}
-            </span>
+          <div className="topbar-actions">
+            <div
+              className={`save-status ${state.saveState === "error" ? "error" : ""}`}
+              role="status"
+            >
+              {state.saveState === "saved" ? (
+                <CheckCircle2 size={14} />
+              ) : (
+                <span className="status-dot" />
+              )}
+              <span>
+                {state.recoveryError
+                  ? "Recovery needed"
+                  : state.saveState === "saved"
+                    ? "Saved on this device"
+                    : state.saveState === "error"
+                      ? "Could not save"
+                      : "Saving…"}
+              </span>
+            </div>
+            <ThemeControl />
           </div>
         </header>
         <main id="main" ref={main} tabIndex={-1}>

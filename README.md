@@ -44,6 +44,10 @@ TZ=America/Los_Angeles npm test
 
 There is no backend, database, authentication, API key, account, tracking, analytics, advertising, or remote font dependency.
 
+## Appearance
+
+The header's appearance button offers **Dark**, **Light**, and **Auto**, matching NetRevive. Auto follows device settings and is the default. An explicit choice is saved locally under `schoolcal.theme`, stays in sync across tabs, and is applied before the app renders. Appearance still works when browser storage is unavailable. The interface uses a blue palette; timetable print previews and PDFs always use light paper colours.
+
 ## Rotation rules
 
 1. Weeks run **Monday–Sunday**. Weekday indexes follow JavaScript's convention: Sunday `0`, Monday `1`, … Saturday `6`.

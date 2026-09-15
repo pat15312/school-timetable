@@ -15,7 +15,7 @@ export default defineConfig({
         short_name: BRAND.name,
         description: BRAND.description,
         theme_color: BRAND.primary,
-        background_color: "#f6f7f4",
+        background_color: "#f4f7fb",
         display: "standalone",
         start_url: ".",
         scope: ".",

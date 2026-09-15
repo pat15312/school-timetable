@@ -3,7 +3,7 @@ export const BRAND = {
   name: "SchoolCal",
   description:
     "The easiest way to put your school timetable into your calendar.",
-  primary: "#2d6654",
+  primary: "#285da8",
   prodId: "-//SchoolCal//Timetable 1.0//EN",
   uidDomain: "schoolcal.local",
 } as const;

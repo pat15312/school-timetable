@@ -37,7 +37,6 @@ class ErrorBoundary extends Component<
   }
 }
 document.title = `${BRAND.name} · Your school week, sorted`;
-document.documentElement.style.setProperty("--primary", BRAND.primary);
 createRoot(document.getElementById("root")!).render(
   <ErrorBoundary>
     <App />
