@@ -89,6 +89,17 @@ describe("print preparation", () => {
     });
   });
 });
+describe("registration print rows", () => {
+  it("prints a renamed registration block without a previously assigned subject", () => {
+    const p = testProject();
+    p.periods[0].type = "registration";
+    p.periods[0].name = "Tutor period";
+    const row = preparePrintPages(p, "landscape")[0][0].rows[0];
+    expect(row.structural).toBe(true);
+    expect(row.period.name).toBe("Tutor period");
+    expect(row.cells).toEqual([null, null, null, null, null]);
+  });
+});
 describe("backup and autosave", () => {
   it("round-trips a versioned project without altering IDs", () => {
     const p = testProject();

@@ -536,8 +536,28 @@ export function Holidays({ project: p, update }: SettingsProps) {
   );
 }
 
+const periodTypes: Period["type"][] = [
+  "lesson",
+  "registration",
+  "break",
+  "lunch",
+  "other",
+];
+const periodTypeLabel = (type: Period["type"]) =>
+  type[0].toUpperCase() + type.slice(1);
+
 export function Periods({ project: p, update }: SettingsProps) {
   const periods = sortedPeriods(p);
+  const [draft, setDraft] = useState<Period | null>(null);
+  const [error, setError] = useState("");
+  const changeDraft = (patch: Partial<Period>) => {
+    setDraft((current) => (current ? { ...current, ...patch } : null));
+    setError("");
+  };
+  const defaultName = (type: Period["type"]) =>
+    type === "lesson"
+      ? `Period ${p.periods.filter((period) => period.type === "lesson").length + 1}`
+      : type[0].toUpperCase() + type.slice(1);
   const change = (id: string, patch: Partial<Period>) =>
     update((p) => ({
       ...p,
@@ -556,31 +576,25 @@ export function Periods({ project: p, update }: SettingsProps) {
       periods: next.map((period, sortOrder) => ({ ...period, sortOrder })),
     }));
   };
-  const add = () =>
-    update((p) => ({
-      ...p,
-      periods: [
-        ...sortedPeriods(p).map((period, sortOrder) => ({
-          ...period,
-          sortOrder,
-        })),
-        {
-          id: newId(),
-          name: `Period ${p.periods.filter((x) => x.type === "lesson").length + 1}`,
-          startTime: "",
-          endTime: "",
-          type: "lesson",
-          sortOrder: p.periods.length,
-        },
-      ],
-    }));
+  const add = () => {
+    setError("");
+    setDraft({
+      id: newId(),
+      name: defaultName("lesson"),
+      startTime: periods.at(-1)?.endTime || "",
+      endTime: "",
+      type: "lesson",
+      sortOrder: periods.length,
+    });
+  };
   return (
     <div>
       <div className="section-heading">
         <div>
           <h2>The shape of your school day</h2>
           <p className="muted">
-            Set your times once. They'll be used across every week.
+            Add lessons, registration, breaks or lunch. Edit any name or time
+            below, and use the arrows or bin to reorder or delete a period.
           </p>
         </div>
         <button
@@ -592,6 +606,123 @@ export function Periods({ project: p, update }: SettingsProps) {
           Add period
         </button>
       </div>
+      {draft && (
+        <Modal title="Add a period" onClose={() => setDraft(null)}>
+          <form
+            onSubmit={(event) => {
+              event.preventDefault();
+              if (!draft.name.trim()) {
+                setError("Give this period a name.");
+                return;
+              }
+              if (
+                !validTime(draft.startTime) ||
+                !validTime(draft.endTime) ||
+                draft.endTime <= draft.startTime
+              ) {
+                setError(
+                  "Choose start and end times. End must be later than start.",
+                );
+                return;
+              }
+              update((current) => {
+                if (current.periods.length >= 40) return current;
+                const next = sortedPeriods(current);
+                const insertion = next.findIndex(
+                  (period) => period.startTime > draft.startTime,
+                );
+                next.splice(insertion < 0 ? next.length : insertion, 0, {
+                  ...draft,
+                  name: draft.name.trim(),
+                });
+                return {
+                  ...current,
+                  periods: next.map((period, sortOrder) => ({
+                    ...period,
+                    sortOrder,
+                  })),
+                };
+              });
+              setDraft(null);
+            }}
+          >
+            {error && <Notice kind="error">{error}</Notice>}
+            <Field label="Period type">
+              <select
+                autoFocus
+                value={draft.type}
+                onChange={(event) => {
+                  const type = event.target.value as Period["type"];
+                  changeDraft({
+                    type,
+                    name:
+                      draft.name === defaultName(draft.type)
+                        ? defaultName(type)
+                        : draft.name,
+                  });
+                }}
+              >
+                {periodTypes.map((type) => (
+                  <option key={type} value={type}>
+                    {periodTypeLabel(type)}
+                  </option>
+                ))}
+              </select>
+            </Field>
+            <Field
+              label="Period name"
+              hint="Use any name, such as Tutor period or Afternoon break."
+            >
+              <input
+                required
+                maxLength={80}
+                value={draft.name}
+                onChange={(event) => changeDraft({ name: event.target.value })}
+              />
+            </Field>
+            <div className="form-grid">
+              <Field label="Start time">
+                <input
+                  required
+                  type="time"
+                  value={draft.startTime}
+                  onChange={(event) =>
+                    changeDraft({ startTime: event.target.value })
+                  }
+                />
+              </Field>
+              <Field label="End time">
+                <input
+                  required
+                  type="time"
+                  value={draft.endTime}
+                  onChange={(event) =>
+                    changeDraft({ endTime: event.target.value })
+                  }
+                />
+              </Field>
+            </div>
+            <p className="muted small">
+              Registration, breaks and lunch appear automatically each school
+              day and cannot be assigned a subject. New periods are inserted by
+              start time.
+            </p>
+            <div className="form-actions">
+              <button
+                type="button"
+                className="button secondary"
+                onClick={() => setDraft(null)}
+              >
+                Cancel
+              </button>
+              <button type="submit" className="button primary">
+                <Plus size={17} />
+                Save period
+              </button>
+            </div>
+          </form>
+        </Modal>
+      )}
       {!periods.length ? (
         <div className="panel">
           <EmptyState
@@ -654,13 +785,11 @@ export function Periods({ project: p, update }: SettingsProps) {
                     })
                   }
                 >
-                  {["lesson", "registration", "break", "lunch", "other"].map(
-                    (type) => (
-                      <option key={type} value={type}>
-                        {type[0].toUpperCase() + type.slice(1)}
-                      </option>
-                    ),
-                  )}
+                  {periodTypes.map((type) => (
+                    <option key={type} value={type}>
+                      {periodTypeLabel(type)}
+                    </option>
+                  ))}
                 </select>
                 <div className="row-actions">
                   <button
@@ -715,8 +844,9 @@ export function Periods({ project: p, update }: SettingsProps) {
       <div className="tip-line">
         <Clock3 size={17} />
         <span>
-          Break and lunch appear automatically in your timetable. They're left
-          out of your calendar by default.
+          Registration, breaks and lunch appear automatically without a subject.
+          Rename registration to “Tutor period” or add as many breaks as your
+          school day needs. They're left out of your calendar by default.
         </span>
       </div>
     </div>

@@ -104,7 +104,7 @@ export const schoolDays = (p: TimetableProject) =>
 export const sortedPeriods = (p: TimetableProject) =>
   [...p.periods].sort((a, b) => a.sortOrder - b.sortOrder);
 export const isStructural = (p: Period) =>
-  p.type === "break" || p.type === "lunch";
+  p.type === "registration" || p.type === "break" || p.type === "lunch";
 export const sameCell = (a: Cell, b: Cell) =>
   a.rotationIndex === b.rotationIndex &&
   a.weekday === b.weekday &&

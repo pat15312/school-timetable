@@ -30,6 +30,8 @@ Layout checks also run in desktop and mobile WebKit, covering date/time field si
 
 Subject duplication and reordering are tested in both browsers, including independent teacher/room defaults, saved order, calendar exports, and responsive controls in light and dark themes.
 
+Period checks cover existing Registration assignments, renamed tutor periods, extra breaks, creation/editing/deletion of fixed periods, invalid times, print rows, and optional calendar inclusion in both browsers.
+
 To exercise date handling in a different host timezone:
 
 ```sh
@@ -80,11 +82,13 @@ In **Subjects**, choose **Duplicate** to create another version with the same na
 
 Visible buttons provide the same actions for touch. Undo keeps the last 80 entry edits in memory and resets when a project is replaced or the page is reloaded. Week replacement requires an explicit confirmation in the copy dialog.
 
-On phones, the timetable becomes a day list with weekday tabs and a sticky, horizontally scrollable subject palette. Break and lunch are structural rows, and registration/other periods can optionally contain lessons.
+On phones, the timetable becomes a day list with weekday tabs and a sticky, horizontally scrollable subject palette. Registration, breaks and lunch are fixed rows without subject assignments. Existing assignments in those rows are ignored in the timetable, printout and export. Lesson and other periods can contain subjects.
+
+In **Lesson times**, choose **Add period**, select the type, and enter a name and times. New periods are inserted by start time. Names and times remain editable in the list; use the arrows to reorder or the bin to delete. For example, rename Registration to **Tutor period**, or add another **Break** named **Afternoon break**.
 
 ## Calendar output
 
-The exporter writes individual `VEVENT`s—**no `RRULE`**. Excluded dates, disabled days, and empty cells produce no lesson events. Break/lunch export is opt-in.
+The exporter writes individual `VEVENT`s—**no `RRULE`**. Excluded dates, disabled days, and empty cells produce no lesson events. Registration/break/lunch export is opt-in and uses each period's custom name and times.
 
 - Stable, collision-free UIDs derive from the project, date, weekday, period, and subject IDs.
 - Text escapes commas, semicolons, backslashes, and line breaks; physical lines fold at 75 UTF-8 bytes with CRLF endings.

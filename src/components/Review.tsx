@@ -287,7 +287,8 @@ export function Review({
                 }}
               />
               <span>
-                Include breaks and lunch<small>Off by default</small>
+                Include registration, breaks and lunch
+                <small>Off by default</small>
               </span>
             </label>
             <button

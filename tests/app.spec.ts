@@ -136,7 +136,7 @@ test("complete setup, holiday-aware review, both print layouts, and ICS download
     .map((component) => new ICAL.Event(component));
   expect(events.length).toBeGreaterThan(30);
   expect(calendarText).not.toContain("RRULE");
-  expect(events.every((e) => !["Break", "Lunch"].includes(e.summary))).toBe(
+  expect(events.every((e) => !["Registration", "Break", "Lunch"].includes(e.summary))).toBe(
     true,
   );
   expect(

@@ -27,9 +27,31 @@ describe("individual lesson occurrences", () => {
     expect(dates).not.toContain("2026-09-18");
     expect(dates).not.toContain("2026-09-22");
   });
-  it("break and lunch are opt-in and cannot accidentally export subjects", () => {
+  it("registration, breaks and lunch are opt-in and ignore old subject assignments", () => {
     const p = testProject();
     p.academicYear.endDate = "2026-09-11";
+    p.periods.unshift({
+      id: "registration",
+      name: "Tutor period",
+      type: "registration",
+      startTime: "08:30",
+      endTime: "08:45",
+      sortOrder: 0,
+    });
+    p.periods.forEach((period, index) => {
+      period.sortOrder = index;
+    });
+    p.entries.push({
+      id: "old-registration-entry",
+      rotationIndex: 0,
+      weekday: 1,
+      periodId: "registration",
+      subjectId: "maths",
+      titleOverride: "Old subject title",
+      teacherOverride: "Old teacher",
+      roomOverride: "Old room",
+      notes: "Old lesson notes",
+    });
     p.entries.push({
       id: "bad-break-entry",
       rotationIndex: 0,
@@ -38,10 +60,19 @@ describe("individual lesson occurrences", () => {
       subjectId: "maths",
     });
     expect(generateOccurrences(p)).toHaveLength(5);
+    const before = structuredClone(p);
     const events = generateOccurrences(p, true);
-    expect(events).toHaveLength(15);
+    expect(events).toHaveLength(20);
+    const registration = events.filter((e) => e.title === "Tutor period");
+    expect(registration).toHaveLength(5);
+    expect(
+      registration.every(
+        (e) => e.structural && !e.teacher && !e.room && !e.notes,
+      ),
+    ).toBe(true);
     expect(events.filter((e) => e.title === "Break")).toHaveLength(5);
     expect(events.filter((e) => e.title === "Lunch")).toHaveLength(5);
+    expect(p).toEqual(before);
   });
   it.each([false, true])(
     "uses the correct timetable after a holiday (reset: %s)",
@@ -66,7 +97,7 @@ describe("individual lesson occurrences", () => {
       ).toEqual(Array.from({ length: 8 }, (_, i) => i % cycle));
     },
   );
-  it("empty cells generate nothing, while registration and other blocks can contain lessons", () => {
+  it("empty cells generate nothing and only lesson or other blocks can contain subjects", () => {
     const p = testProject();
     p.entries = p.entries.filter(
       (e) => e.weekday === 1 && e.rotationIndex === 0,
@@ -77,7 +108,7 @@ describe("individual lesson occurrences", () => {
       ),
     ).toBe(true);
     p.periods[0].type = "registration";
-    expect(generateOccurrences(p).length).toBeGreaterThan(0);
+    expect(generateOccurrences(p)).toEqual([]);
     p.periods[0].type = "other";
     expect(generateOccurrences(p).length).toBeGreaterThan(0);
     p.entries = [];
