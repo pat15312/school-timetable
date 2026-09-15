@@ -33,7 +33,7 @@ describe("individual lesson occurrences", () => {
     p.periods.unshift({
       id: "registration",
       name: "Tutor period",
-      type: "registration",
+      categoryId: "registration",
       startTime: "08:30",
       endTime: "08:45",
       sortOrder: 0,
@@ -97,7 +97,7 @@ describe("individual lesson occurrences", () => {
       ).toEqual(Array.from({ length: 8 }, (_, i) => i % cycle));
     },
   );
-  it("empty cells generate nothing and only lesson or other blocks can contain subjects", () => {
+  it("empty cells generate nothing and category settings decide whether periods can contain subjects", () => {
     const p = testProject();
     p.entries = p.entries.filter(
       (e) => e.weekday === 1 && e.rotationIndex === 0,
@@ -107,9 +107,11 @@ describe("individual lesson occurrences", () => {
         (e) => weekday(e.date) === 1 && e.rotationIndex === 0,
       ),
     ).toBe(true);
-    p.periods[0].type = "registration";
+    p.periods[0].categoryId = "registration";
     expect(generateOccurrences(p)).toEqual([]);
-    p.periods[0].type = "other";
+    p.periodCategories.find(
+      (category) => category.id === "registration",
+    )!.allowSubjects = true;
     expect(generateOccurrences(p).length).toBeGreaterThan(0);
     p.entries = [];
     expect(generateOccurrences(p)).toEqual([]);

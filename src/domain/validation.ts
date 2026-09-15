@@ -34,6 +34,23 @@ export function validateProject(
   )
     errors.push("Choose a valid first timetable week.");
   if (!p.periods.length) errors.push("Add at least one lesson period.");
+  if (p.periodCategories.some((category) => !category.name.trim()))
+    errors.push("Give each period category a name.");
+  if (
+    new Set(
+      p.periodCategories.map((category) => category.name.trim().toLowerCase()),
+    ).size !== p.periodCategories.length
+  )
+    errors.push("Use a different name for each period category.");
+  if (
+    p.periods.some(
+      (period) =>
+        !p.periodCategories.some(
+          (category) => category.id === period.categoryId,
+        ),
+    )
+  )
+    errors.push("Some periods reference a missing category.");
   for (const period of p.periods) {
     if (!period.name.trim()) errors.push("Give each period a label.");
     if (
@@ -100,7 +117,7 @@ export function validateProject(
       e.rotationIndex < p.cycleLength &&
       a.schoolWeekdays.includes(e.weekday) &&
       p.periods.some(
-        (period) => period.id === e.periodId && !isStructural(period),
+        (period) => period.id === e.periodId && !isStructural(period, p),
       ) &&
       subjects.has(e.subjectId),
   );

@@ -74,12 +74,12 @@ test("registration is fixed, renamed periods persist, and an afternoon break is 
     .fill("08:20");
   await page.getByLabel("Tutor period end time", { exact: true }).fill("08:40");
   await expect(
-    page.getByLabel("Tutor period type", { exact: true }),
+    page.getByLabel("Tutor period category", { exact: true }),
   ).toHaveValue("registration");
   await page.getByLabel("Period 5 start time", { exact: true }).fill("14:10");
   await page.getByRole("button", { name: "Add period", exact: true }).click();
   const dialog = page.getByRole("dialog", { name: "Add a period" });
-  await dialog.getByLabel("Period type").selectOption("break");
+  await dialog.getByLabel("Period category").selectOption("break");
   await expect(dialog.getByLabel("Period name", { exact: true })).toHaveValue(
     "Break",
   );
@@ -126,7 +126,7 @@ test("registration is fixed, renamed periods persist, and an afternoon break is 
 
   await go(page, "Calendar & export");
   const include = page.getByRole("checkbox", {
-    name: /Include registration, breaks and lunch/,
+    name: /Include fixed periods/,
   });
   await expect(include).not.toBeChecked();
   const lessons = await downloadEvents(page);
@@ -173,14 +173,14 @@ test("registration is fixed, renamed periods persist, and an afternoon break is 
   await page.reload();
   await expect(page.locator(".period-row")).toHaveCount(8);
   await expect(
-    page.getByLabel("Afternoon break type", { exact: true }),
+    page.getByLabel("Afternoon break category", { exact: true }),
   ).toHaveCount(0);
   await expect(
-    page.getByLabel("Tutor period type", { exact: true }),
+    page.getByLabel("Tutor period category", { exact: true }),
   ).toHaveValue("registration");
 });
 
-test("period form validates times, supports each fixed type, and fits mobile and desktop in dark mode", async ({
+test("period form validates times, supports each fixed category, and fits mobile and desktop in dark mode", async ({
   page,
 }, testInfo) => {
   await page.emulateMedia({ colorScheme: "dark" });
@@ -190,12 +190,21 @@ test("period form validates times, supports each fixed type, and fits mobile and
   await page.getByRole("button", { name: /Try a sample/ }).click();
   await go(page, "Lesson times");
   await page.getByRole("button", { name: "Add period", exact: true }).click();
+  await page
+    .getByRole("dialog")
+    .getByLabel("End time", { exact: true })
+    .fill("14:00");
+  await page.getByRole("button", { name: "Save period", exact: true }).click();
+  await expect(page.getByRole("alert")).toContainText(
+    "End must be later than start",
+  );
   await page.getByRole("button", { name: "Cancel", exact: true }).click();
+  await expect(page.getByRole("alert")).toHaveCount(0);
   await expect(page.locator(".period-row")).toHaveCount(8);
   for (const type of ["registration", "break", "lunch"]) {
     await page.getByRole("button", { name: "Add period", exact: true }).click();
     const dialog = page.getByRole("dialog", { name: "Add a period" });
-    await dialog.getByLabel("Period type").selectOption(type);
+    await dialog.getByLabel("Period category").selectOption(type);
     await dialog
       .getByLabel("Period name", { exact: true })
       .fill(`Extra ${type}`);
@@ -238,7 +247,7 @@ test("period form validates times, supports each fixed type, and fits mobile and
     await dialog.getByRole("button", { name: "Save period" }).click();
     await expect(page.locator(".period-row")).toHaveCount(9);
     await expect(
-      page.getByLabel(`Extra ${type} type`, { exact: true }),
+      page.getByLabel(`Extra ${type} category`, { exact: true }),
     ).toHaveValue(type);
     await page
       .getByLabel(`Extra ${type} end time`, { exact: true })

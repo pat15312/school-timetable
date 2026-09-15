@@ -1121,6 +1121,66 @@
   .periods-panel {
     padding: 18px 22px;
   }
+  .periods-heading {
+    flex-wrap: wrap;
+  }
+  .periods-heading > div:first-child {
+    flex: 1 1 300px;
+  }
+  .period-heading-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .period-heading-actions .button {
+    min-height: 44px;
+  }
+  .category-list {
+    display: grid;
+    gap: 10px;
+  }
+  .category-list-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 14px;
+  }
+  .category-list-actions .button {
+    min-height: 44px;
+  }
+  .category-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 4px 10px;
+    padding: 12px;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    background: var(--soft);
+  }
+  .category-row h3 {
+    overflow-wrap: anywhere;
+    font-size: 14px;
+  }
+  .category-row .icon-button {
+    width: 44px;
+    height: 44px;
+  }
+  .category-permission {
+    grid-column: 1 / -1;
+    min-height: 44px;
+  }
+  .category-row .category-permission {
+    margin: 0;
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .category-row .row-actions {
+    grid-column: 3;
+    grid-row: 1;
+  }
+  .category-note {
+    margin-top: 16px;
+  }
   .period-head,
   .period-row {
     display: grid;
@@ -2549,6 +2609,16 @@
     }
   }
   @media (max-width: 480px) {
+    .category-row {
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+    .category-row .row-actions {
+      grid-column: 2;
+    }
+    .category-row .category-permission {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
     main {
       padding: 25px 16px 0;
     }

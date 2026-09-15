@@ -92,7 +92,7 @@ describe("print preparation", () => {
 describe("registration print rows", () => {
   it("prints a renamed registration block without a previously assigned subject", () => {
     const p = testProject();
-    p.periods[0].type = "registration";
+    p.periods[0].categoryId = "registration";
     p.periods[0].name = "Tutor period";
     const row = preparePrintPages(p, "landscape")[0][0].rows[0];
     expect(row.structural).toBe(true);

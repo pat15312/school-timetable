@@ -35,7 +35,7 @@ export function resolveEntry(entry: TimetableEntry, subject: Subject) {
 }
 export function generateOccurrences(
   project: TimetableProject,
-  includeBreaks = false,
+  includeFixedPeriods = false,
 ): Occurrence[] {
   if (validateProject(project).errors.length) return [];
   const entries = new Map(project.entries.map((e) => [cellKey(e), e]));
@@ -53,8 +53,8 @@ export function generateOccurrences(
           }),
         );
         const subject = entry && subjects.get(entry.subjectId);
-        const structural = isStructural(period);
-        if (structural ? !includeBreaks : !entry || !subject) continue;
+        const structural = isStructural(period, project);
+        if (structural ? !includeFixedPeriods : !entry || !subject) continue;
         const details = structural
           ? {
               title: period.name,
@@ -71,7 +71,7 @@ export function generateOccurrences(
             date,
             String(day),
             period.id,
-            structural ? period.type : subject!.id,
+            structural ? period.categoryId : subject!.id,
           ]
             .map((part) => `${part.length}_${part}`)
             .join("-") +

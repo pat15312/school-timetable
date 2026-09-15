@@ -10,6 +10,7 @@ import {
   Pencil,
   Plus,
   RotateCcw,
+  Settings2,
   ShieldCheck,
   Trash2,
   X,
@@ -27,7 +28,8 @@ import {
 } from "../domain/model";
 import { dateRange, formatDate, validDate, validTime } from "../domain/dates";
 import { getRotationLabel, getTeachingWeeks } from "../domain/rotation";
-import { standardPeriods } from "../domain/fixture";
+import { withStandardDay } from "../domain/fixture";
+import { PeriodCategories } from "./PeriodCategories";
 import { EmptyState, Field, Modal, Notice } from "./ui";
 
 export interface SettingsProps {
@@ -536,28 +538,27 @@ export function Holidays({ project: p, update }: SettingsProps) {
   );
 }
 
-const periodTypes: Period["type"][] = [
-  "lesson",
-  "registration",
-  "break",
-  "lunch",
-  "other",
-];
-const periodTypeLabel = (type: Period["type"]) =>
-  type[0].toUpperCase() + type.slice(1);
-
 export function Periods({ project: p, update }: SettingsProps) {
   const periods = sortedPeriods(p);
+  const [managingCategories, setManagingCategories] = useState(false);
   const [draft, setDraft] = useState<Period | null>(null);
   const [error, setError] = useState("");
   const changeDraft = (patch: Partial<Period>) => {
     setDraft((current) => (current ? { ...current, ...patch } : null));
     setError("");
   };
-  const defaultName = (type: Period["type"]) =>
-    type === "lesson"
-      ? `Period ${p.periods.filter((period) => period.type === "lesson").length + 1}`
-      : type[0].toUpperCase() + type.slice(1);
+  const closeDraft = () => {
+    setDraft(null);
+    setError("");
+  };
+  const defaultName = (categoryId: string) => {
+    const category = p.periodCategories.find(
+      (category) => category.id === categoryId,
+    );
+    return category?.allowSubjects
+      ? `${category.name} ${p.periods.filter((period) => period.categoryId === categoryId).length + 1}`
+      : category?.name || "";
+  };
   const change = (id: string, patch: Partial<Period>) =>
     update((p) => ({
       ...p,
@@ -577,37 +578,63 @@ export function Periods({ project: p, update }: SettingsProps) {
     }));
   };
   const add = () => {
+    const category =
+      p.periodCategories.find((category) => category.allowSubjects) ??
+      p.periodCategories[0];
+    if (!category) return;
     setError("");
     setDraft({
       id: newId(),
-      name: defaultName("lesson"),
+      name: defaultName(category.id),
       startTime: periods.at(-1)?.endTime || "",
       endTime: "",
-      type: "lesson",
+      categoryId: category.id,
       sortOrder: periods.length,
     });
   };
   return (
     <div>
-      <div className="section-heading">
+      <div className="section-heading periods-heading">
         <div>
           <h2>The shape of your school day</h2>
           <p className="muted">
-            Add lessons, registration, breaks or lunch. Edit any name or time
-            below, and use the arrows or bin to reorder or delete a period.
+            Add periods and choose a category for each one. Manage categories to
+            decide which periods can have subjects.
           </p>
         </div>
-        <button
-          className="button secondary"
-          onClick={add}
-          disabled={periods.length >= 40}
-        >
-          <Plus size={17} />
-          Add period
-        </button>
+        <div className="period-heading-actions">
+          <button
+            className="button secondary"
+            onClick={() => setManagingCategories(true)}
+          >
+            <Settings2 size={17} />
+            Period categories
+          </button>
+          <button
+            className="button secondary"
+            onClick={add}
+            disabled={periods.length >= 40 || !p.periodCategories.length}
+          >
+            <Plus size={17} />
+            Add period
+          </button>
+        </div>
       </div>
+      {managingCategories && (
+        <PeriodCategories
+          project={p}
+          update={update}
+          onClose={() => setManagingCategories(false)}
+        />
+      )}
+      {!p.periodCategories.length && (
+        <Notice>
+          Add a period category to choose whether its periods can have subjects.
+        </Notice>
+      )}
+      {error && !draft && <Notice kind="error">{error}</Notice>}
       {draft && (
-        <Modal title="Add a period" onClose={() => setDraft(null)}>
+        <Modal title="Add a period" onClose={closeDraft}>
           <form
             onSubmit={(event) => {
               event.preventDefault();
@@ -643,28 +670,28 @@ export function Periods({ project: p, update }: SettingsProps) {
                   })),
                 };
               });
-              setDraft(null);
+              closeDraft();
             }}
           >
             {error && <Notice kind="error">{error}</Notice>}
-            <Field label="Period type">
+            <Field label="Period category">
               <select
                 autoFocus
-                value={draft.type}
+                value={draft.categoryId}
                 onChange={(event) => {
-                  const type = event.target.value as Period["type"];
+                  const categoryId = event.target.value;
                   changeDraft({
-                    type,
+                    categoryId,
                     name:
-                      draft.name === defaultName(draft.type)
-                        ? defaultName(type)
+                      draft.name === defaultName(draft.categoryId)
+                        ? defaultName(categoryId)
                         : draft.name,
                   });
                 }}
               >
-                {periodTypes.map((type) => (
-                  <option key={type} value={type}>
-                    {periodTypeLabel(type)}
+                {p.periodCategories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
                   </option>
                 ))}
               </select>
@@ -703,15 +730,18 @@ export function Periods({ project: p, update }: SettingsProps) {
               </Field>
             </div>
             <p className="muted small">
-              Registration, breaks and lunch appear automatically each school
-              day and cannot be assigned a subject. New periods are inserted by
-              start time.
+              {p.periodCategories.find(
+                (category) => category.id === draft.categoryId,
+              )?.allowSubjects
+                ? "You can place a subject in this period."
+                : "This period shows its name automatically, without a subject."}{" "}
+              New periods are inserted by start time.
             </p>
             <div className="form-actions">
               <button
                 type="button"
                 className="button secondary"
-                onClick={() => setDraft(null)}
+                onClick={closeDraft}
               >
                 Cancel
               </button>
@@ -728,9 +758,14 @@ export function Periods({ project: p, update }: SettingsProps) {
           <EmptyState
             title="Every school day has its rhythm"
             action="Use a standard school day"
-            onAction={() =>
-              update((p) => ({ ...p, periods: standardPeriods() }))
-            }
+            onAction={() => {
+              setError("");
+              try {
+                update(withStandardDay);
+              } catch (error) {
+                setError((error as Error).message);
+              }
+            }}
           >
             Start with registration, five lessons, break, and lunch. Adjust
             everything to fit your school.
@@ -742,7 +777,7 @@ export function Periods({ project: p, update }: SettingsProps) {
             <span>Period / block</span>
             <span>Start</span>
             <span>End</span>
-            <span>Type</span>
+            <span>Category</span>
             <span>Order</span>
           </div>
           {periods.map((period, i) => (
@@ -777,17 +812,17 @@ export function Periods({ project: p, update }: SettingsProps) {
                   />
                 </label>
                 <select
-                  aria-label={`${period.name} type`}
-                  value={period.type}
+                  aria-label={`${period.name} category`}
+                  value={period.categoryId}
                   onChange={(e) =>
                     change(period.id, {
-                      type: e.target.value as Period["type"],
+                      categoryId: e.target.value,
                     })
                   }
                 >
-                  {periodTypes.map((type) => (
-                    <option key={type} value={type}>
-                      {periodTypeLabel(type)}
+                  {p.periodCategories.map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
                     </option>
                   ))}
                 </select>
@@ -844,9 +879,9 @@ export function Periods({ project: p, update }: SettingsProps) {
       <div className="tip-line">
         <Clock3 size={17} />
         <span>
-          Registration, breaks and lunch appear automatically without a subject.
-          Rename registration to “Tutor period” or add as many breaks as your
-          school day needs. They're left out of your calendar by default.
+          A category's Allow subjects setting applies to all its periods. With
+          subjects switched off, periods appear automatically by name and are
+          left out of calendar exports unless you include fixed periods.
         </span>
       </div>
     </div>

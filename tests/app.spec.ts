@@ -79,10 +79,10 @@ test("complete setup, holiday-aware review, both print layouts, and ICS download
   ).toBeVisible();
   await continueSetup(page);
   await page.getByRole("button", { name: "Use a standard school day" }).click();
-  await expect(page.getByLabel("Break type", { exact: true })).toHaveValue(
+  await expect(page.getByLabel("Break category", { exact: true })).toHaveValue(
     "break",
   );
-  await expect(page.getByLabel("Lunch type", { exact: true })).toHaveValue(
+  await expect(page.getByLabel("Lunch category", { exact: true })).toHaveValue(
     "lunch",
   );
   await continueSetup(page);
@@ -300,7 +300,7 @@ test("painting, overrides, copy across weeks, erase, undo, duplication, and back
   const backup = JSON.parse(
     await readFile((await (await downloading).path())!, "utf8"),
   );
-  expect(backup.schemaVersion).toBe(1);
+  expect(backup.schemaVersion).toBe(2);
   expect(
     backup.timetable.entries.some(
       (e: { notes?: string }) => e.notes === "Bring a calculator",
@@ -404,7 +404,7 @@ test("restores a backup and keeps a four-week printout within its chosen pages",
   const project = sampleProject();
   project.cycleLength = 4;
   project.rotationLabelStyle = "letters";
-  const original = project.periods.find((p) => p.type === "lesson")!;
+  const original = project.periods.find((p) => p.categoryId === "lesson")!;
   project.periods = Array.from({ length: 24 }, (_, i) => ({
     ...original,
     id: `period-${i}`,

@@ -33,7 +33,7 @@ export function testProject(): TimetableProject {
         name: "Period 1",
         startTime: "09:00",
         endTime: "10:00",
-        type: "lesson",
+        categoryId: "lesson",
         sortOrder: 0,
       },
       {
@@ -41,7 +41,7 @@ export function testProject(): TimetableProject {
         name: "Break",
         startTime: "10:00",
         endTime: "10:20",
-        type: "break",
+        categoryId: "break",
         sortOrder: 1,
       },
       {
@@ -49,7 +49,7 @@ export function testProject(): TimetableProject {
         name: "Lunch",
         startTime: "12:00",
         endTime: "13:00",
-        type: "lunch",
+        categoryId: "lunch",
         sortOrder: 2,
       },
     ],

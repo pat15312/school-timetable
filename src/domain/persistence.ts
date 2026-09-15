@@ -1,11 +1,31 @@
 import { z } from "zod";
-import { cellKey, projectSchema, type TimetableProject } from "./model";
+import {
+  cellKey,
+  defaultPeriodCategories,
+  periodSchema,
+  projectSchema,
+  type TimetableProject,
+} from "./model";
 export const STORAGE_KEY = "schoolcal.project.v1";
-export const SCHEMA_VERSION = 1;
-const envelopeSchema = z.object({
-  schemaVersion: z.literal(SCHEMA_VERSION),
-  timetable: projectSchema,
-});
+export const SCHEMA_VERSION = 2;
+const legacyProjectSchema = projectSchema
+  .omit({ periodCategories: true })
+  .extend({
+    periods: z
+      .array(
+        periodSchema.omit({ categoryId: true }).extend({
+          type: z.enum(["lesson", "registration", "break", "lunch", "other"]),
+        }),
+      )
+      .max(40),
+  });
+const envelopeSchema = z.discriminatedUnion("schemaVersion", [
+  z.object({ schemaVersion: z.literal(1), timetable: legacyProjectSchema }),
+  z.object({
+    schemaVersion: z.literal(SCHEMA_VERSION),
+    timetable: projectSchema,
+  }),
+]);
 export function serializeProject(project: TimetableProject): string {
   return JSON.stringify(
     { schemaVersion: SCHEMA_VERSION, timetable: project },
@@ -29,10 +49,23 @@ export function parseProject(text: string): TimetableProject {
   const result = envelopeSchema.safeParse(data);
   if (!result.success)
     throw new Error(
-      "This is not a supported SchoolCal project backup (version 1). Your timetable has not been changed.",
+      "This is not a supported SchoolCal project backup (versions 1 or 2). Your timetable has not been changed.",
     );
-  const p = result.data.timetable;
+  const p: TimetableProject =
+    result.data.schemaVersion === 1
+      ? {
+          ...result.data.timetable,
+          periodCategories: defaultPeriodCategories(),
+          // Other allowed subjects, just like Lesson. Keep its period names,
+          // IDs and entries while removing the old catch-all dropdown option.
+          periods: result.data.timetable.periods.map(({ type, ...period }) => ({
+            ...period,
+            categoryId: type === "other" ? "lesson" : type,
+          })),
+        }
+      : result.data.timetable;
   for (const records of [
+    p.periodCategories,
     p.periods,
     p.subjects,
     p.entries,
@@ -45,6 +78,20 @@ export function parseProject(text: string): TimetableProject {
   }
   if (new Set(p.entries.map(cellKey)).size !== p.entries.length)
     throw new Error("This backup contains duplicate timetable cells.");
+  if (
+    new Set(p.periodCategories.map((category) => category.name.toLowerCase()))
+      .size !== p.periodCategories.length
+  )
+    throw new Error("This backup contains duplicate period category names.");
+  if (
+    p.periods.some(
+      (period) =>
+        !p.periodCategories.some(
+          (category) => category.id === period.categoryId,
+        ),
+    )
+  )
+    throw new Error("This backup refers to a missing period category.");
   if (
     p.entries.some(
       (e) =>

@@ -32,6 +32,8 @@ Subject duplication and reordering are tested in both browsers, including indepe
 
 Period checks cover existing Registration assignments, renamed tutor periods, extra breaks, creation/editing/deletion of fixed periods, invalid times, print rows, and optional calendar inclusion in both browsers.
 
+Category checks cover creating and renaming dropdown choices, switching subjects on and off across all assigned periods, restoring saved lessons, replacing used categories before deletion, version 1 upgrades, version 2 backups, and mobile/desktop accessibility.
+
 To exercise date handling in a different host timezone:
 
 ```sh
@@ -44,7 +46,7 @@ TZ=America/Los_Angeles npm test
 - Pure domain utilities in `src/domain/`: civil dates, teaching weeks, validation, occurrences, iCalendar output, editing operations, print preparation, and versioned persistence.
 - React views in `src/components/`; the project and editing history are managed by `src/hooks/useProject.ts`.
 - Zod validates **untrusted JSON and saved-state structure**. Domain validation separately checks whether a project is ready for export, so an incomplete draft can still be saved.
-- One local project, stored in `localStorage` under `schoolcal.project.v1`. Saves include a `schemaVersion` envelope. Unknown schemas and damaged backups are rejected before changing a project. Unreadable saved data can be downloaded for recovery.
+- One local project, stored in `localStorage` under `schoolcal.project.v1`. Version 2 saves include editable period categories. Version 1 projects and backups upgrade automatically: fixed types become categories, and legacy Other periods move to Lesson with their names, IDs, subjects and overrides preserved. Unknown schemas and damaged backups are rejected before changing a project. Unreadable saved data can be downloaded for recovery.
 - Hash navigation works without server-side route rewriting. Changing rotation length or school days preserves entries in hidden weeks/days.
 - Branding is centralised in `src/brand.ts`; theme tokens are at the top of `src/styles.css`. The code-native favicon is in `public/favicon.svg`. After changing it, regenerate the committed PNG icons with `node scripts/generate-icons.mjs` (requires the Playwright browser).
 
@@ -82,13 +84,15 @@ In **Subjects**, choose **Duplicate** to create another version with the same na
 
 Visible buttons provide the same actions for touch. Undo keeps the last 80 entry edits in memory and resets when a project is replaced or the page is reloaded. Week replacement requires an explicit confirmation in the copy dialog.
 
-On phones, the timetable becomes a day list with weekday tabs and a sticky, horizontally scrollable subject palette. Registration, breaks and lunch are fixed rows without subject assignments. Existing assignments in those rows are ignored in the timetable, printout and export. Lesson and other periods can contain subjects.
+On phones, the timetable becomes a day list with weekday tabs and a sticky, horizontally scrollable subject palette. Each period refers to a category with an **Allow subjects** flag. When off, the period displays its name as a fixed row in the timetable and printout; its saved lessons remain stored and return when the flag is switched on. This setting applies to all periods using the category, regardless of its name.
 
-In **Lesson times**, choose **Add period**, select the type, and enter a name and times. New periods are inserted by start time. Names and times remain editable in the list; use the arrows to reorder or the bin to delete. For example, rename Registration to **Tutor period**, or add another **Break** named **Afternoon break**.
+In **Lesson times → Period categories**, add, edit or delete the choices shown in the Category dropdown. New projects start with Lesson (subjects on), Registration, Break and Lunch (subjects off). Renaming a category also updates periods whose names exactly matched the old category name; custom period names are preserved. Deleting a category in use requires a replacement, keeping its periods and saved lessons.
+
+Choose **Add period**, select a category, and enter a name and times. New periods are inserted by start time. Names and times remain editable in the list; use the arrows to reorder or the bin to delete a period. For example, rename the Registration category to **Tutor period**, or create an **Assembly** category with subjects switched off.
 
 ## Calendar output
 
-The exporter writes individual `VEVENT`s—**no `RRULE`**. Excluded dates, disabled days, and empty cells produce no lesson events. Registration/break/lunch export is opt-in and uses each period's custom name and times.
+The exporter writes individual `VEVENT`s—**no `RRULE`**. Excluded dates, disabled days, and empty cells produce no lesson events. **Include fixed periods** optionally exports periods whose categories have Allow subjects switched off, using each period's name and times.
 
 - Stable, collision-free UIDs derive from the project, date, weekday, period, and subject IDs.
 - Text escapes commas, semicolons, backslashes, and line breaks; physical lines fold at 75 UTF-8 bytes with CRLF endings.
@@ -144,7 +148,7 @@ See [Vite's GitHub Pages deployment guide](https://vite.dev/guide/static-deploy.
 
 - One project per browser/origin; no cloud sync or coordination between multiple open editing tabs. Use one editing tab and keep backups.
 - Supports modern browsers, same-day periods, and one shared period structure across enabled school days. Overnight lessons and different bell schedules per weekday are outside this release.
-- Bounds keep malformed imports and accidental huge calendars manageable: dates from 1900–2200, up to three years per project, 40 periods, 100 subjects, 200 exclusions, and 2 MB backups. Normal school years are much smaller.
+- Bounds keep malformed imports and accidental huge calendars manageable: dates from 1900–2200, up to three years per project, 40 periods, 40 period categories, 100 subjects, 200 exclusions, and 2 MB backups. Normal school years are much smaller.
 - Sample holidays are illustrative and must be checked against the actual school calendar. They are not a source of official term dates.
 - Browser timezone rules depend on its installed IANA data. Use a current browser. Rare ambiguous/nonexistent lesson times during the overnight clock change follow calendar-client timezone interpretation.
 - Automated phone testing uses Chromium with an iPhone viewport, not a physical iPhone or native Apple Calendar/Outlook. Actual calendar-client import and physical-printer output still need release-device checks.

@@ -81,7 +81,7 @@ export function Timetable({
       e.rotationIndex === currentWeek &&
       days.includes(e.weekday) &&
       periods.some(
-        (period) => period.id === e.periodId && !isStructural(period),
+        (period) => period.id === e.periodId && !isStructural(period, p),
       ),
   ).length;
   const label = (i: number) => getRotationLabel(i, p.rotationLabelStyle);
@@ -186,7 +186,7 @@ export function Timetable({
           )
             return;
           e.preventDefault();
-          const editable = periods.filter((period) => !isStructural(period));
+          const editable = periods.filter((period) => !isStructural(period, p));
           const x = days.indexOf(cell.weekday),
             y = editable.findIndex((period) => period.id === cell.periodId);
           const nextX = Math.max(
@@ -437,7 +437,7 @@ export function Timetable({
                 {periods.map((period) => (
                   <tr
                     key={period.id}
-                    className={isStructural(period) ? "structural-row" : ""}
+                    className={isStructural(period, p) ? "structural-row" : ""}
                   >
                     <th scope="row">
                       <strong>{period.name}</strong>
@@ -445,7 +445,7 @@ export function Timetable({
                         {period.startTime || "—"} – {period.endTime || "—"}
                       </span>
                     </th>
-                    {isStructural(period) ? (
+                    {isStructural(period, p) ? (
                       <td colSpan={days.length}>
                         <div className="structural-label">
                           <span />
@@ -489,14 +489,14 @@ export function Timetable({
             <h3>{DAY_NAMES[currentDay]}</h3>
             {periods.map((period) => (
               <div
-                className={`mobile-period ${isStructural(period) ? "structural" : ""}`}
+                className={`mobile-period ${isStructural(period, p) ? "structural" : ""}`}
                 key={period.id}
               >
                 <div>
                   <strong>{period.startTime || "—"}</strong>
                   <span>{period.endTime || "—"}</span>
                 </div>
-                {isStructural(period) ? (
+                {isStructural(period, p) ? (
                   <div className="mobile-break">{period.name}</div>
                 ) : (
                   <div className="mobile-cell-wrap">

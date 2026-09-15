@@ -23,14 +23,14 @@ export function Review({
   project: TimetableProject;
   notify: (message: string) => void;
 }) {
-  const [includeBreaks, setIncludeBreaks] = useState(false);
+  const [includeFixedPeriods, setIncludeFixedPeriods] = useState(false);
   const [selectedMonday, setSelectedMonday] = useState("");
   const [exported, setExported] = useState(false);
   const [exportError, setExportError] = useState("");
   const validation = useMemo(() => validateProject(p), [p]);
   const occurrences = useMemo(
-    () => generateOccurrences(p, includeBreaks),
-    [p, includeBreaks],
+    () => generateOccurrences(p, includeFixedPeriods),
+    [p, includeFixedPeriods],
   );
   const weeks = useMemo(() => getTeachingWeeks(p), [p]);
   const index = Math.max(
@@ -50,7 +50,7 @@ export function Review({
   const exportCalendar = async (share: boolean) => {
     setExportError("");
     try {
-      const content = buildCalendar(p, includeBreaks),
+      const content = buildCalendar(p, includeFixedPeriods),
         name = `${safeFilename(p.name)}-timetable.ics`;
       if (share && canShare)
         await navigator.share({
@@ -280,15 +280,17 @@ export function Review({
             <label className="checkbox-label">
               <input
                 type="checkbox"
-                checked={includeBreaks}
+                checked={includeFixedPeriods}
                 onChange={(e) => {
-                  setIncludeBreaks(e.target.checked);
+                  setIncludeFixedPeriods(e.target.checked);
                   setExported(false);
                 }}
               />
               <span>
-                Include registration, breaks and lunch
-                <small>Off by default</small>
+                Include fixed periods
+                <small>
+                  Categories with Allow subjects off. Off by default.
+                </small>
               </span>
             </label>
             <button

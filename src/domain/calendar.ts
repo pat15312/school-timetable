@@ -102,12 +102,12 @@ export function timezoneLines(
 }
 export function buildCalendar(
   project: TimetableProject,
-  includeBreaks = false,
+  includeFixedPeriods = false,
   stamp = new Date(),
 ): string {
   const validation = validateProject(project);
   if (validation.errors.length) throw new Error(validation.errors.join(" "));
-  const occurrences = generateOccurrences(project, includeBreaks);
+  const occurrences = generateOccurrences(project, includeFixedPeriods);
   if (!occurrences.some((e) => !e.structural))
     throw new Error(
       "No lessons fall on actual school days. Check your dates and timetable.",

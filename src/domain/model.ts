@@ -14,12 +14,17 @@ export const exclusionSchema = z.object({
   endDate: date,
   resetRotationAfter: z.boolean(),
 });
+export const periodCategorySchema = z.object({
+  id,
+  name: z.string().trim().min(1).max(80),
+  allowSubjects: z.boolean(),
+});
 export const periodSchema = z.object({
   id,
   name: text,
   startTime: z.string().max(5),
   endTime: z.string().max(5),
-  type: z.enum(["lesson", "registration", "break", "lunch", "other"]),
+  categoryId: id,
   sortOrder: z.number().int().min(0).max(100),
 });
 export const subjectSchema = z.object({
@@ -59,6 +64,7 @@ export const projectSchema = z.object({
   ]),
   rotationLabelStyle: z.enum(["letters", "numbers"]),
   initialRotationIndex: z.number().int().min(0).max(3),
+  periodCategories: z.array(periodCategorySchema).max(40),
   periods: z.array(periodSchema).max(40),
   subjects: z.array(subjectSchema).max(100),
   entries: z.array(entrySchema).max(1120),
@@ -71,6 +77,7 @@ export const projectSchema = z.object({
 export type TimetableProject = z.infer<typeof projectSchema>;
 export type DateExclusion = z.infer<typeof exclusionSchema>;
 export type Period = z.infer<typeof periodSchema>;
+export type PeriodCategory = z.infer<typeof periodCategorySchema>;
 export type Subject = z.infer<typeof subjectSchema>;
 export type TimetableEntry = z.infer<typeof entrySchema>;
 export type RotationLabelStyle = TimetableProject["rotationLabelStyle"];
@@ -103,8 +110,19 @@ export const schoolDays = (p: TimetableProject) =>
   WEEKDAYS.filter((d) => p.academicYear.schoolWeekdays.includes(d));
 export const sortedPeriods = (p: TimetableProject) =>
   [...p.periods].sort((a, b) => a.sortOrder - b.sortOrder);
-export const isStructural = (p: Period) =>
-  p.type === "registration" || p.type === "break" || p.type === "lunch";
+export const isStructural = (
+  period: Period,
+  project: Pick<TimetableProject, "periodCategories">,
+) =>
+  !project.periodCategories.find(
+    (category) => category.id === period.categoryId,
+  )?.allowSubjects;
+export const defaultPeriodCategories = (): PeriodCategory[] => [
+  { id: "lesson", name: "Lesson", allowSubjects: true },
+  { id: "registration", name: "Registration", allowSubjects: false },
+  { id: "break", name: "Break", allowSubjects: false },
+  { id: "lunch", name: "Lunch", allowSubjects: false },
+];
 export const sameCell = (a: Cell, b: Cell) =>
   a.rotationIndex === b.rotationIndex &&
   a.weekday === b.weekday &&
@@ -128,6 +146,7 @@ export function createProject(): TimetableProject {
     cycleLength: 1,
     rotationLabelStyle: "numbers",
     initialRotationIndex: 0,
+    periodCategories: defaultPeriodCategories(),
     periods: [],
     subjects: [],
     entries: [],

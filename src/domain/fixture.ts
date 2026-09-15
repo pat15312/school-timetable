@@ -1,6 +1,7 @@
 import {
   COLOURS,
   createProject,
+  defaultPeriodCategories,
   newId,
   type Period,
   type TimetableProject,
@@ -15,14 +16,51 @@ export function standardPeriods(): Period[] {
     ["Period 4", "12:05", "13:05", "lesson"],
     ["Lunch", "13:05", "14:00", "lunch"],
     ["Period 5", "14:00", "15:00", "lesson"],
-  ].map(([name, startTime, endTime, type], sortOrder) => ({
+  ].map(([name, startTime, endTime, categoryId], sortOrder) => ({
     id: newId(),
     name,
     startTime,
     endTime,
-    type: type as Period["type"],
+    categoryId,
     sortOrder,
   }));
+}
+export function withStandardDay(project: TimetableProject): TimetableProject {
+  const periodCategories = [...project.periodCategories];
+  const categoryIds = new Map<string, string>();
+  for (const defaults of defaultPeriodCategories()) {
+    const existing =
+      periodCategories.find((category) => category.id === defaults.id) ??
+      periodCategories.find(
+        (category) =>
+          category.name.toLowerCase() === defaults.name.toLowerCase(),
+      );
+    if (!existing) periodCategories.push(defaults);
+    categoryIds.set(defaults.id, existing?.id ?? defaults.id);
+  }
+  if (periodCategories.length > 40)
+    throw new Error(
+      "Make room for the standard day's categories first (40 maximum).",
+    );
+  return {
+    ...project,
+    periodCategories,
+    periods: standardPeriods().map((period) => {
+      const categoryId = categoryIds.get(period.categoryId)!;
+      const defaultName = defaultPeriodCategories().find(
+        (category) => category.id === period.categoryId,
+      )!.name;
+      return {
+        ...period,
+        categoryId,
+        name:
+          period.name === defaultName
+            ? periodCategories.find((category) => category.id === categoryId)!
+                .name
+            : period.name,
+      };
+    }),
+  };
 }
 /** Only loaded after an explicit user action or in tests. Never default production data. */
 export function sampleProject(): TimetableProject {
@@ -93,7 +131,7 @@ export function sampleProject(): TimetableProject {
   for (let week = 0; week < 2; week++)
     for (let day = 1; day <= 5; day++) {
       p.periods
-        .filter((period) => period.type === "lesson")
+        .filter((period) => period.categoryId === "lesson")
         .forEach((period, i) => {
           if ((day + i + week) % 9 === 0) return;
           p.entries.push({

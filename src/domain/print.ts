@@ -17,7 +17,7 @@ export function preparePrintPages(
     days: schoolDays(project),
     rows: sortedPeriods(project).map((period) => ({
       period,
-      structural: isStructural(period),
+      structural: isStructural(period, project),
       cells: schoolDays(project).map((day) => {
         const entry = project.entries.find(
           (e) =>
@@ -27,7 +27,7 @@ export function preparePrintPages(
         );
         const subject =
           entry && project.subjects.find((s) => s.id === entry.subjectId);
-        return entry && subject && !isStructural(period)
+        return entry && subject && !isStructural(period, project)
           ? resolveEntry(entry, subject)
           : null;
       }),
