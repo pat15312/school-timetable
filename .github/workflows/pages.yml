@@ -33,7 +33,7 @@ jobs:
         run: npm test
         env:
           TZ: America/Los_Angeles
-      - run: npx playwright install --with-deps chromium
+      - run: npx playwright install --with-deps chromium webkit
       # Playwright builds the app and tests its production preview, including offline caching.
       - run: npm run test:e2e
       - uses: actions/upload-artifact@v4

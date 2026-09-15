@@ -95,6 +95,9 @@
     --backdrop: #040b18b3;
   }
   :root {
+    --topbar-height: 74px;
+    --topbar-offset: calc(var(--topbar-height) + env(safe-area-inset-top, 0px));
+    scroll-padding-top: calc(var(--topbar-offset) + 12px);
     --radius: 13px;
     font-family:
       Inter,
@@ -199,7 +202,23 @@
   }
   input[type="date"],
   input[type="time"] {
+    /* iOS native controls otherwise impose their own intrinsic width. */
+    -webkit-appearance: none;
+    appearance: none;
+    display: block;
+    box-sizing: border-box;
+    min-inline-size: 0;
+    max-inline-size: 100%;
+    inline-size: 100%;
     min-height: 44px;
+  }
+  input::-webkit-date-and-time-value {
+    min-height: 1.5em;
+    text-align: left;
+  }
+  input::-webkit-datetime-edit {
+    min-width: 0;
+    padding: 0;
   }
   textarea {
     resize: vertical;
@@ -227,6 +246,7 @@
     background: var(--sidebar-surface);
     border-right: 1px solid var(--line);
     padding: 30px 18px 18px;
+    padding-top: calc(30px + env(safe-area-inset-top, 0px));
     display: flex;
     flex-direction: column;
     overflow-y: auto;
@@ -405,14 +425,18 @@
     margin-left: 234px;
   }
   .topbar {
-    height: 74px;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    height: var(--topbar-offset);
     border-bottom: 1px solid var(--line);
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 10px;
     padding: 0 40px;
-    background: var(--topbar-surface);
+    padding-top: env(safe-area-inset-top, 0px);
+    background: var(--sidebar-surface);
   }
   .topbar > div {
     display: flex;
@@ -634,6 +658,7 @@
     font-size: 12px;
   }
   .field {
+    min-width: 0;
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -646,6 +671,7 @@
     margin-bottom: 0;
   }
   .field > label {
+    min-width: 0;
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -1118,6 +1144,18 @@
   .period-row select {
     font-size: 12px;
     padding-inline: 9px;
+  }
+  .period-time {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    gap: 6px;
+  }
+  .period-time > span {
+    display: none;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 550;
   }
   .tip-line {
     display: flex;
@@ -2184,27 +2222,36 @@
       display: none;
     }
     .period-row {
-      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
-    .period-row input:first-child {
-      grid-column: 1 / 3;
+    .period-row > input:first-child {
+      grid-column: 1 / -1;
     }
     .period-row select {
-      grid-column: 1 / 3;
+      grid-column: 1;
+      grid-row: 3;
     }
     .period-row .row-actions {
+      grid-column: 2;
+      grid-row: 3;
       justify-content: flex-end;
     }
-    .period-row input[type="time"]:nth-child(2) {
+    .period-time > span {
+      display: block;
+    }
+    .period-start {
       grid-column: 1;
       grid-row: 2;
     }
-    .period-row input[type="time"]:nth-child(3) {
-      grid-column: 2 / 4;
+    .period-end {
+      grid-column: 2;
       grid-row: 2;
     }
   }
   @media (max-width: 780px) {
+    :root {
+      --topbar-height: 61px;
+    }
     .topbar .topbar-actions {
       gap: 10px;
     }
@@ -2220,7 +2267,7 @@
       transform: translateX(-100%);
       width: 258px;
       transition: transform 0.2s;
-      padding-top: 27px;
+      padding-top: calc(27px + env(safe-area-inset-top, 0px));
       background: var(--sidebar-surface);
     }
     .sidebar.open {
@@ -2235,7 +2282,7 @@
     }
     .close-nav {
       position: absolute;
-      top: 25px;
+      top: calc(25px + env(safe-area-inset-top, 0px));
       right: 6px;
     }
     .nav-scrim {
@@ -2248,7 +2295,6 @@
     }
     .topbar {
       padding-inline: 14px;
-      height: 61px;
       background: var(--sidebar-surface);
     }
     .breadcrumb {
@@ -2385,15 +2431,17 @@
     }
     .subject-palette {
       position: sticky;
-      top: 0;
+      top: calc(var(--topbar-offset) + 8px);
       z-index: 10;
       box-shadow: 0 3px 8px rgb(var(--shadow-rgb) / 0.031);
     }
     .palette-items {
       flex-wrap: nowrap;
       overflow-x: auto;
-      padding: 3px 1px 7px;
-      margin: -3px -1px -7px;
+      /* Keep selection and keyboard focus rings inside the scroll viewport. */
+      padding: 6px 6px 10px;
+      margin: -6px -6px -10px;
+      scroll-padding-inline: 6px;
       scrollbar-width: thin;
     }
     .palette-subject,

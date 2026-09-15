@@ -18,13 +18,15 @@ Open the local URL printed by Vite. New users start with an empty project. **Try
 ```sh
 npm run typecheck
 npm test
-npx playwright install --with-deps chromium
+npx playwright install --with-deps chromium webkit
 npm run test:e2e
 npm run build
 npm run preview
 ```
 
 Playwright builds and tests the **production** site, including its service worker, with desktop and iPhone-sized Chromium contexts. The full journey checks setup, half-term continuation, Christmas reset, painting, overrides, undo, week duplication, JSON backups, calendar downloads, corrupt-storage recovery, and offline access. Desktop tests also generate real PDFs, check their page counts, and verify that the last row fits on each page. Axe checks the main screens for WCAG A/AA violations. Unit tests independently parse exported calendars with `ical.js`, including timezone transitions. `ical.js` and Axe are only development dependencies.
+
+Layout checks also run in desktop and mobile WebKit, covering date/time field sizing, sticky navigation, and subject selection outlines across phone, tablet, and desktop widths.
 
 To exercise date handling in a different host timezone:
 

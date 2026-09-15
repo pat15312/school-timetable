@@ -25,6 +25,19 @@ export default defineConfig({
       name: "mobile-chromium",
       use: { ...devices["iPhone 13"], defaultBrowserType: "chromium" },
     },
+    {
+      name: "desktop-webkit",
+      testMatch: /layout\.spec\.ts/,
+      use: {
+        ...devices["Desktop Safari"],
+        viewport: { width: 1440, height: 1050 },
+      },
+    },
+    {
+      name: "mobile-webkit",
+      testMatch: /layout\.spec\.ts/,
+      use: { ...devices["iPhone 13"] },
+    },
   ],
   webServer: {
     command: "npm run build && npm run preview -- --host 127.0.0.1 --port 4173",

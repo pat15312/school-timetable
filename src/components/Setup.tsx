@@ -301,7 +301,11 @@ export function Holidays({ project: p, update }: SettingsProps) {
           </h2>
           <p className="muted">No lessons will be added on these dates.</p>
         </div>
-        <button className="button secondary" onClick={add} disabled={exclusions.length >= 200}>
+        <button
+          className="button secondary"
+          onClick={add}
+          disabled={exclusions.length >= 200}
+        >
           <Plus size={17} />
           Add days off
         </button>
@@ -448,7 +452,9 @@ export function Holidays({ project: p, update }: SettingsProps) {
       ) : (
         <div className="holiday-list">
           {exclusions.map((e) => {
-            const back = weeks.find((w) => w.dates.some((date) => date > e.endDate));
+            const back = weeks.find((w) =>
+              w.dates.some((date) => date > e.endDate),
+            );
             const backDate = back?.dates.find((date) => date > e.endDate);
             const overlap = exclusions.some(
               (other) =>
@@ -616,22 +622,28 @@ export function Periods({ project: p, update }: SettingsProps) {
                   value={period.name}
                   onChange={(e) => change(period.id, { name: e.target.value })}
                 />
-                <input
-                  type="time"
-                  aria-label={`${period.name} start time`}
-                  value={period.startTime}
-                  onChange={(e) =>
-                    change(period.id, { startTime: e.target.value })
-                  }
-                />
-                <input
-                  type="time"
-                  aria-label={`${period.name} end time`}
-                  value={period.endTime}
-                  onChange={(e) =>
-                    change(period.id, { endTime: e.target.value })
-                  }
-                />
+                <label className="period-time period-start">
+                  <span>Start</span>
+                  <input
+                    type="time"
+                    aria-label={`${period.name} start time`}
+                    value={period.startTime}
+                    onChange={(e) =>
+                      change(period.id, { startTime: e.target.value })
+                    }
+                  />
+                </label>
+                <label className="period-time period-end">
+                  <span>End</span>
+                  <input
+                    type="time"
+                    aria-label={`${period.name} end time`}
+                    value={period.endTime}
+                    onChange={(e) =>
+                      change(period.id, { endTime: e.target.value })
+                    }
+                  />
+                </label>
                 <select
                   aria-label={`${period.name} type`}
                   value={period.type}
