@@ -20,7 +20,7 @@ async function go(page: Page, name: string) {
 async function manage(page: Page) {
   await go(page, "Lesson times");
   await page
-    .getByRole("button", { name: "Period categories", exact: true })
+    .getByRole("button", { name: "Edit categories", exact: true })
     .click();
 }
 async function saved(page: Page) {

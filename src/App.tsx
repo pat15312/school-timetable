@@ -342,10 +342,33 @@ export default function App() {
           }}
         >
           <span className="brand-mark">
-            <Grid2X2 size={23} strokeWidth={2.5} />
+            <svg
+              viewBox="0 0 128 128"
+              width="35"
+              height="35"
+              aria-hidden="true"
+            >
+              <g
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="7"
+                strokeLinejoin="round"
+              >
+                <rect x="31" y="31" width="66" height="66" rx="9" />
+                <path d="M31 54h66M54 54v43" />
+              </g>
+              <rect
+                x="65"
+                y="65"
+                width="21"
+                height="20"
+                rx="4"
+                fill="currentColor"
+                fillOpacity=".5"
+              />
+            </svg>
           </span>
           {BRAND.name}
-          <span className="brand-dot">.</span>
         </a>
         <button
           className="close-nav icon-button"
@@ -354,8 +377,16 @@ export default function App() {
         >
           <X size={20} />
         </button>
-        <div className="project-label">
-          <span className="project-avatar">
+        <a
+          className="project-label"
+          href="#year"
+          aria-label={`School year for ${p.name || "My school timetable"}`}
+          onClick={(e) => {
+            e.preventDefault();
+            navigate("year");
+          }}
+        >
+          <span className="project-avatar" aria-hidden="true">
             {p.name ? (
               p.name.trim().slice(0, 1).toUpperCase()
             ) : (
@@ -370,7 +401,7 @@ export default function App() {
                 : "Let’s make it yours"}
             </small>
           </div>
-        </div>
+        </a>
         {isSetup ? (
           <nav className="setup-nav">
             <span className="nav-heading">LET’S GET YOU SET UP</span>

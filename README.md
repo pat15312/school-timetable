@@ -86,7 +86,7 @@ Visible buttons provide the same actions for touch. Undo keeps the last 80 entry
 
 On phones, the timetable becomes a day list with weekday tabs and a sticky, horizontally scrollable subject palette. Each period refers to a category with an **Allow subjects** flag. When off, the period displays its name as a fixed row in the timetable and printout; its saved lessons remain stored and return when the flag is switched on. This setting applies to all periods using the category, regardless of its name.
 
-In **Lesson times → Period categories**, add, edit or delete the choices shown in the Category dropdown. New projects start with Lesson (subjects on), Registration, Break and Lunch (subjects off). Renaming a category also updates periods whose names exactly matched the old category name; custom period names are preserved. Deleting a category in use requires a replacement, keeping its periods and saved lessons.
+In **Lesson times → Edit categories**, add, edit or delete the choices shown in the Category dropdown. New projects start with Lesson (subjects on), Registration, Break and Lunch (subjects off). Renaming a category also updates periods whose names exactly matched the old category name; custom period names are preserved. Deleting a category in use requires a replacement, keeping its periods and saved lessons.
 
 Choose **Add period**, select a category, and enter a name and times. New periods are inserted by start time. Names and times remain editable in the list; use the arrows to reorder or the bin to delete a period. For example, rename the Registration category to **Tutor period**, or create an **Assembly** category with subjects switched off.
 
@@ -103,7 +103,7 @@ The exporter writes individual `VEVENT`s—**no `RRULE`**. Excluded dates, disab
 
 See [RFC 5545](https://www.rfc-editor.org/rfc/rfc5545) for the calendar format.
 
-Open `.ics` files with Apple Calendar or Outlook, or use Google Calendar's desktop **Settings → Import & export**. Where file sharing is supported, **Share Calendar** uses the Web Share API.
+Open `.ics` files with Apple Calendar or Outlook, or use Google Calendar's desktop **Settings → Import & export**. Where file sharing is supported, **Share calendar file** opens the device's sharing menu to send the `.ics` file through another app. If the browser blocks sharing, **Download to share** saves the file so you can attach it yourself. Cancelling the sharing menu does not download anything.
 
 Calendar imports are snapshots. Stable UIDs do **not** guarantee that every calendar app deduplicates repeated imports. Use a dedicated school calendar and remove the previous import before replacing it. There is no hosted subscription or direct calendar API integration.
 

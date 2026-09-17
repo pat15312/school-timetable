@@ -614,7 +614,7 @@ export function Periods({ project: p, update }: SettingsProps) {
             onClick={() => setManagingCategories(true)}
           >
             <Settings2 size={17} />
-            Period categories
+            Edit categories
           </button>
           <button
             className="button secondary"

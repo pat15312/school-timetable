@@ -298,11 +298,8 @@
     height: 35px;
     display: grid;
     place-items: center;
-    border-radius: 9px;
-  }
-  .brand-dot {
-    margin-left: -10px;
-    color: var(--muted);
+    border-radius: calc(35px * 29 / 128);
+    flex-shrink: 0;
   }
   .project-label {
     margin: 31px 4px 31px;
@@ -311,6 +308,12 @@
     padding: 13px 9px;
     border-block: 1px solid var(--line);
     align-items: center;
+    text-decoration: none;
+    color: var(--ink);
+    border-radius: 7px;
+  }
+  .project-label:hover {
+    background: var(--soft);
   }
   .project-avatar {
     display: grid;
@@ -1995,6 +1998,9 @@
   }
   .export-card .notice {
     margin: 0;
+  }
+  .export-share-help {
+    font-size: 12px;
   }
   .import-tip-grid {
     display: grid;

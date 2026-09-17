@@ -27,6 +27,8 @@ export function Review({
   const [selectedMonday, setSelectedMonday] = useState("");
   const [exported, setExported] = useState(false);
   const [exportError, setExportError] = useState("");
+  const [sharing, setSharing] = useState(false);
+  const [shareUnavailable, setShareUnavailable] = useState(false);
   const validation = useMemo(() => validateProject(p), [p]);
   const occurrences = useMemo(
     () => generateOccurrences(p, includeFixedPeriods),
@@ -43,26 +45,74 @@ export function Review({
   const first = lessons[0],
     last = lessons.at(-1);
   const valid = !validation.errors.length && !!lessons.length;
-  const sampleFile = new File([""], "timetable.ics", { type: "text/calendar" });
-  const canShare =
-    typeof navigator.canShare === "function" &&
-    navigator.canShare({ files: [sampleFile] });
-  const exportCalendar = async (share: boolean) => {
-    setExportError("");
+  // Prepare the actual file before the click so sharing keeps its user activation.
+  const calendar = useMemo(() => {
+    if (!valid) return null;
     try {
-      const content = buildCalendar(p, includeFixedPeriods),
-        name = `${safeFilename(p.name)}-timetable.ics`;
-      if (share && canShare)
-        await navigator.share({
-          files: [new File([content], name, { type: "text/calendar" })],
-          title: p.name,
-        });
-      else downloadFile(content, name, "text/calendar;charset=utf-8");
-      setExported(true);
-      notify(share ? "Calendar shared." : "Calendar file created.");
+      const content = buildCalendar(p, includeFixedPeriods);
+      return {
+        content,
+        file: new File([content], `${safeFilename(p.name)}-timetable.ics`, {
+          type: "text/calendar",
+        }),
+        error: "",
+      };
     } catch (error) {
-      if (error instanceof Error && error.name !== "AbortError")
-        setExportError(error.message);
+      return {
+        content: "",
+        file: null,
+        error:
+          error instanceof Error
+            ? error.message
+            : "The calendar could not be created. Please try again.",
+      };
+    }
+  }, [p, includeFixedPeriods, valid]);
+  const canShare = useMemo(() => {
+    try {
+      return (
+        !!calendar?.file &&
+        typeof navigator.share === "function" &&
+        typeof navigator.canShare === "function" &&
+        navigator.canShare({ files: [calendar.file] })
+      );
+    } catch {
+      return false;
+    }
+  }, [calendar]);
+  const exportCalendar = async (share: boolean) => {
+    if (!calendar?.file || sharing) return;
+    setExportError("");
+    setExported(false);
+    if (share && canShare && !shareUnavailable) {
+      setSharing(true);
+      try {
+        await navigator.share({ files: [calendar.file], title: p.name });
+        setExported(true);
+        notify("Calendar file passed to your device’s sharing menu.");
+      } catch (error) {
+        if (error instanceof Error && error.name === "AbortError") return;
+        setShareUnavailable(true);
+        notify(
+          "Sharing is unavailable. Choose Download to share to save the calendar file.",
+        );
+      } finally {
+        setSharing(false);
+      }
+      return;
+    }
+    try {
+      downloadFile(
+        calendar.content,
+        calendar.file.name,
+        "text/calendar;charset=utf-8",
+      );
+      setExported(true);
+      notify("Calendar file downloaded.");
+    } catch {
+      setExportError(
+        "The calendar file could not be downloaded. Please try again.",
+      );
     }
   };
   return (
@@ -187,27 +237,48 @@ export function Review({
             <div className="export-actions">
               <button
                 className="button primary wide"
-                disabled={!valid}
+                disabled={!calendar?.file || sharing}
                 onClick={() => void exportCalendar(false)}
               >
                 <Download size={17} />
                 Export Calendar (.ics)
               </button>
-              {canShare && (
-                <button
-                  className="button secondary wide"
-                  disabled={!valid}
-                  onClick={() => void exportCalendar(true)}
-                >
-                  <Share2 size={17} />
-                  Share Calendar
-                </button>
+              {(canShare || shareUnavailable) && (
+                <>
+                  <button
+                    className="button secondary wide"
+                    disabled={!calendar?.file || sharing}
+                    aria-describedby="calendar-share-help"
+                    onClick={() => void exportCalendar(!shareUnavailable)}
+                  >
+                    {shareUnavailable ? (
+                      <Download size={17} />
+                    ) : (
+                      <Share2 size={17} />
+                    )}
+                    {shareUnavailable
+                      ? "Download to share"
+                      : sharing
+                        ? "Opening sharing…"
+                        : "Share calendar file"}
+                  </button>
+                  <small
+                    id="calendar-share-help"
+                    className="export-file-note export-share-help"
+                  >
+                    {shareUnavailable
+                      ? "Your browser couldn’t open sharing. Download the .ics file, then attach it in your preferred app."
+                      : "Opens your device’s sharing menu to send the .ics file through another app."}
+                  </small>
+                </>
               )}
               <small className="export-file-note">
                 {occurrences.length.toLocaleString()} events · .ics calendar
                 file
               </small>
-              {exportError && <Notice kind="error">{exportError}</Notice>}
+              {(calendar?.error || exportError) && (
+                <Notice kind="error">{calendar?.error || exportError}</Notice>
+              )}
             </div>
           </div>
         </section>
