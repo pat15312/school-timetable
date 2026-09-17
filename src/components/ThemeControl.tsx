@@ -13,9 +13,15 @@ function subscribe(callback: () => void) {
 }
 const getPreference = () =>
   document.documentElement.dataset.themePreference || "system";
+const getColour = () => document.documentElement.dataset.appColour || "#285da8";
 
 export function ThemeControl() {
   const preference = useSyncExternalStore(subscribe, getPreference);
+  const colour = useSyncExternalStore(subscribe, getColour);
+  const changeColour = (value: string) =>
+    window.dispatchEvent(
+      new CustomEvent("schoolcal:colour-change", { detail: value }),
+    );
   const selected =
     choices.find((choice) => choice.value === preference) || choices[2];
   const [open, setOpen] = useState(false);
@@ -41,7 +47,11 @@ export function ThemeControl() {
       className="theme-control"
       ref={control}
       onBlur={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false);
+        if (
+          event.relatedTarget &&
+          !event.currentTarget.contains(event.relatedTarget)
+        )
+          setOpen(false);
       }}
       onKeyDown={(event) => {
         if (event.key === "Escape" && open) {
@@ -50,7 +60,9 @@ export function ThemeControl() {
           close();
         }
         const buttons = [
-          ...(options.current?.querySelectorAll("button") || []),
+          ...(options.current?.querySelectorAll<HTMLButtonElement>(
+            ".theme-choice",
+          ) || []),
         ];
         const index = buttons.indexOf(
           document.activeElement as HTMLButtonElement,
@@ -105,6 +117,7 @@ export function ThemeControl() {
         {choices.map((choice) => (
           <button
             key={choice.value}
+            className="theme-choice"
             type="button"
             aria-label={`${choice.label} theme`}
             aria-pressed={preference === choice.value}
@@ -129,6 +142,27 @@ export function ThemeControl() {
             )}
           </button>
         ))}
+        <div className="theme-colour">
+          <label htmlFor="app-colour">App colour</label>
+          <div className="theme-colour-controls">
+            <input
+              id="app-colour"
+              type="color"
+              value={colour}
+              onChange={(event) => changeColour(event.target.value)}
+            />
+            <output htmlFor="app-colour">{colour.toUpperCase()}</output>
+            <button
+              type="button"
+              className="colour-reset"
+              onClick={() => changeColour("#285da8")}
+              aria-label="Reset app colour to blue"
+            >
+              Reset
+            </button>
+          </div>
+          <p>Choose one colour. Light and dark shades follow automatically.</p>
+        </div>
       </div>
     </div>
   );

@@ -39,7 +39,8 @@ test("appearance follows the device, persists overrides, syncs tabs, and support
   await expect(trigger).toBeFocused();
   await expect(trigger).toHaveAttribute("aria-expanded", "false");
   await trigger.click();
-  await page.locator("h1").click();
+  // The expanded appearance menu can cover the heading's centre on phones.
+  await page.locator("h1").click({ position: { x: 5, y: 5 } });
   await expect(trigger).toHaveAttribute("aria-expanded", "false");
 
   const other = await context.newPage();
@@ -64,9 +65,10 @@ test("appearance follows the device, persists overrides, syncs tabs, and support
 test("saved appearance applies before React loads and still works without storage", async ({
   page,
 }) => {
-  await page.addInitScript(() =>
-    localStorage.setItem("schoolcal.theme", "dark"),
-  );
+  await page.addInitScript(() => {
+    localStorage.setItem("schoolcal.theme", "dark");
+    localStorage.setItem("schoolcal.colour", "#6d28d9");
+  });
   let release!: () => void;
   const paused = new Promise<void>((resolve) => {
     release = resolve;
@@ -79,6 +81,17 @@ test("saved appearance applies before React loads and still works without storag
     await page.goto("./", { waitUntil: "commit" });
     await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
     await expect(page.locator("#root")).toBeEmpty();
+    await expect(page.locator("html")).toHaveAttribute(
+      "data-app-colour",
+      "#6d28d9",
+    );
+    expect(
+      await page
+        .locator("html")
+        .evaluate((node) =>
+          (node as HTMLElement).style.getPropertyValue("--brand"),
+        ),
+    ).toBe("#6d28d9");
     await expect(page.locator("html")).toHaveCSS("color-scheme", "dark");
   } finally {
     release();
@@ -125,7 +138,7 @@ test("dark appearance keeps print previews and PDFs on light paper", async ({
     });
   const paper = {
     background: "rgb(255, 255, 255)",
-    colour: "rgb(29, 45, 70)",
+    colour: "rgb(0, 0, 0)",
     scheme: "light",
   };
   expect(await colours()).toEqual(paper);

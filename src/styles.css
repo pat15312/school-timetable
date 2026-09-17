@@ -40,9 +40,10 @@
   }
 }
 @layer base {
-  :root,
-  .print-sheet {
+  :root {
     color-scheme: light;
+    --brand: #285da8;
+    --on-brand: #fff;
     --primary: #285da8;
     --action: #285da8;
     --action-hover: #204c8b;
@@ -93,6 +94,30 @@
     --toast-bg: #254e82;
     --shadow-rgb: 0 7 20;
     --backdrop: #040b18b3;
+  }
+  .print-sheet {
+    color-scheme: light;
+    --primary: #000;
+    --action: #000;
+    --ink: #000;
+    --muted: #444;
+    --surface: #fff;
+    --canvas: #fff;
+    --soft: #fff;
+    --accent-soft: #fff;
+    --line: #aaa;
+    --line-strong: #aaa;
+    --shadow-rgb: 0 0 0;
+  }
+  @media (min-width: 781px) {
+    :root {
+      scrollbar-gutter: stable;
+    }
+    @supports not (scrollbar-gutter: stable) {
+      :root {
+        overflow-y: scroll;
+      }
+    }
   }
   :root {
     --page-width: 1360px;
@@ -267,8 +292,8 @@
     color: var(--ink);
   }
   .brand-mark {
-    background: var(--action);
-    color: var(--on-action);
+    background: var(--brand);
+    color: var(--on-brand);
     width: 35px;
     height: 35px;
     display: grid;
@@ -485,7 +510,10 @@
     z-index: 40;
     display: flex;
     flex-direction: column;
-    min-width: 158px;
+    width: 264px;
+    max-width: calc(100vw - 24px);
+    max-height: calc(100dvh - var(--topbar-offset) - 20px);
+    overflow-y: auto;
     padding: 4px;
     gap: 2px;
     background: var(--canvas);
@@ -496,7 +524,7 @@
   .theme-options[hidden] {
     display: none;
   }
-  .theme-options button {
+  .theme-options .theme-choice {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -509,17 +537,61 @@
     font-size: 12px;
     text-align: left;
   }
-  .theme-options button span {
+  .theme-choice span {
     flex: 1;
   }
-  .theme-options button[aria-pressed="true"] {
+  .theme-choice[aria-pressed="true"] {
     background: var(--surface);
     border-color: var(--line);
     color: var(--primary);
   }
-  .theme-options button:hover {
+  .theme-choice:hover {
     background: var(--accent-soft);
     color: var(--primary);
+  }
+  .theme-colour {
+    border-top: 1px solid var(--line);
+    margin-top: 6px;
+    padding: 14px 10px 10px;
+    font-size: 12px;
+  }
+  .theme-colour > label {
+    font-weight: 600;
+  }
+  .theme-colour-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .theme-colour input {
+    width: 44px;
+    height: 44px;
+    padding: 3px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .theme-colour output {
+    flex: 1;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .colour-reset {
+    min-height: 44px;
+    padding: 8px;
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    background: var(--surface);
+    color: var(--primary);
+    font-size: 12px;
+  }
+  .colour-reset:hover {
+    background: var(--accent-soft);
+  }
+  .theme-colour p {
+    margin-top: 10px;
+    font-size: 11px;
+    color: var(--muted);
   }
   .breadcrumb {
     display: flex;
@@ -2039,6 +2111,9 @@
     text-align: left;
     overflow-wrap: anywhere;
   }
+  .print-table td.print-subject {
+    border-left-width: 3px;
+  }
   .print-table thead th {
     background: var(--accent-soft);
     font-size: 10px;
@@ -2893,7 +2968,8 @@
   @media print {
     :root {
       color-scheme: light;
-      color: #1d2d46;
+      scrollbar-gutter: auto;
+      color: #000;
       background: white;
     }
     html,

@@ -264,3 +264,41 @@ test("pages share content edges and export stays in the main flow across screen 
     .click();
   expect((await download).suggestedFilename()).toMatch(/\.ics$/);
 });
+
+test("short and long pages keep the same position when the document scrollbar appears", async ({
+  page,
+}, testInfo) => {
+  test.skip(
+    testInfo.project.name.startsWith("mobile"),
+    "Desktop document scrollbars",
+  );
+  await page.setViewportSize({ width: 1440, height: 1050 });
+  await page.goto("./");
+  await page.getByRole("button", { name: /Try a sample/ }).click();
+  await go(page, "School year");
+  const measure = () =>
+    page.evaluate(() => {
+      const heading = document
+        .querySelector(".page-heading")!
+        .getBoundingClientRect();
+      const appearance = document
+        .querySelector(".theme-trigger")!
+        .getBoundingClientRect();
+      return {
+        x: heading.x,
+        width: heading.width,
+        appearance: appearance.x,
+        scrolling:
+          document.documentElement.scrollHeight >
+          document.documentElement.clientHeight,
+      };
+    });
+  const short = await measure();
+  expect(short.scrolling).toBe(false);
+  await go(page, "Holidays & days off");
+  const long = await measure();
+  expect(long.scrolling).toBe(true);
+  expect({ ...long, scrolling: false }).toEqual(short);
+  await go(page, "School year");
+  expect(await measure()).toEqual(short);
+});

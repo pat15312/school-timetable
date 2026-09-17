@@ -89,7 +89,8 @@ export function PrintView({ project: p }: { project: TimetableProject }) {
         <Notice>
           Use A4 paper and turn off the browser's headers and footers for a
           clean print. Your preview below includes all {p.cycleLength} timetable
-          week{p.cycleLength !== 1 ? "s" : ""}.
+          week{p.cycleLength !== 1 ? "s" : ""}. White backgrounds and small
+          subject-colour markers keep ink use low.
         </Notice>
       </div>
       <div className="print-sheets" ref={sheets}>
@@ -148,10 +149,10 @@ export function PrintView({ project: p }: { project: TimetableProject }) {
                               row.cells.map((cell, i) => (
                                 <td
                                   key={i}
+                                  className={cell ? "print-subject" : undefined}
                                   style={
                                     cell
                                       ? {
-                                          backgroundColor: `${cell.colour}1c`,
                                           borderLeftColor: cell.colour,
                                         }
                                       : undefined

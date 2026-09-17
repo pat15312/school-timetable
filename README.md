@@ -54,7 +54,7 @@ There is no backend, database, authentication, API key, account, tracking, analy
 
 ## Appearance
 
-The header's appearance button offers **Dark**, **Light**, and **Auto**, matching NetRevive. Auto follows device settings and is the default. An explicit choice is saved locally under `schoolcal.theme`, stays in sync across tabs, and is applied before the app renders. Appearance still works when browser storage is unavailable. The interface uses a blue palette; timetable print previews and PDFs always use light paper colours.
+The header's appearance button offers **Dark**, **Light**, and **Auto**, matching NetRevive. Auto follows device settings and is the default. An explicit choice is saved locally under `schoolcal.theme`, stays in sync across tabs, and is applied before the app renders. Appearance still works when browser storage is unavailable. The same menu includes **App colour**: choose one colour and matching light/dark shades are generated with readable contrast. The on-screen logo and browser icon follow the choice. Colour is saved separately under `schoolcal.colour`, syncs across tabs, and can be reset to blue. Desktop pages reserve scrollbar space so short and long pages stay aligned. Timetable print previews and PDFs use white paper, black/grey text and rules, and narrow subject-colour markers without coloured cell fills.
 
 ## Rotation rules
 
@@ -151,5 +151,5 @@ See [Vite's GitHub Pages deployment guide](https://vite.dev/guide/static-deploy.
 - Bounds keep malformed imports and accidental huge calendars manageable: dates from 1900–2200, up to three years per project, 40 periods, 40 period categories, 100 subjects, 200 exclusions, and 2 MB backups. Normal school years are much smaller.
 - Sample holidays are illustrative and must be checked against the actual school calendar. They are not a source of official term dates.
 - Browser timezone rules depend on its installed IANA data. Use a current browser. Rare ambiguous/nonexistent lesson times during the overnight clock change follow calendar-client timezone interpretation.
-- Automated phone testing uses Chromium with an iPhone viewport, not a physical iPhone or native Apple Calendar/Outlook. Actual calendar-client import and physical-printer output still need release-device checks.
+- Automated phone testing uses Chromium and WebKit with iPhone viewports, not a physical iPhone or native Apple Calendar/Outlook. Actual calendar-client import and physical-printer output still need release-device checks.
 - No homework, grades, messaging, notifications, exams, subscriptions, or OCR. A future image/photo/PDF importer can populate the same subject, period, exclusion, and entry structures, then hand off to the existing editor for correction; it is intentionally not implemented here.
