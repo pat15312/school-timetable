@@ -153,7 +153,70 @@ export function Review({
           </div>
         </div>
       </section>
-      <div className="review-columns">
+      <div className="review-sections">
+        <section className="panel export-card">
+          <div className="section-heading">
+            <div>
+              <h2>Export your calendar</h2>
+              <p className="muted">
+                Add your lessons to Apple Calendar, Google Calendar, Outlook, or
+                another calendar app.
+              </p>
+            </div>
+            <Download size={20} className="muted" />
+          </div>
+          <div className="export-options">
+            <div>
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={includeFixedPeriods}
+                  onChange={(e) => {
+                    setIncludeFixedPeriods(e.target.checked);
+                    setExported(false);
+                  }}
+                />
+                <span>
+                  Include fixed periods
+                  <small>
+                    Categories with Allow subjects off. Off by default.
+                  </small>
+                </span>
+              </label>
+            </div>
+            <div className="export-actions">
+              <button
+                className="button primary wide"
+                disabled={!valid}
+                onClick={() => void exportCalendar(false)}
+              >
+                <Download size={17} />
+                Export Calendar (.ics)
+              </button>
+              {canShare && (
+                <button
+                  className="button secondary wide"
+                  disabled={!valid}
+                  onClick={() => void exportCalendar(true)}
+                >
+                  <Share2 size={17} />
+                  Share Calendar
+                </button>
+              )}
+              <small className="export-file-note">
+                {occurrences.length.toLocaleString()} events · .ics calendar
+                file
+              </small>
+              {exportError && <Notice kind="error">{exportError}</Notice>}
+            </div>
+          </div>
+        </section>
+        {exported && (
+          <Notice kind="success">
+            Your calendar contains individual lessons for the selected school
+            year. Holidays and days off have already been removed.
+          </Notice>
+        )}
         <section className="panel calendar-preview">
           <div className="section-heading">
             <div>
@@ -165,98 +228,120 @@ export function Review({
           </div>
           {weeks.length > 0 && (
             <>
-              <div className="preview-navigation">
-                <button
-                  className="icon-button"
-                  aria-label="Previous teaching week"
-                  disabled={index === 0}
-                  onClick={() => setSelectedMonday(weeks[index - 1].startDate)}
-                >
-                  <ChevronLeft size={18} />
-                </button>
-                <select
-                  aria-label="Preview teaching week"
-                  value={week.startDate}
-                  onChange={(e) => setSelectedMonday(e.target.value)}
-                >
-                  {weeks.map((w) => (
-                    <option key={w.startDate} value={w.startDate}>
-                      {formatDate(w.startDate)} ·{" "}
-                      {getRotationLabel(w.rotationIndex, p.rotationLabelStyle)}
-                    </option>
-                  ))}
-                </select>
-                <button
-                  className="icon-button"
-                  aria-label="Next teaching week"
-                  disabled={index >= weeks.length - 1}
-                  onClick={() => setSelectedMonday(weeks[index + 1].startDate)}
-                >
-                  <ChevronRight size={18} />
-                </button>
+              <div className="preview-filters form-grid">
+                <div className="field">
+                  <span id="teaching-week-label">Teaching week</span>
+                  <div
+                    className="preview-navigation"
+                    role="group"
+                    aria-labelledby="teaching-week-label"
+                  >
+                    <select
+                      aria-label="Preview teaching week"
+                      value={week.startDate}
+                      onChange={(e) => setSelectedMonday(e.target.value)}
+                    >
+                      {weeks.map((w) => (
+                        <option key={w.startDate} value={w.startDate}>
+                          {formatDate(w.startDate)} ·{" "}
+                          {getRotationLabel(
+                            w.rotationIndex,
+                            p.rotationLabelStyle,
+                          )}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="preview-week-buttons">
+                      <button
+                        className="icon-button"
+                        aria-label="Previous teaching week"
+                        disabled={index === 0}
+                        onClick={() =>
+                          setSelectedMonday(weeks[index - 1].startDate)
+                        }
+                      >
+                        <ChevronLeft size={18} />
+                        <span className="preview-direction">Previous</span>
+                      </button>
+                      <button
+                        className="icon-button"
+                        aria-label="Next teaching week"
+                        disabled={index >= weeks.length - 1}
+                        onClick={() =>
+                          setSelectedMonday(weeks[index + 1].startDate)
+                        }
+                      >
+                        <span className="preview-direction">Next</span>
+                        <ChevronRight size={18} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <Field label="Jump to a date">
+                  <input
+                    type="date"
+                    min={p.academicYear.startDate}
+                    max={p.academicYear.endDate}
+                    onChange={(e) => {
+                      if (!validDate(e.target.value)) return;
+                      const target = mondayOf(e.target.value),
+                        match =
+                          weeks.find((w) => w.startDate >= target) ??
+                          weeks.at(-1);
+                      if (match) {
+                        setSelectedMonday(match.startDate);
+                        if (match.startDate !== target)
+                          notify(
+                            "That week has no school days. Showing the next available teaching week.",
+                          );
+                      }
+                    }}
+                  />
+                </Field>
               </div>
-              <Field label="Jump to a date">
-                <input
-                  type="date"
-                  min={p.academicYear.startDate}
-                  max={p.academicYear.endDate}
-                  onChange={(e) => {
-                    if (!validDate(e.target.value)) return;
-                    const target = mondayOf(e.target.value),
-                      match =
-                        weeks.find((w) => w.startDate >= target) ??
-                        weeks.at(-1);
-                    if (match) {
-                      setSelectedMonday(match.startDate);
-                      if (match.startDate !== target)
-                        notify(
-                          "That week has no school days. Showing the next available teaching week.",
-                        );
-                    }
-                  }}
-                />
-              </Field>
               <div className="preview-week-label">
                 {getRotationLabel(week.rotationIndex, p.rotationLabelStyle)}{" "}
                 <span>· {p.academicYear.timezone}</span>
               </div>
-              {week.dates.map((date) => (
-                <div className="preview-day" key={date} data-date={date}>
-                  <h3>
-                    {formatDate(date, {
-                      weekday: "long",
-                      day: "numeric",
-                      month: "short",
-                    })}
-                  </h3>
-                  {events
-                    .filter((e) => e.date === date)
-                    .map((event) => (
-                      <div className="preview-event" key={event.uid}>
-                        <time>
-                          {event.startTime}
-                          <small>{event.endTime}</small>
-                        </time>
-                        <span
-                          className="event-stripe"
-                          style={{ background: event.colour }}
-                        />
-                        <div>
-                          <strong>{event.title}</strong>
-                          <small>
-                            {[event.room, event.teacher]
-                              .filter(Boolean)
-                              .join(" · ")}
-                          </small>
-                          {event.notes && <small>{event.notes}</small>}
+              <div className="preview-days">
+                {week.dates.map((date) => (
+                  <div className="preview-day" key={date} data-date={date}>
+                    <h3>
+                      {formatDate(date, {
+                        weekday: "long",
+                        day: "numeric",
+                        month: "short",
+                      })}
+                    </h3>
+                    {events
+                      .filter((e) => e.date === date)
+                      .map((event) => (
+                        <div className="preview-event" key={event.uid}>
+                          <time>
+                            {event.startTime}
+                            <small>{event.endTime}</small>
+                          </time>
+                          <span
+                            className="event-stripe"
+                            style={{ background: event.colour }}
+                          />
+                          <div>
+                            <strong>{event.title}</strong>
+                            <small>
+                              {[event.room, event.teacher]
+                                .filter(Boolean)
+                                .join(" · ")}
+                            </small>
+                            {event.notes && <small>{event.notes}</small>}
+                          </div>
                         </div>
-                      </div>
-                    ))}
-                  {!events.some((e) => e.date === date) && (
-                    <p className="muted small">No lessons scheduled.</p>
-                  )}
-                </div>
-              ))}
+                      ))}
+                    {!events.some((e) => e.date === date) && (
+                      <p className="muted small">No lessons scheduled.</p>
+                    )}
+                  </div>
+                ))}
+              </div>
             </>
           )}
           {!weeks.length && (
@@ -265,65 +350,11 @@ export function Review({
             </p>
           )}
         </section>
-        <aside className="export-column">
-          <section className="export-card">
-            <Download size={25} />
-            <h2>
-              Your year.
-              <br />
-              Ready to go.
-            </h2>
-            <p>
-              Add your lessons to Apple Calendar, Google Calendar, Outlook, or
-              another calendar app.
-            </p>
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                checked={includeFixedPeriods}
-                onChange={(e) => {
-                  setIncludeFixedPeriods(e.target.checked);
-                  setExported(false);
-                }}
-              />
-              <span>
-                Include fixed periods
-                <small>
-                  Categories with Allow subjects off. Off by default.
-                </small>
-              </span>
-            </label>
-            <button
-              className="button primary wide"
-              disabled={!valid}
-              onClick={() => void exportCalendar(false)}
-            >
-              <Download size={17} />
-              Export Calendar (.ics)
-            </button>
-            {canShare && (
-              <button
-                className="button secondary wide"
-                disabled={!valid}
-                onClick={() => void exportCalendar(true)}
-              >
-                <Share2 size={17} />
-                Share Calendar
-              </button>
-            )}
-            <small className="export-file-note">
-              {occurrences.length.toLocaleString()} events · .ics calendar file
-            </small>
-            {exportError && <Notice kind="error">{exportError}</Notice>}
-          </section>
-          {exported && (
-            <Notice kind="success">
-              Your calendar contains individual lessons for the selected school
-              year. Holidays and days off have already been removed.
-            </Notice>
-          )}
-          <div className="import-tips">
-            <h3>Adding it to your calendar</h3>
+        <section className="panel import-tips">
+          <div className="section-heading">
+            <h2>Adding it to your calendar</h2>
+          </div>
+          <div className="import-tip-grid">
             <p>
               <strong>Apple Calendar & Outlook</strong>
               <br />
@@ -345,7 +376,7 @@ export function Review({
             <ShieldCheck size={17} />
             <span>Created entirely on your device.</span>
           </div>
-        </aside>
+        </section>
       </div>
     </div>
   );

@@ -55,131 +55,137 @@ export function SchoolYear({
   const change = (patch: Partial<typeof a>) =>
     update((p) => ({ ...p, academicYear: { ...p.academicYear, ...patch } }));
   return (
-    <div className="setup-columns">
+    <div className={isNew ? "setup-columns" : "settings-page"}>
       <section className="panel year-form">
         <div className="section-heading">
           <h2>Your school year</h2>
           <CalendarDays size={20} className="muted" />
         </div>
-        <Field
-          label="Timetable name"
-          hint="Something you'll recognise in your calendar."
-        >
-          <input
-            autoComplete="off"
-            maxLength={120}
-            placeholder="e.g. My school timetable"
-            value={p.name}
-            onChange={(e) => update((p) => ({ ...p, name: e.target.value }))}
-          />
-        </Field>
-        <div className="form-grid">
-          <Field label="First day of school">
+        <div className="year-fields">
+          <Field
+            label="Timetable name"
+            hint="Something you'll recognise in your calendar."
+          >
             <input
-              type="date"
-              min="1900-01-01"
-              max="2200-12-31"
-              value={a.startDate}
-              onChange={(e) => change({ startDate: e.target.value })}
+              autoComplete="off"
+              maxLength={120}
+              placeholder="e.g. My school timetable"
+              value={p.name}
+              onChange={(e) => update((p) => ({ ...p, name: e.target.value }))}
             />
           </Field>
-          <Field label="Last day of school">
+          <div className="form-grid">
+            <Field label="First day of school">
+              <input
+                type="date"
+                min="1900-01-01"
+                max="2200-12-31"
+                value={a.startDate}
+                onChange={(e) => change({ startDate: e.target.value })}
+              />
+            </Field>
+            <Field label="Last day of school">
+              <input
+                type="date"
+                min={a.startDate || "1900-01-01"}
+                max="2200-12-31"
+                value={a.endDate}
+                onChange={(e) => change({ endDate: e.target.value })}
+              />
+            </Field>
+          </div>
+          <fieldset className="field">
+            <legend>Which days do you go to school?</legend>
+            <div className="weekday-options">
+              {WEEKDAYS.map((day) => (
+                <button
+                  type="button"
+                  key={day}
+                  aria-pressed={a.schoolWeekdays.includes(day)}
+                  className={a.schoolWeekdays.includes(day) ? "selected" : ""}
+                  onClick={() =>
+                    change({
+                      schoolWeekdays: a.schoolWeekdays.includes(day)
+                        ? a.schoolWeekdays.filter((d) => d !== day)
+                        : [...a.schoolWeekdays, day],
+                    })
+                  }
+                >
+                  {DAY_NAMES[day].slice(0, 3)}
+                </button>
+              ))}
+            </div>
+          </fieldset>
+          <Field
+            label="School time zone"
+            hint="Lesson times stay the same when the clocks change."
+          >
             <input
-              type="date"
-              min={a.startDate || "1900-01-01"}
-              max="2200-12-31"
-              value={a.endDate}
-              onChange={(e) => change({ endDate: e.target.value })}
+              list="timezones"
+              value={a.timezone}
+              onChange={(e) => change({ timezone: e.target.value })}
             />
+            <datalist id="timezones">
+              {timezones.map((zone) => (
+                <option key={zone} value={zone} />
+              ))}
+            </datalist>
           </Field>
         </div>
-        <fieldset className="field">
-          <legend>Which days do you go to school?</legend>
-          <div className="weekday-options">
-            {WEEKDAYS.map((day) => (
-              <button
-                type="button"
-                key={day}
-                aria-pressed={a.schoolWeekdays.includes(day)}
-                className={a.schoolWeekdays.includes(day) ? "selected" : ""}
-                onClick={() =>
-                  change({
-                    schoolWeekdays: a.schoolWeekdays.includes(day)
-                      ? a.schoolWeekdays.filter((d) => d !== day)
-                      : [...a.schoolWeekdays, day],
-                  })
-                }
-              >
-                {DAY_NAMES[day].slice(0, 3)}
-              </button>
-            ))}
-          </div>
-        </fieldset>
-        <Field
-          label="School time zone"
-          hint="Lesson times stay the same when the clocks change."
-        >
-          <input
-            list="timezones"
-            value={a.timezone}
-            onChange={(e) => change({ timezone: e.target.value })}
-          />
-          <datalist id="timezones">
-            {timezones.map((zone) => (
-              <option key={zone} value={zone} />
-            ))}
-          </datalist>
-        </Field>
       </section>
-      <aside className="setup-aside">
-        <div className="intro-card">
-          <span className="eyebrow">A little setup. A whole year sorted.</span>
-          <h2>
-            Your school week,
-            <br />
-            <em>in your calendar.</em>
-          </h2>
-          <p>
-            Set up once. We'll take care of the weeks, holidays, and every
-            lesson in between.
-          </p>
-          <ol className="benefits">
-            <li>
-              <span>01</span>
-              <div>
-                <strong>Make it yours</strong>
-                <small>Your subjects, lesson times, and school days.</small>
-              </div>
-            </li>
-            <li>
-              <span>02</span>
-              <div>
-                <strong>Fill your week in minutes</strong>
-                <small>Pick a subject. Tap to place it. Done.</small>
-              </div>
-            </li>
-            <li>
-              <span>03</span>
-              <div>
-                <strong>Take it with you</strong>
-                <small>Print a copy or add it to your calendar.</small>
-              </div>
-            </li>
-          </ol>
-          <div className="privacy-line">
-            <ShieldCheck size={18} />
-            <span>Private by design. Saved on your device.</span>
+      {isNew && (
+        <aside className="setup-aside">
+          <div className="intro-card">
+            <span className="eyebrow">
+              A little setup. A whole year sorted.
+            </span>
+            <h2>
+              Your school week,
+              <br />
+              <em>in your calendar.</em>
+            </h2>
+            <p>
+              Set up once. We'll take care of the weeks, holidays, and every
+              lesson in between.
+            </p>
+            <ol className="benefits">
+              <li>
+                <span>01</span>
+                <div>
+                  <strong>Make it yours</strong>
+                  <small>Your subjects, lesson times, and school days.</small>
+                </div>
+              </li>
+              <li>
+                <span>02</span>
+                <div>
+                  <strong>Fill your week in minutes</strong>
+                  <small>Pick a subject. Tap to place it. Done.</small>
+                </div>
+              </li>
+              <li>
+                <span>03</span>
+                <div>
+                  <strong>Take it with you</strong>
+                  <small>Print a copy or add it to your calendar.</small>
+                </div>
+              </li>
+            </ol>
+            <div className="privacy-line">
+              <ShieldCheck size={18} />
+              <span>Private by design. Saved on your device.</span>
+            </div>
           </div>
-        </div>
-        {isNew && (
-          <button className="sample-link" onClick={sample}>
-            Want to have a look first?{" "}
-            <strong>
-              Try a sample <ArrowRight size={15} />
-            </strong>
-          </button>
-        )}
-      </aside>
+          {isNew && (
+            <button className="sample-link" onClick={sample}>
+              Want to have a look first?{" "}
+              <strong>
+                Try a sample <ArrowRight size={15} />
+              </strong>
+            </button>
+          )}
+        </aside>
+      )}
     </div>
   );
 }
@@ -187,7 +193,7 @@ export function SchoolYear({
 export function Rotation({ project: p, update }: SettingsProps) {
   const label = (i: number) => getRotationLabel(i, p.rotationLabelStyle);
   return (
-    <div className="settings-width">
+    <div className="settings-page">
       <section className="panel">
         <h2>Your timetable rhythm</h2>
         <fieldset className="field">
@@ -295,7 +301,7 @@ export function Holidays({ project: p, update }: SettingsProps) {
     });
   };
   return (
-    <div className="settings-width">
+    <div className="settings-page">
       <div className="section-heading">
         <div>
           <h2>
@@ -1025,7 +1031,7 @@ export function Subjects({ project: p, update }: SettingsProps) {
     );
   };
   return (
-    <div className="settings-width">
+    <div className="settings-page">
       <div className="section-heading">
         <div>
           <h2>

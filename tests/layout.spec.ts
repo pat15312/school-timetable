@@ -148,3 +148,119 @@ test("navigation stays reachable while scrolling and subject outlines are not cl
     animations: "disabled",
   });
 });
+
+test("pages share content edges and export stays in the main flow across screen sizes", async ({
+  page,
+}, testInfo) => {
+  test.setTimeout(90_000);
+  const mobile = testInfo.project.name.startsWith("mobile");
+  await page.goto("./");
+  await page.getByRole("button", { name: /Try a sample/ }).click();
+  const pages = [
+    ["School year", ".year-form"],
+    ["Timetable rotation", ".settings-page > .panel"],
+    ["Holidays & days off", ".holiday-list"],
+    ["Lesson times", ".periods-panel"],
+    ["Subjects", ".subject-cards"],
+    ["My timetable", ".editor-heading"],
+    ["Print timetable", ".print-controls"],
+    ["Calendar & export", ".review-summary"],
+  ];
+  for (const [index, width] of (mobile ? [320, 768] : [1280, 1920]).entries()) {
+    await page.setViewportSize({ width, height: 1000 });
+    await page.emulateMedia({ colorScheme: index ? "dark" : "light" });
+    let sharedEdges: { x: number; width: number } | undefined;
+    for (const [name, selector] of pages) {
+      await go(page, name);
+      const heading = (await page.locator(".page-heading").boundingBox())!;
+      const content = (await page.locator(selector).boundingBox())!;
+      sharedEdges ??= heading;
+      for (const box of [
+        heading,
+        content,
+        (await page.locator(".app-footer").boundingBox())!,
+      ]) {
+        expect(
+          Math.abs(box.x - sharedEdges.x),
+          `${name}: left edge at ${width}px`,
+        ).toBeLessThanOrEqual(1);
+        expect(
+          Math.abs(box.width - sharedEdges.width),
+          `${name}: width at ${width}px`,
+        ).toBeLessThanOrEqual(1);
+      }
+      expect(
+        await page.evaluate(
+          () => document.documentElement.scrollWidth <= innerWidth + 1,
+        ),
+        `${name}: no page overflow at ${width}px`,
+      ).toBe(true);
+    }
+    const heading = (await page.locator(".page-heading").boundingBox())!;
+    if (!mobile) {
+      const breadcrumb = (await page.locator(".breadcrumb").boundingBox())!;
+      const appearance = (await page
+        .getByRole("button", { name: /^Appearance:/ })
+        .boundingBox())!;
+      expect(Math.abs(breadcrumb.x - heading.x)).toBeLessThanOrEqual(1);
+      expect(
+        Math.abs(appearance.x + appearance.width - heading.x - heading.width),
+      ).toBeLessThanOrEqual(1);
+    }
+    for (const selector of [
+      ".export-card",
+      ".calendar-preview",
+      ".import-tips",
+    ]) {
+      const box = (await page.locator(selector).boundingBox())!;
+      expect(Math.abs(box.x - heading.x)).toBeLessThanOrEqual(1);
+      expect(Math.abs(box.width - heading.width)).toBeLessThanOrEqual(1);
+    }
+    const exportPanel = (await page.locator(".export-card").boundingBox())!;
+    const preview = (await page.locator(".calendar-preview").boundingBox())!;
+    expect(preview.y - exportPanel.y - exportPanel.height).toBeCloseTo(24, 0);
+    const filters = await page
+      .locator(".preview-filters .field")
+      .evaluateAll((nodes) =>
+        nodes.map((node) => {
+          const { x, y, width, height } = node.getBoundingClientRect();
+          return { x, y, width, height };
+        }),
+      );
+    if (mobile)
+      expect(filters[1].y).toBeGreaterThan(filters[0].y + filters[0].height);
+    else {
+      expect(filters[1].y).toBe(filters[0].y);
+      expect(Math.abs(filters[1].width - filters[0].width)).toBeLessThanOrEqual(
+        1,
+      );
+    }
+    expect(
+      await page
+        .locator(
+          ".preview-filters input, .preview-filters select, .preview-filters button",
+        )
+        .evaluateAll((nodes) =>
+          nodes.every((node) => {
+            const box = node.getBoundingClientRect();
+            const field = node.closest(".field")!.getBoundingClientRect();
+            return (
+              box.height >= 44 &&
+              box.left >= field.left - 1 &&
+              box.right <= field.right + 1
+            );
+          }),
+        ),
+    ).toBe(true);
+    await page.screenshot({
+      path: testInfo.outputPath(`consistent-layout-${width}.png`),
+      fullPage: true,
+      animations: "disabled",
+    });
+  }
+  const download = page.waitForEvent("download");
+  await page
+    .getByRole("button", { name: "Export Calendar (.ics)", exact: true })
+    .click();
+  expect((await download).suggestedFilename()).toMatch(/\.ics$/);
+});

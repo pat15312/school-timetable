@@ -95,6 +95,10 @@
     --backdrop: #040b18b3;
   }
   :root {
+    --page-width: 1360px;
+    --page-gutter: 40px;
+    --panel-padding: 24px;
+    --section-gap: 24px;
     --topbar-height: 74px;
     --topbar-offset: calc(var(--topbar-height) + env(safe-area-inset-top, 0px));
     scroll-padding-top: calc(var(--topbar-offset) + 12px);
@@ -334,7 +338,7 @@
     font-size: 12px;
     font-weight: 500;
     margin-bottom: 4px;
-    min-height: 43px;
+    min-height: 44px;
     color: var(--muted);
   }
   .nav-item > span:nth-child(2) {
@@ -434,7 +438,11 @@
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-    padding: 0 40px;
+    padding: 0
+      max(
+        var(--page-gutter),
+        calc((100% - var(--page-width)) / 2 + var(--page-gutter))
+      );
     padding-top: env(safe-area-inset-top, 0px);
     background: var(--sidebar-surface);
   }
@@ -533,8 +541,8 @@
     color: var(--error);
   }
   main {
-    max-width: 1550px;
-    padding: 36px 40px 0;
+    max-width: var(--page-width);
+    padding: 36px var(--page-gutter) 0;
     margin: 0 auto;
   }
   .page-heading {
@@ -542,7 +550,7 @@
     justify-content: space-between;
     align-items: flex-end;
     gap: 24px;
-    margin-bottom: 27px;
+    margin-bottom: var(--section-gap);
   }
   .eyebrow {
     display: block;
@@ -573,7 +581,7 @@
     border-radius: 7px;
     font-size: 12px;
     font-weight: 560;
-    min-height: 43px;
+    min-height: 44px;
     line-height: 1.4;
     text-decoration: none;
     transition:
@@ -639,7 +647,7 @@
     background: var(--surface);
     border: 1px solid var(--line);
     border-radius: var(--radius);
-    padding: 27px;
+    padding: var(--panel-padding);
     box-shadow: 0 2px 3px rgb(var(--shadow-rgb) / 0.008);
   }
   .panel > h2,
@@ -651,7 +659,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 15px;
-    margin-bottom: 24px;
+    margin-bottom: var(--section-gap);
   }
   .section-heading p {
     margin-top: 5px;
@@ -725,7 +733,18 @@
     align-items: start;
   }
   .year-form {
-    padding: 28px 30px 11px;
+    padding-bottom: 0;
+  }
+  .year-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--section-gap);
+  }
+  .setup-columns .year-fields {
+    display: block;
+  }
+  .year-fields .form-grid {
+    gap: 16px;
   }
   .year-form .section-heading {
     padding-bottom: 20px;
@@ -853,8 +872,8 @@
     font-size: 10px;
     color: var(--muted);
   }
-  .settings-width {
-    max-width: 840px;
+  .settings-page {
+    min-width: 0;
   }
   .choice-grid {
     display: grid;
@@ -1227,7 +1246,7 @@
   }
   .subject-cards {
     display: grid;
-    gap: 10px;
+    gap: 12px;
   }
   .subject-card {
     display: grid;
@@ -1692,7 +1711,7 @@
     margin-top: 2px;
   }
   .review-summary {
-    margin-bottom: 25px;
+    margin-bottom: var(--section-gap);
   }
   .review-summary-title {
     display: flex;
@@ -1778,38 +1797,54 @@
     font-size: 10px;
     color: var(--muted);
   }
-  .review-columns {
+  .review-sections {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 285px;
-    gap: 24px;
-    align-items: start;
+    gap: var(--section-gap);
+    min-width: 0;
+  }
+  .review-sections > .notice {
+    margin: 0;
+  }
+  .preview-filters .field {
+    margin-bottom: 16px;
+  }
+  .preview-filters .field > span {
+    line-height: 1.55;
   }
   .preview-navigation {
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     background: var(--soft);
-    padding: 6px;
+    padding: 0;
     border-radius: 8px;
-    margin-bottom: 18px;
+    min-width: 0;
+  }
+  .preview-week-buttons {
+    display: flex;
+    gap: 8px;
+  }
+  .preview-direction {
+    display: none;
+  }
+  .preview-navigation .icon-button {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
   }
   .preview-navigation select {
     border-color: transparent;
     background: transparent;
-    font-size: 11px;
+    font-size: 14px;
     font-weight: 550;
-    min-height: 36px;
-    padding: 8px;
+    min-height: 44px;
+    padding: 10px 12px;
   }
-  .calendar-preview > .field {
-    max-width: 220px;
-    margin-bottom: 18px;
-  }
-  .calendar-preview > .field > span {
-    font-size: 10px;
-  }
-  .calendar-preview > .field input {
-    font-size: 11px;
+  .preview-days {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--section-gap);
   }
   .preview-week-label {
     font-weight: 600;
@@ -1835,6 +1870,10 @@
     gap: 13px;
     padding: 9px 0;
     align-items: stretch;
+  }
+  .preview-event > div {
+    min-width: 0;
+    overflow-wrap: anywhere;
   }
   .preview-event time {
     width: 37px;
@@ -1864,61 +1903,40 @@
   }
   .export-card {
     background: var(--accent-soft);
-    border: 1px solid var(--line);
-    padding: 25px;
-    border-radius: 12px;
   }
-  .export-card > svg {
-    color: var(--primary);
-    margin-bottom: 17px;
+  .export-options {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(240px, 320px);
+    gap: var(--section-gap);
+    align-items: start;
   }
-  .export-card h2 {
-    font-size: 26px;
-    line-height: 1.25;
-    font-weight: 550;
-    letter-spacing: -0.75px;
-  }
-  .export-card > p {
-    color: var(--muted);
-    font-size: 11px;
-    margin-top: 15px;
-  }
-  .export-card .checkbox-label {
-    margin: 23px 0;
-    font-size: 11px;
-  }
-  .export-card .button {
-    font-size: 11px;
-    margin-top: 8px;
+  .export-actions {
+    display: grid;
+    gap: 12px;
   }
   .export-file-note {
     display: block;
-    font-size: 9px;
-    color: var(--muted);
-    text-align: center;
-    margin: 12px 0 0;
-  }
-  .export-card .notice {
-    margin-top: 16px;
-  }
-  .export-column > .notice {
-    margin-top: 20px;
-  }
-  .import-tips {
-    padding: 25px 5px;
-  }
-  .import-tips h3 {
-    font-size: 12px;
-    margin-bottom: 15px;
-  }
-  .import-tips p {
     font-size: 10px;
     color: var(--muted);
-    margin-bottom: 16px;
+    text-align: center;
+    margin: 0;
+  }
+  .export-card .notice {
+    margin: 0;
+  }
+  .import-tip-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--section-gap);
+    margin-bottom: var(--section-gap);
+  }
+  .import-tips p {
+    font-size: 12px;
+    color: var(--muted);
   }
   .import-tips strong {
-    color: var(--muted);
-    font-weight: 550;
+    color: var(--ink);
+    font-weight: 600;
   }
   .print-controls {
     display: flex;
@@ -2201,6 +2219,9 @@
     }
   }
   @media (max-width: 1200px) {
+    :root {
+      --page-gutter: 26px;
+    }
     .sidebar {
       width: 216px;
       padding-inline: 12px;
@@ -2209,10 +2230,7 @@
       margin-left: 216px;
     }
     main {
-      padding: 30px 26px 0;
-    }
-    .topbar {
-      padding-inline: 26px;
+      padding-top: 30px;
     }
     .page-heading {
       align-items: flex-start;
@@ -2222,9 +2240,6 @@
     .setup-columns {
       gap: 18px;
       grid-template-columns: minmax(310px, 1.2fr) minmax(240px, 1fr);
-    }
-    .year-form {
-      padding: 24px 22px 8px;
     }
     .intro-card {
       padding: 26px 22px 0;
@@ -2248,16 +2263,6 @@
     }
     .periods-panel {
       padding: 18px 16px;
-    }
-    .review-columns {
-      grid-template-columns: minmax(0, 1fr) 260px;
-      gap: 18px;
-    }
-    .review-columns .panel {
-      padding: 22px;
-    }
-    .export-card {
-      padding: 22px;
     }
     .timetable-table thead th:first-child {
       width: 96px;
@@ -2301,16 +2306,17 @@
     .toolbar-buttons {
       gap: 16px;
     }
-    .review-columns {
+    .year-fields {
       grid-template-columns: minmax(0, 1fr);
     }
-    .export-column {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
+    .export-options,
+    .preview-filters,
+    .preview-days,
+    .import-tip-grid {
+      grid-template-columns: minmax(0, 1fr);
     }
-    .export-column > .notice {
-      grid-column: 1 / -1;
+    .preview-filters {
+      gap: 0;
     }
     .period-head {
       display: none;
@@ -2356,6 +2362,8 @@
     }
     :root {
       --topbar-height: 61px;
+      --page-gutter: 20px;
+      --section-gap: 24px;
     }
     .topbar .topbar-actions {
       gap: 10px;
@@ -2411,10 +2419,7 @@
       gap: 5px !important;
     }
     main {
-      padding: 26px 20px 0;
-    }
-    .page-heading {
-      margin-bottom: 23px;
+      padding-top: 26px;
     }
     .page-heading p {
       font-size: 12px;
@@ -2608,7 +2613,37 @@
       padding: 4px;
     }
   }
+  @media (max-width: 640px) {
+    .export-options {
+      gap: 20px;
+    }
+    .preview-navigation select {
+      font-size: 16px;
+      padding-inline: 4px;
+    }
+  }
   @media (max-width: 480px) {
+    :root {
+      --page-gutter: 16px;
+      --panel-padding: 20px 18px;
+    }
+    .preview-navigation {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .preview-week-buttons {
+      border-top: 1px solid var(--line);
+    }
+    .preview-week-buttons .icon-button {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex: 1;
+      width: auto;
+    }
+    .preview-direction {
+      display: inline;
+      font-size: 12px;
+    }
     .category-row {
       grid-template-columns: minmax(0, 1fr) auto;
     }
@@ -2620,7 +2655,7 @@
       grid-row: 2;
     }
     main {
-      padding: 25px 16px 0;
+      padding-top: 26px;
     }
     h1 {
       font-size: 28px;
@@ -2642,9 +2677,6 @@
     }
     .topbar > div {
       gap: 4px;
-    }
-    .panel {
-      padding: 21px 18px;
     }
     .year-form {
       padding-bottom: 3px;
@@ -2803,30 +2835,6 @@
     }
     .first-last span {
       font-size: 7px;
-    }
-    .export-column {
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-    }
-    .export-card {
-      width: 100%;
-      padding: 24px;
-    }
-    .export-column > .notice {
-      width: 100%;
-    }
-    .export-card .button {
-      font-size: 13px;
-    }
-    .export-card > p {
-      font-size: 12px;
-    }
-    .import-tips p {
-      font-size: 11px;
-    }
-    .preview-navigation select {
-      font-size: 12px;
     }
     .preview-event strong {
       font-size: 13px;
