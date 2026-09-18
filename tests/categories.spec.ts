@@ -31,7 +31,7 @@ async function saved(page: Page) {
 async function calendar(page: Page) {
   const downloading = page.waitForEvent("download");
   await page
-    .getByRole("button", { name: "Download .ics", exact: true })
+    .getByRole("button", { name: "Download calendar", exact: true })
     .click();
   const component = new ICAL.Component(
     ICAL.parse(await readFile((await (await downloading).path())!, "utf8")),

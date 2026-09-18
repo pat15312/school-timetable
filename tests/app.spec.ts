@@ -134,7 +134,7 @@ test("complete setup, holiday-aware review, both print layouts, and ICS download
   await go(page, "Export & share");
   const downloading = page.waitForEvent("download");
   await page
-    .getByRole("button", { name: "Download .ics", exact: true })
+    .getByRole("button", { name: "Download calendar", exact: true })
     .click();
   const download = await downloading;
   expect(download.suggestedFilename()).toBe("school-week-timetable.ics");
@@ -405,7 +405,7 @@ test("production app and saved timetable open offline from the configured base p
   ).toBeVisible();
   await go(page, "Export & share");
   await expect(
-    page.getByRole("button", { name: "Download .ics", exact: true }),
+    page.getByRole("button", { name: "Download calendar", exact: true }),
   ).toBeEnabled();
   expect(externalRequests).toEqual([]);
 });

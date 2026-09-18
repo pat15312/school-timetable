@@ -51,7 +51,7 @@ test("sharing sends the same complete calendar file as download and respects exp
   await mockSharing(page);
   await openExport(page);
   const share = page.getByRole("button", {
-    name: "Share calendar file",
+    name: "Share calendar",
     exact: true,
   });
   await share.click();
@@ -80,7 +80,7 @@ test("sharing sends the same complete calendar file as download and respects exp
   );
   const downloading = page.waitForEvent("download");
   await page
-    .getByRole("button", { name: "Download .ics", exact: true })
+    .getByRole("button", { name: "Download calendar", exact: true })
     .click();
   const download = await downloading;
   expect(download.suggestedFilename()).toBe(updated.name);
@@ -96,7 +96,7 @@ for (const error of ["NotAllowedError", "DataError", "TypeError"]) {
     await mockSharing(page, error);
     await openExport(page);
     await page
-      .getByRole("button", { name: "Share calendar file", exact: true })
+      .getByRole("button", { name: "Share calendar", exact: true })
       .click();
     await expect(
       page.getByText("Permission denied", { exact: true }),
@@ -138,10 +138,10 @@ test("cancelling sharing leaves the calendar available without downloading or re
   );
   await openExport(page);
   await page
-    .getByRole("button", { name: "Share calendar file", exact: true })
+    .getByRole("button", { name: "Share calendar", exact: true })
     .click();
   await expect(
-    page.getByRole("button", { name: "Share calendar file", exact: true }),
+    page.getByRole("button", { name: "Share calendar", exact: true }),
   ).toBeEnabled();
   await expect(
     page.getByRole("button", { name: "Download to share", exact: true }),
@@ -194,11 +194,11 @@ test("unsupported or failing sharing detection keeps export usable", async ({
       .getByRole("button", { name: "Export & share", exact: true })
       .click();
     await expect(
-      page.getByRole("button", { name: "Share calendar file", exact: true }),
+      page.getByRole("button", { name: "Share calendar", exact: true }),
     ).toHaveCount(0);
     const downloading = page.waitForEvent("download");
     await page
-      .getByRole("button", { name: "Download .ics", exact: true })
+      .getByRole("button", { name: "Download calendar", exact: true })
       .click();
     expect((await downloading).suggestedFilename()).toMatch(/\.ics$/);
   }

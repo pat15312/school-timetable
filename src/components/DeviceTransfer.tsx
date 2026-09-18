@@ -111,7 +111,7 @@ export function DeviceTransfer({
     <section className="panel transfer-card">
       <div className="section-heading">
         <div>
-          <h2>Continue on another device</h2>
+          <h2>Copy on another device</h2>
           <p className="muted">
             Take your editable timetable and settings with you. Scan a QR code
             with your other device’s camera, then confirm the import in

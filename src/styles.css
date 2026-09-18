@@ -1899,6 +1899,9 @@
   .export-options .notice {
     margin-top: 16px;
   }
+  .export-options .calendar-options {
+    margin-bottom: 0;
+  }
   .import-tips {
     margin-top: 24px;
     border-top: 1px solid var(--line);

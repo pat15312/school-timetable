@@ -62,17 +62,17 @@ Use **Calendar overview** to review lesson totals and any setup issues. **Lesson
 
 **Include fixed periods** also includes activities whose categories have **Allow subjects** switched off. This choice is shared between **Lesson preview** and **Export & share** while the app is open, so the preview matches the calendar file. It defaults to off when you reopen the app.
 
-In **Export & share → Add to your calendar**, choose **Download .ics**. Calendar export becomes available once the timetable is valid and has lessons on actual school days. The calendar-import instructions are expandable beneath the download controls.
+In **Export & share → Add to your calendar app**, choose **Download calendar**. Calendar export becomes available once the timetable is valid and has lessons on actual school days. The calendar-import instructions are expandable beneath the download controls.
 
-Open `.ics` files with Apple Calendar or Outlook, or use Google Calendar's desktop **Settings → Import & export**. Where file sharing is supported, **Share calendar file** opens the device's sharing menu to send the `.ics` file through another app. If the browser blocks sharing, **Download to share** saves the file so you can attach it yourself. Cancelling the sharing menu does not download anything.
+Open `.ics` files with Apple Calendar or Outlook, or use Google Calendar's desktop **Settings → Import & export**. Where file sharing is supported, **Share calendar** opens the device's sharing menu to send the `.ics` file through another app. If the browser blocks sharing, **Download to share** saves the file so you can attach it yourself. Cancelling the sharing menu does not download anything.
 
 Calendar imports are snapshots: later edits in SchoolCal do not update an imported calendar. Use a dedicated school calendar and remove the previous import before replacing it to avoid duplicates. SchoolCal does not provide a calendar subscription or connect directly to a calendar account.
 
 Lesson times follow the school time zone, including daylight-saving changes. Check the time zone in **School year** if the preview looks wrong.
 
-## Continue on another device
+## Copy on another device
 
-Open **Export & share → Continue on another device → Show QR code**. On your other device, scan the code with its camera and open the link in SchoolCal. Review the timetable summary, then choose **Use this timetable**. SchoolCal asks before replacing the timetable already on that device and offers a backup of it first.
+Open **Export & share → Copy on another device → Show QR code**. On your other device, scan the code with its camera and open the link in SchoolCal. Review the timetable summary, then choose **Use this timetable**. SchoolCal asks before replacing the timetable already on that device and offers a backup of it first.
 
 The code contains the editable configuration, including subjects, times, holidays, lesson overrides and notes. Drafts resume at their saved setup step. Your devices do not need to share a network; the receiving device needs to be able to open SchoolCal. Nothing needs to be uploaded to create the code. The QR code and link contain your timetable, so share them only with someone you want to have a copy.
 

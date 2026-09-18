@@ -111,9 +111,9 @@ export function ExportShare({
       <section className="panel export-card">
         <div className="section-heading">
           <div>
-            <h2>Add to your calendar</h2>
+            <h2>Add to your calendar app</h2>
             <p className="muted">
-              Add your lessons to Apple Calendar, Google Calendar, Outlook, or
+              Add your timetable to Apple Calendar, Google Calendar, Outlook, or
               another calendar app.
             </p>
           </div>
@@ -140,9 +140,6 @@ export function ExportShare({
                 setExported(false);
               }}
             />
-            <button className="inline-link" onClick={() => navigate("preview")}>
-              Preview the lessons in this calendar
-            </button>
             {!valid && (
               <Notice>
                 Finish your timetable before exporting a calendar.{" "}
@@ -156,16 +153,16 @@ export function ExportShare({
             )}
           </div>
           <div className="export-actions">
-            <button
-              className="button primary"
-              disabled={!calendar?.file || sharing}
-              onClick={() => void exportCalendar(false)}
-            >
-              <Download size={17} />
-              Download .ics
-            </button>
-            {(canShare || shareUnavailable) && (
-              <>
+            <div className="page-actions">
+              <button
+                className="button primary"
+                disabled={!calendar?.file || sharing}
+                onClick={() => void exportCalendar(false)}
+              >
+                <Download size={17} />
+                Download calendar
+              </button>
+              {(canShare || shareUnavailable) && (
                 <button
                   className="button secondary"
                   disabled={!calendar?.file || sharing}
@@ -181,17 +178,19 @@ export function ExportShare({
                     ? "Download to share"
                     : sharing
                       ? "Opening sharing…"
-                      : "Share calendar file"}
+                      : "Share calendar"}
                 </button>
-                <small
-                  id="calendar-share-help"
-                  className="export-file-note export-share-help"
-                >
-                  {shareUnavailable
-                    ? "Your browser couldn’t open sharing. Download the .ics file, then attach it in your preferred app."
-                    : "Opens your device’s sharing menu to send the .ics file through another app."}
-                </small>
-              </>
+              )}
+            </div>
+            {(canShare || shareUnavailable) && (
+              <small
+                id="calendar-share-help"
+                className="export-file-note export-share-help"
+              >
+                {shareUnavailable
+                  ? "Your browser couldn’t open sharing. Download the .ics file, then attach it in your preferred app."
+                  : "Share calendar file opens your device’s sharing menu to send the .ics file through another app. This typically only works on mobile devices."}
+              </small>
             )}
             <small className="export-file-note">
               {occurrences.length.toLocaleString()} events · .ics calendar file

@@ -139,7 +139,7 @@ test("overview, dated preview and export stay separate and share the fixed-perio
   ).toBeChecked();
   const downloading = page.waitForEvent("download");
   await page
-    .getByRole("button", { name: "Download .ics", exact: true })
+    .getByRole("button", { name: "Download calendar", exact: true })
     .click();
   const content = await readFile((await (await downloading).path())!, "utf8");
   const events = new ICAL.Component(ICAL.parse(content)).getAllSubcomponents(
@@ -149,9 +149,7 @@ test("overview, dated preview and export stay separate and share the fixed-perio
     events.some((e) => e.getFirstPropertyValue("summary") === "Tutor time"),
   ).toBe(true);
   await page.getByRole("checkbox", { name: /Include fixed periods/ }).uncheck();
-  await page
-    .getByRole("button", { name: "Preview the lessons in this calendar" })
-    .click();
+  await go(page, "Lesson preview");
   await expect(
     page.getByRole("checkbox", { name: /Include fixed periods/ }),
   ).not.toBeChecked();
@@ -172,7 +170,7 @@ test("unfinished setup can back up, restore and transfer without becoming comple
   await page.goto("./");
   await go(page, "Export & share");
   await expect(
-    page.getByRole("button", { name: "Download .ics", exact: true }),
+    page.getByRole("button", { name: "Download calendar", exact: true }),
   ).toBeDisabled();
   expect(await backup(page)).toEqual(draft);
   const received = await decodeTransfer(new URL(await scan(page)).hash);
@@ -272,7 +270,7 @@ test("a browser without compression can still export and back up", async ({
     page.getByRole("button", { name: "Show QR code" }),
   ).toBeDisabled();
   await expect(
-    page.getByRole("button", { name: "Download .ics", exact: true }),
+    page.getByRole("button", { name: "Download calendar", exact: true }),
   ).toBeEnabled();
   expect(await backup(page)).toEqual(project);
 });

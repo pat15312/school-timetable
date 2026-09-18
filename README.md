@@ -13,7 +13,7 @@ Use it in your browser on desktop or mobile. No account or installation needed.
 - **Plan your school year:** set term dates, school days, holidays and days off, with a repeating cycle of one to four weeks.
 - **Make it your timetable:** add subjects, teachers and rooms; duplicate subjects for different classes; and customise lessons, registration, breaks and other periods.
 - **Add lessons to your calendar:** export a holiday-aware `.ics` file for Apple Calendar, Google Calendar, Outlook and other calendar apps.
-- **Continue on another device:** generate a QR code or transfer link containing your editable timetable, including unfinished setup.
+- **Copy on another device:** generate a QR code or transfer link containing your editable timetable, including unfinished setup.
 - **Print a clear copy:** choose one or two weeks per page, with an ink-saving layout and subject-colour markers.
 - **Choose your look:** light, dark or automatic appearance, plus your own app colour.
 - **Keep working offline:** after the app has loaded and cached successfully, it can work without an internet connection.

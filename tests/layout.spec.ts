@@ -260,7 +260,7 @@ test("pages share content edges and export stays in the main flow across screen 
   await go(page, "Export & share");
   const download = page.waitForEvent("download");
   await page
-    .getByRole("button", { name: "Download .ics", exact: true })
+    .getByRole("button", { name: "Download calendar", exact: true })
     .click();
   expect((await download).suggestedFilename()).toMatch(/\.ics$/);
 });

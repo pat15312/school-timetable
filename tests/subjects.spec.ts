@@ -135,7 +135,7 @@ test("duplicate and reorder subjects independently, persist their order, and pla
   await go(page, "Export & share");
   const downloading = page.waitForEvent("download");
   await page
-    .getByRole("button", { name: "Download .ics", exact: true })
+    .getByRole("button", { name: "Download calendar", exact: true })
     .click();
   const calendar = new ICAL.Component(
     ICAL.parse(await readFile((await (await downloading).path())!, "utf8")),
