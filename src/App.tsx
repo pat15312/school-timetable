@@ -40,6 +40,7 @@ import { Timetable } from "./components/Timetable";
 import { Review } from "./components/Review";
 import { PrintView } from "./components/PrintView";
 import { ThemeControl } from "./components/ThemeControl";
+import { TransferImport } from "./components/TransferImport";
 import { Modal, Notice, downloadFile } from "./components/ui";
 
 const STEPS = [
@@ -111,6 +112,9 @@ export default function App() {
         : STEPS[p.setupStep].id;
   });
   const [mobileNav, setMobileNav] = useState(false);
+  const [incomingTransfer, setIncomingTransfer] = useState<string | null>(() =>
+    window.location.hash.startsWith("#transfer=") ? window.location.hash : null,
+  );
   const [narrow, setNarrow] = useState(
     () => window.matchMedia("(max-width: 780px)").matches,
   );
@@ -152,7 +156,12 @@ export default function App() {
   useEffect(() => {
     const onHash = () => {
       const next = window.location.hash.slice(1);
+      if (next.startsWith("transfer=")) {
+        setIncomingTransfer(window.location.hash);
+        return;
+      }
       if (validPages.includes(next as (typeof validPages)[number])) {
+        setIncomingTransfer(null);
         setPage(next);
         setErrors([]);
       }
@@ -306,6 +315,14 @@ export default function App() {
     }
   };
   const isSetup = !p.setupComplete;
+  const dismissTransfer = (destination = page) => {
+    setIncomingTransfer(null);
+    window.history.replaceState(
+      null,
+      "",
+      `${window.location.pathname}${window.location.search}#${destination}`,
+    );
+  };
   const title =
     page === "print"
       ? "A timetable worth pinning up."
@@ -745,6 +762,37 @@ export default function App() {
           </>
         )}
       </div>
+      {incomingTransfer && (
+        <TransferImport
+          key={incomingTransfer}
+          hash={incomingTransfer}
+          hasCurrent={
+            !!(p.name || p.subjects.length || p.entries.length ||
+              p.periods.length || p.academicYear.startDate || state.recoveryError)
+          }
+          onBackup={() => {
+            if (state.recoveryRaw && state.recoveryError)
+              downloadFile(
+                state.recoveryRaw,
+                "schoolcal-recovery.json",
+                "application/json",
+              );
+            else backup();
+          }}
+          onClose={() => dismissTransfer()}
+          onImport={(imported) => {
+            const destination = imported.setupComplete
+              ? "timetable"
+              : STEPS[imported.setupStep].id;
+            replace(imported);
+            setPage(destination);
+            setErrors([]);
+            setMobileNav(false);
+            dismissTransfer(destination);
+            notify("Timetable received. You can continue editing on this device.");
+          }}
+        />
+      )}
       {help && (
         <Modal title="A little help" onClose={() => setHelp(false)}>
           <div className="help-content">

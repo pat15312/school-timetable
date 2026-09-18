@@ -1,0 +1,944 @@
+{
+  "schemaVersion": 2,
+  "timetable": {
+    "id": "c26275f2-abff-a67d-8b4b-80e89d83be6e",
+    "name": "QR transfer test · Alex",
+    "academicYear": {
+      "startDate": "2026-09-07",
+      "endDate": "2027-07-16",
+      "schoolWeekdays": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "timezone": "Europe/London",
+      "exclusions": [
+        {
+          "id": "transfer-holiday-0",
+          "name": "October half-term",
+          "startDate": "2026-10-26",
+          "endDate": "2026-10-30",
+          "resetRotationAfter": false
+        },
+        {
+          "id": "transfer-holiday-1",
+          "name": "Christmas holiday",
+          "startDate": "2026-12-21",
+          "endDate": "2027-01-01",
+          "resetRotationAfter": true
+        },
+        {
+          "id": "transfer-holiday-2",
+          "name": "February half-term",
+          "startDate": "2027-02-15",
+          "endDate": "2027-02-19",
+          "resetRotationAfter": false
+        },
+        {
+          "id": "transfer-holiday-3",
+          "name": "Easter holiday",
+          "startDate": "2027-03-29",
+          "endDate": "2027-04-09",
+          "resetRotationAfter": true
+        },
+        {
+          "id": "transfer-holiday-4",
+          "name": "Teacher training day",
+          "startDate": "2027-05-03",
+          "endDate": "2027-05-03",
+          "resetRotationAfter": false
+        }
+      ]
+    },
+    "cycleLength": 4,
+    "rotationLabelStyle": "letters",
+    "initialRotationIndex": 1,
+    "periodCategories": [
+      {
+        "id": "lesson",
+        "name": "Lesson",
+        "allowSubjects": true
+      },
+      {
+        "id": "registration",
+        "name": "Tutor time",
+        "allowSubjects": false
+      },
+      {
+        "id": "break",
+        "name": "Break",
+        "allowSubjects": false
+      },
+      {
+        "id": "lunch",
+        "name": "Lunch",
+        "allowSubjects": false
+      }
+    ],
+    "periods": [
+      {
+        "id": "3200d3dc-c036-f065-e66c-1461277e8b9d",
+        "name": "Tutor time",
+        "startTime": "08:30",
+        "endTime": "08:45",
+        "categoryId": "registration",
+        "sortOrder": 0
+      },
+      {
+        "id": "33b91ab6-3a53-e0e8-4236-6d61e63baa29",
+        "name": "Period 1",
+        "startTime": "08:45",
+        "endTime": "09:45",
+        "categoryId": "lesson",
+        "sortOrder": 1
+      },
+      {
+        "id": "e2841e5a-fe10-8571-19a8-1b2803049d39",
+        "name": "Period 2",
+        "startTime": "09:45",
+        "endTime": "10:45",
+        "categoryId": "lesson",
+        "sortOrder": 2
+      },
+      {
+        "id": "f7a5ac47-5e4a-35a6-88f6-708e15a2dcbf",
+        "name": "Break",
+        "startTime": "10:45",
+        "endTime": "11:05",
+        "categoryId": "break",
+        "sortOrder": 3
+      },
+      {
+        "id": "bb7d3148-84b6-5375-5fe5-73339e1ea3f4",
+        "name": "Period 3",
+        "startTime": "11:05",
+        "endTime": "12:05",
+        "categoryId": "lesson",
+        "sortOrder": 4
+      },
+      {
+        "id": "f386196b-def4-4721-b9b0-1ff854a8fd04",
+        "name": "Period 4",
+        "startTime": "12:05",
+        "endTime": "13:05",
+        "categoryId": "lesson",
+        "sortOrder": 5
+      },
+      {
+        "id": "acecad33-6faa-bdd6-61f4-c4cc92a10e43",
+        "name": "Lunch",
+        "startTime": "13:05",
+        "endTime": "14:00",
+        "categoryId": "lunch",
+        "sortOrder": 6
+      },
+      {
+        "id": "f5e48c95-2a3e-7170-a8eb-960787d84d22",
+        "name": "Period 5",
+        "startTime": "14:00",
+        "endTime": "15:00",
+        "categoryId": "lesson",
+        "sortOrder": 7
+      }
+    ],
+    "subjects": [
+      {
+        "id": "0dfc0fd1-8f4c-ba8b-1e97-9423422ac4f1",
+        "name": "Mathematics",
+        "shortName": "Maths",
+        "teacher": "Mrs Jones",
+        "room": "M12",
+        "colour": "#6484ba"
+      },
+      {
+        "id": "afdb6377-91eb-5ced-130c-b84f39b790a4",
+        "name": "English",
+        "shortName": "English",
+        "teacher": "Mr Ahmed",
+        "room": "E4",
+        "colour": "#b07e9c"
+      },
+      {
+        "id": "eb61d5d5-a0b4-6c22-c03e-a0d46dfe88a5",
+        "name": "Biology",
+        "shortName": "Biology",
+        "teacher": "Dr Patel",
+        "room": "Lab 2",
+        "colour": "#679783"
+      },
+      {
+        "id": "b7c48c02-14db-02d2-01e3-983cf3db3ab1",
+        "name": "Chemistry",
+        "shortName": "Chemistry",
+        "teacher": "Ms Chen",
+        "room": "Lab 1",
+        "colour": "#ac945f"
+      },
+      {
+        "id": "bc023f01-3ec1-0fea-cf11-285ba817a4fe",
+        "name": "Physics",
+        "shortName": "Physics",
+        "teacher": "Mr Clarke",
+        "room": "Lab 3",
+        "colour": "#8a80b1"
+      },
+      {
+        "id": "9a391d9b-6663-d727-a2c5-89cfc382e51f",
+        "name": "History",
+        "shortName": "History",
+        "teacher": "Ms Williams",
+        "room": "H6",
+        "colour": "#be8268"
+      },
+      {
+        "id": "27199e0b-7e2a-2928-4c7a-d6c969126c52",
+        "name": "Geography",
+        "shortName": "Geog",
+        "teacher": "Ms Brown",
+        "room": "G3",
+        "colour": "#689ca6"
+      },
+      {
+        "id": "a19ee8ce-a4e4-f1f7-e49e-3a2420849e38",
+        "name": "French",
+        "shortName": "French",
+        "teacher": "Mme Martin",
+        "room": "L1",
+        "colour": "#a58062"
+      },
+      {
+        "id": "a49168b3-f2dc-b881-233d-f6708a2e8102",
+        "name": "Music",
+        "shortName": "",
+        "teacher": "Mr Wilson",
+        "room": "MU2",
+        "colour": "#8a80b1"
+      },
+      {
+        "id": "ca886375-0390-acb7-3333-508a9b69d7f3",
+        "name": "Art",
+        "shortName": "Art",
+        "room": "",
+        "colour": "#be8268"
+      }
+    ],
+    "entries": [
+      {
+        "id": "transfer-entry-0",
+        "rotationIndex": 0,
+        "weekday": 1,
+        "periodId": "33b91ab6-3a53-e0e8-4236-6d61e63baa29",
+        "subjectId": "afdb6377-91eb-5ced-130c-b84f39b790a4",
+        "titleOverride": "Algebra workshop",
+        "teacherOverride": "Dr O’Neill",
+        "roomOverride": "B12",
+        "notes": "Bring calculator.\nSolve x² + 3x = 10."
+      },
+      {
+        "id": "transfer-entry-1",
+        "rotationIndex": 0,
+        "weekday": 1,
+        "periodId": "e2841e5a-fe10-8571-19a8-1b2803049d39",
+        "subjectId": "b7c48c02-14db-02d2-01e3-983cf3db3ab1"
+      },
+      {
+        "id": "transfer-entry-2",
+        "rotationIndex": 0,
+        "weekday": 1,
+        "periodId": "bb7d3148-84b6-5375-5fe5-73339e1ea3f4",
+        "subjectId": "9a391d9b-6663-d727-a2c5-89cfc382e51f"
+      },
+      {
+        "id": "transfer-entry-3",
+        "rotationIndex": 0,
+        "weekday": 1,
+        "periodId": "f386196b-def4-4721-b9b0-1ff854a8fd04",
+        "subjectId": "a19ee8ce-a4e4-f1f7-e49e-3a2420849e38"
+      },
+      {
+        "id": "transfer-entry-4",
+        "rotationIndex": 0,
+        "weekday": 1,
+        "periodId": "f5e48c95-2a3e-7170-a8eb-960787d84d22",
+        "subjectId": "ca886375-0390-acb7-3333-508a9b69d7f3"
+      },
+      {
+        "id": "transfer-entry-5",
+        "rotationIndex": 0,
+        "weekday": 2,
+        "periodId": "33b91ab6-3a53-e0e8-4236-6d61e63baa29",
+        "subjectId": "eb61d5d5-a0b4-6c22-c03e-a0d46dfe88a5"
+      },
+      {
+        "id": "transfer-entry-6",
+        "rotationIndex": 0,
+        "weekday": 2,
+        "periodId": "e2841e5a-fe10-8571-19a8-1b2803049d39",
+        "subjectId": "bc023f01-3ec1-0fea-cf11-285ba817a4fe"
+      },
+      {
+        "id": "transfer-entry-7",
+        "rotationIndex": 0,
+        "weekday": 2,
+        "periodId": "bb7d3148-84b6-5375-5fe5-73339e1ea3f4",
+        "subjectId": "27199e0b-7e2a-2928-4c7a-d6c969126c52"
+      },
+      {
+        "id": "transfer-entry-8",
+        "rotationIndex": 0,
+        "weekday": 2,
+        "periodId": "f386196b-def4-4721-b9b0-1ff854a8fd04",
+        "subjectId": "a49168b3-f2dc-b881-233d-f6708a2e8102"
+      },
+      {
+        "id": "transfer-entry-9",
+        "rotationIndex": 0,
+        "weekday": 2,
+        "periodId": "f5e48c95-2a3e-7170-a8eb-960787d84d22",
+        "subjectId": "0dfc0fd1-8f4c-ba8b-1e97-9423422ac4f1"
+      },
+      {
+        "id": "transfer-entry-10",
+        "rotationIndex": 0,
+        "weekday": 3,
+        "periodId": "33b91ab6-3a53-e0e8-4236-6d61e63baa29",
+        "subjectId": "b7c48c02-14db-02d2-01e3-983cf3db3ab1"
+      },
+      {
+        "id": "transfer-entry-11",
+        "rotationIndex": 0,
+        "weekday": 3,
+        "periodId": "e2841e5a-fe10-8571-19a8-1b2803049d39",
+        "subjectId": "9a391d9b-6663-d727-a2c5-89cfc382e51f"
+      },
+      {
+        "id": "transfer-entry-12",
+        "rotationIndex": 0,
+        "weekday": 3,
+        "periodId": "bb7d3148-84b6-5375-5fe5-73339e1ea3f4",
+        "subjectId": "a19ee8ce-a4e4-f1f7-e49e-3a2420849e38"
+      },
+      {
+        "id": "transfer-entry-13",
+        "rotationIndex": 0,
+        "weekday": 3,
+        "periodId": "f386196b-def4-4721-b9b0-1ff854a8fd04",
+        "subjectId": "ca886375-0390-acb7-3333-508a9b69d7f3"
+      },
+      {
+        "id": "transfer-entry-14",
+        "rotationIndex": 0,
+        "weekday": 3,
+        "periodId": "f5e48c95-2a3e-7170-a8eb-960787d84d22",
+        "subjectId": "afdb6377-91eb-5ced-130c-b84f39b790a4"
+      },
+      {
+        "id": "transfer-entry-15",
+        "rotationIndex": 0,
+        "weekday": 4,
+        "periodId": "33b91ab6-3a53-e0e8-4236-6d61e63baa29",
+        "subjectId": "bc023f01-3ec1-0fea-cf11-285ba817a4fe"
+      },
+      {
+        "id": "transfer-entry-16",
+        "rotationIndex": 0,
+        "weekday": 4,
+        "periodId": "e2841e5a-fe10-8571-19a8-1b2803049d39",
+        "subjectId": "27199e0b-7e2a-2928-4c7a-d6c969126c52"
+      },
+      {
+        "id": "transfer-entry-17",
+        "rotationIndex": 0,
+        "weekday": 4,
+        "periodId": "bb7d3148-84b6-5375-5fe5-73339e1ea3f4",
+        "subjectId": "a49168b3-f2dc-b881-233d-f6708a2e8102"
+      },
+      {
+        "id": "transfer-entry-18",
+        "rotationIndex": 0,
+        "weekday": 4,
+        "periodId": "f386196b-def4-4721-b9b0-1ff854a8fd04",
+        "subjectId": "0dfc0fd1-8f4c-ba8b-1e97-9423422ac4f1"
+      },
+      {
+        "id": "transfer-entry-19",
+        "rotationIndex": 0,
+        "weekday": 4,
+        "periodId": "f5e48c95-2a3e-7170-a8eb-960787d84d22",
+        "subjectId": "eb61d5d5-a0b4-6c22-c03e-a0d46dfe88a5"
+      },
+      {
+        "id": "transfer-entry-20",
+        "rotationIndex": 0,
+        "weekday": 5,
+        "periodId": "33b91ab6-3a53-e0e8-4236-6d61e63baa29",
+        "subjectId": "9a391d9b-6663-d727-a2c5-89cfc382e51f"
+      },
+      {
+        "id": "transfer-entry-21",
+        "rotationIndex": 0,
+        "weekday": 5,
+        "periodId": "e2841e5a-fe10-8571-19a8-1b2803049d39",
+        "subjectId": "a19ee8ce-a4e4-f1f7-e49e-3a2420849e38"
+      },
+      {
+        "id": "transfer-entry-22",
+        "rotationIndex": 0,
+        "weekday": 5,
+        "periodId": "bb7d3148-84b6-5375-5fe5-73339e1ea3f4",
+        "subjectId": "ca886375-0390-acb7-3333-508a9b69d7f3"
+      },
+      {
+        "id": "transfer-entry-23",
+        "rotationIndex": 0,
+        "weekday": 5,
+        "periodId": "f386196b-def4-4721-b9b0-1ff854a8fd04",
+        "subjectId": "afdb6377-91eb-5ced-130c-b84f39b790a4"
+      },
+      {
+        "id": "transfer-entry-24",
+        "rotationIndex": 0,
+        "weekday": 5,
+        "periodId": "f5e48c95-2a3e-7170-a8eb-960787d84d22",
+        "subjectId": "b7c48c02-14db-02d2-01e3-983cf3db3ab1"
+      },
+      {
+        "id": "transfer-entry-25",
+        "rotationIndex": 1,
+        "weekday": 1,
+        "periodId": "33b91ab6-3a53-e0e8-4236-6d61e63baa29",
+        "subjectId": "bc023f01-3ec1-0fea-cf11-285ba817a4fe"
+      },
+      {
+        "id": "transfer-entry-26",
+        "rotationIndex": 1,
+        "weekday": 1,
+        "periodId": "e2841e5a-fe10-8571-19a8-1b2803049d39",
+        "subjectId": "27199e0b-7e2a-2928-4c7a-d6c969126c52",
+        "teacherOverride": "",
+        "roomOverride": "",
+        "notes": "Library: read chapters 2–3."
+      },
+      {
+        "id": "transfer-entry-27",
+        "rotationIndex": 1,
+        "weekday": 1,
+        "periodId": "bb7d3148-84b6-5375-5fe5-73339e1ea3f4",
+        "subjectId": "a49168b3-f2dc-b881-233d-f6708a2e8102"
+      },
+      {
+        "id": "transfer-entry-28",
+        "rotationIndex": 1,
+        "weekday": 1,
+        "periodId": "f386196b-def4-4721-b9b0-1ff854a8fd04",
+        "subjectId": "0dfc0fd1-8f4c-ba8b-1e97-9423422ac4f1"
+      },
+      {
+        "id": "transfer-entry-29",
+        "rotationIndex": 1,
+        "weekday": 1,
+        "periodId": "f5e48c95-2a3e-7170-a8eb-960787d84d22",
+        "subjectId": "eb61d5d5-a0b4-6c22-c03e-a0d46dfe88a5"
+      },
+      {
+        "id": "transfer-entry-30",
+        "rotationIndex": 1,
+        "weekday": 2,
+        "periodId": "33b91ab6-3a53-e0e8-4236-6d61e63baa29",
+        "subjectId": "9a391d9b-6663-d727-a2c5-89cfc382e51f"
+      },
+      {
+        "id": "transfer-entry-31",
+        "rotationIndex": 1,
+        "weekday": 2,
+        "periodId": "e2841e5a-fe10-8571-19a8-1b2803049d39",
+        "subjectId": "a19ee8ce-a4e4-f1f7-e49e-3a2420849e38"
+      },
+      {
+        "id": "transfer-entry-32",
+        "rotationIndex": 1,
+        "weekday": 2,
+        "periodId": "bb7d3148-84b6-5375-5fe5-73339e1ea3f4",
+        "subjectId": "ca886375-0390-acb7-3333-508a9b69d7f3"
+      },
+      {
+        "id": "transfer-entry-33",
+        "rotationIndex": 1,
+        "weekday": 2,
+        "periodId": "f386196b-def4-4721-b9b0-1ff854a8fd04",
+        "subjectId": "afdb6377-91eb-5ced-130c-b84f39b790a4"
+      },
+      {
+        "id": "transfer-entry-34",
+        "rotationIndex": 1,
+        "weekday": 2,
+        "periodId": "f5e48c95-2a3e-7170-a8eb-960787d84d22",
+        "subjectId": "b7c48c02-14db-02d2-01e3-983cf3db3ab1"
+      },
+      {
+        "id": "transfer-entry-35",
+        "rotationIndex": 1,
+        "weekday": 3,
+        "periodId": "33b91ab6-3a53-e0e8-4236-6d61e63baa29",
+        "subjectId": "27199e0b-7e2a-2928-4c7a-d6c969126c52"
+      },
+      {
+        "id": "transfer-entry-36",
+        "rotationIndex": 1,
+        "weekday": 3,
+        "periodId": "e2841e5a-fe10-8571-19a8-1b2803049d39",
+        "subjectId": "a49168b3-f2dc-b881-233d-f6708a2e8102"
+      },
+      {
+        "id": "transfer-entry-37",
+        "rotationIndex": 1,
+        "weekday": 3,
+        "periodId": "bb7d3148-84b6-5375-5fe5-73339e1ea3f4",
+        "subjectId": "0dfc0fd1-8f4c-ba8b-1e97-9423422ac4f1"
+      },
+      {
+        "id": "transfer-entry-38",
+        "rotationIndex": 1,
+        "weekday": 3,
+        "periodId": "f386196b-def4-4721-b9b0-1ff854a8fd04",
+        "subjectId": "eb61d5d5-a0b4-6c22-c03e-a0d46dfe88a5"
+      },
+      {
+        "id": "transfer-entry-39",
+        "rotationIndex": 1,
+        "weekday": 3,
+        "periodId": "f5e48c95-2a3e-7170-a8eb-960787d84d22",
+        "subjectId": "bc023f01-3ec1-0fea-cf11-285ba817a4fe"
+      },
+      {
+        "id": "transfer-entry-40",
+        "rotationIndex": 1,
+        "weekday": 4,
+        "periodId": "33b91ab6-3a53-e0e8-4236-6d61e63baa29",
+        "subjectId": "a19ee8ce-a4e4-f1f7-e49e-3a2420849e38"
+      },
+      {
+        "id": "transfer-entry-41",
+        "rotationIndex": 1,
+        "weekday": 4,
+        "periodId": "e2841e5a-fe10-8571-19a8-1b2803049d39",
+        "subjectId": "ca886375-0390-acb7-3333-508a9b69d7f3"
+      },
+      {
+        "id": "transfer-entry-42",
+        "rotationIndex": 1,
+        "weekday": 4,
+        "periodId": "bb7d3148-84b6-5375-5fe5-73339e1ea3f4",
+        "subjectId": "afdb6377-91eb-5ced-130c-b84f39b790a4"
+      },
+      {
+        "id": "transfer-entry-43",
+        "rotationIndex": 1,
+        "weekday": 4,
+        "periodId": "f386196b-def4-4721-b9b0-1ff854a8fd04",
+        "subjectId": "b7c48c02-14db-02d2-01e3-983cf3db3ab1"
+      },
+      {
+        "id": "transfer-entry-44",
+        "rotationIndex": 1,
+        "weekday": 4,
+        "periodId": "f5e48c95-2a3e-7170-a8eb-960787d84d22",
+        "subjectId": "9a391d9b-6663-d727-a2c5-89cfc382e51f"
+      },
+      {
+        "id": "transfer-entry-45",
+        "rotationIndex": 1,
+        "weekday": 5,
+        "periodId": "33b91ab6-3a53-e0e8-4236-6d61e63baa29",
+        "subjectId": "a49168b3-f2dc-b881-233d-f6708a2e8102"
+      },
+      {
+        "id": "transfer-entry-46",
+        "rotationIndex": 1,
+        "weekday": 5,
+        "periodId": "e2841e5a-fe10-8571-19a8-1b2803049d39",
+        "subjectId": "0dfc0fd1-8f4c-ba8b-1e97-9423422ac4f1"
+      },
+      {
+        "id": "transfer-entry-47",
+        "rotationIndex": 1,
+        "weekday": 5,
+        "periodId": "bb7d3148-84b6-5375-5fe5-73339e1ea3f4",
+        "subjectId": "eb61d5d5-a0b4-6c22-c03e-a0d46dfe88a5"
+      },
+      {
+        "id": "transfer-entry-48",
+        "rotationIndex": 1,
+        "weekday": 5,
+        "periodId": "f386196b-def4-4721-b9b0-1ff854a8fd04",
+        "subjectId": "bc023f01-3ec1-0fea-cf11-285ba817a4fe"
+      },
+      {
+        "id": "transfer-entry-49",
+        "rotationIndex": 1,
+        "weekday": 5,
+        "periodId": "f5e48c95-2a3e-7170-a8eb-960787d84d22",
+        "subjectId": "27199e0b-7e2a-2928-4c7a-d6c969126c52"
+      },
+      {
+        "id": "transfer-entry-50",
+        "rotationIndex": 2,
+        "weekday": 1,
+        "periodId": "33b91ab6-3a53-e0e8-4236-6d61e63baa29",
+        "subjectId": "a19ee8ce-a4e4-f1f7-e49e-3a2420849e38"
+      },
+      {
+        "id": "transfer-entry-51",
+        "rotationIndex": 2,
+        "weekday": 1,
+        "periodId": "e2841e5a-fe10-8571-19a8-1b2803049d39",
+        "subjectId": "ca886375-0390-acb7-3333-508a9b69d7f3"
+      },
+      {
+        "id": "transfer-entry-52",
+        "rotationIndex": 2,
+        "weekday": 1,
+        "periodId": "bb7d3148-84b6-5375-5fe5-73339e1ea3f4",
+        "subjectId": "afdb6377-91eb-5ced-130c-b84f39b790a4",
+        "titleOverride": "Map skills",
+        "notes": "Group work: maps, rivers & coasts."
+      },
+      {
+        "id": "transfer-entry-53",
+        "rotationIndex": 2,
+        "weekday": 1,
+        "periodId": "f386196b-def4-4721-b9b0-1ff854a8fd04",
+        "subjectId": "b7c48c02-14db-02d2-01e3-983cf3db3ab1"
+      },
+      {
+        "id": "transfer-entry-54",
+        "rotationIndex": 2,
+        "weekday": 1,
+        "periodId": "f5e48c95-2a3e-7170-a8eb-960787d84d22",
+        "subjectId": "9a391d9b-6663-d727-a2c5-89cfc382e51f"
+      },
+      {
+        "id": "transfer-entry-55",
+        "rotationIndex": 2,
+        "weekday": 2,
+        "periodId": "33b91ab6-3a53-e0e8-4236-6d61e63baa29",
+        "subjectId": "a49168b3-f2dc-b881-233d-f6708a2e8102"
+      },
+      {
+        "id": "transfer-entry-56",
+        "rotationIndex": 2,
+        "weekday": 2,
+        "periodId": "e2841e5a-fe10-8571-19a8-1b2803049d39",
+        "subjectId": "0dfc0fd1-8f4c-ba8b-1e97-9423422ac4f1"
+      },
+      {
+        "id": "transfer-entry-57",
+        "rotationIndex": 2,
+        "weekday": 2,
+        "periodId": "bb7d3148-84b6-5375-5fe5-73339e1ea3f4",
+        "subjectId": "eb61d5d5-a0b4-6c22-c03e-a0d46dfe88a5"
+      },
+      {
+        "id": "transfer-entry-58",
+        "rotationIndex": 2,
+        "weekday": 2,
+        "periodId": "f386196b-def4-4721-b9b0-1ff854a8fd04",
+        "subjectId": "bc023f01-3ec1-0fea-cf11-285ba817a4fe"
+      },
+      {
+        "id": "transfer-entry-59",
+        "rotationIndex": 2,
+        "weekday": 2,
+        "periodId": "f5e48c95-2a3e-7170-a8eb-960787d84d22",
+        "subjectId": "27199e0b-7e2a-2928-4c7a-d6c969126c52"
+      },
+      {
+        "id": "transfer-entry-60",
+        "rotationIndex": 2,
+        "weekday": 3,
+        "periodId": "33b91ab6-3a53-e0e8-4236-6d61e63baa29",
+        "subjectId": "ca886375-0390-acb7-3333-508a9b69d7f3"
+      },
+      {
+        "id": "transfer-entry-61",
+        "rotationIndex": 2,
+        "weekday": 3,
+        "periodId": "e2841e5a-fe10-8571-19a8-1b2803049d39",
+        "subjectId": "afdb6377-91eb-5ced-130c-b84f39b790a4"
+      },
+      {
+        "id": "transfer-entry-62",
+        "rotationIndex": 2,
+        "weekday": 3,
+        "periodId": "bb7d3148-84b6-5375-5fe5-73339e1ea3f4",
+        "subjectId": "b7c48c02-14db-02d2-01e3-983cf3db3ab1"
+      },
+      {
+        "id": "transfer-entry-63",
+        "rotationIndex": 2,
+        "weekday": 3,
+        "periodId": "f386196b-def4-4721-b9b0-1ff854a8fd04",
+        "subjectId": "9a391d9b-6663-d727-a2c5-89cfc382e51f"
+      },
+      {
+        "id": "transfer-entry-64",
+        "rotationIndex": 2,
+        "weekday": 3,
+        "periodId": "f5e48c95-2a3e-7170-a8eb-960787d84d22",
+        "subjectId": "a19ee8ce-a4e4-f1f7-e49e-3a2420849e38"
+      },
+      {
+        "id": "transfer-entry-65",
+        "rotationIndex": 2,
+        "weekday": 4,
+        "periodId": "33b91ab6-3a53-e0e8-4236-6d61e63baa29",
+        "subjectId": "0dfc0fd1-8f4c-ba8b-1e97-9423422ac4f1"
+      },
+      {
+        "id": "transfer-entry-66",
+        "rotationIndex": 2,
+        "weekday": 4,
+        "periodId": "e2841e5a-fe10-8571-19a8-1b2803049d39",
+        "subjectId": "eb61d5d5-a0b4-6c22-c03e-a0d46dfe88a5"
+      },
+      {
+        "id": "transfer-entry-67",
+        "rotationIndex": 2,
+        "weekday": 4,
+        "periodId": "bb7d3148-84b6-5375-5fe5-73339e1ea3f4",
+        "subjectId": "bc023f01-3ec1-0fea-cf11-285ba817a4fe"
+      },
+      {
+        "id": "transfer-entry-68",
+        "rotationIndex": 2,
+        "weekday": 4,
+        "periodId": "f386196b-def4-4721-b9b0-1ff854a8fd04",
+        "subjectId": "27199e0b-7e2a-2928-4c7a-d6c969126c52"
+      },
+      {
+        "id": "transfer-entry-69",
+        "rotationIndex": 2,
+        "weekday": 4,
+        "periodId": "f5e48c95-2a3e-7170-a8eb-960787d84d22",
+        "subjectId": "a49168b3-f2dc-b881-233d-f6708a2e8102"
+      },
+      {
+        "id": "transfer-entry-70",
+        "rotationIndex": 2,
+        "weekday": 5,
+        "periodId": "33b91ab6-3a53-e0e8-4236-6d61e63baa29",
+        "subjectId": "afdb6377-91eb-5ced-130c-b84f39b790a4"
+      },
+      {
+        "id": "transfer-entry-71",
+        "rotationIndex": 2,
+        "weekday": 5,
+        "periodId": "e2841e5a-fe10-8571-19a8-1b2803049d39",
+        "subjectId": "b7c48c02-14db-02d2-01e3-983cf3db3ab1"
+      },
+      {
+        "id": "transfer-entry-72",
+        "rotationIndex": 2,
+        "weekday": 5,
+        "periodId": "bb7d3148-84b6-5375-5fe5-73339e1ea3f4",
+        "subjectId": "9a391d9b-6663-d727-a2c5-89cfc382e51f"
+      },
+      {
+        "id": "transfer-entry-73",
+        "rotationIndex": 2,
+        "weekday": 5,
+        "periodId": "f386196b-def4-4721-b9b0-1ff854a8fd04",
+        "subjectId": "a19ee8ce-a4e4-f1f7-e49e-3a2420849e38"
+      },
+      {
+        "id": "transfer-entry-74",
+        "rotationIndex": 2,
+        "weekday": 5,
+        "periodId": "f5e48c95-2a3e-7170-a8eb-960787d84d22",
+        "subjectId": "ca886375-0390-acb7-3333-508a9b69d7f3"
+      },
+      {
+        "id": "transfer-entry-75",
+        "rotationIndex": 3,
+        "weekday": 1,
+        "periodId": "33b91ab6-3a53-e0e8-4236-6d61e63baa29",
+        "subjectId": "0dfc0fd1-8f4c-ba8b-1e97-9423422ac4f1"
+      },
+      {
+        "id": "transfer-entry-76",
+        "rotationIndex": 3,
+        "weekday": 1,
+        "periodId": "e2841e5a-fe10-8571-19a8-1b2803049d39",
+        "subjectId": "eb61d5d5-a0b4-6c22-c03e-a0d46dfe88a5"
+      },
+      {
+        "id": "transfer-entry-77",
+        "rotationIndex": 3,
+        "weekday": 1,
+        "periodId": "bb7d3148-84b6-5375-5fe5-73339e1ea3f4",
+        "subjectId": "bc023f01-3ec1-0fea-cf11-285ba817a4fe"
+      },
+      {
+        "id": "transfer-entry-78",
+        "rotationIndex": 3,
+        "weekday": 1,
+        "periodId": "f386196b-def4-4721-b9b0-1ff854a8fd04",
+        "subjectId": "27199e0b-7e2a-2928-4c7a-d6c969126c52"
+      },
+      {
+        "id": "transfer-entry-79",
+        "rotationIndex": 3,
+        "weekday": 1,
+        "periodId": "f5e48c95-2a3e-7170-a8eb-960787d84d22",
+        "subjectId": "a49168b3-f2dc-b881-233d-f6708a2e8102"
+      },
+      {
+        "id": "transfer-entry-80",
+        "rotationIndex": 3,
+        "weekday": 2,
+        "periodId": "33b91ab6-3a53-e0e8-4236-6d61e63baa29",
+        "subjectId": "afdb6377-91eb-5ced-130c-b84f39b790a4"
+      },
+      {
+        "id": "transfer-entry-81",
+        "rotationIndex": 3,
+        "weekday": 2,
+        "periodId": "e2841e5a-fe10-8571-19a8-1b2803049d39",
+        "subjectId": "b7c48c02-14db-02d2-01e3-983cf3db3ab1"
+      },
+      {
+        "id": "transfer-entry-82",
+        "rotationIndex": 3,
+        "weekday": 2,
+        "periodId": "bb7d3148-84b6-5375-5fe5-73339e1ea3f4",
+        "subjectId": "9a391d9b-6663-d727-a2c5-89cfc382e51f"
+      },
+      {
+        "id": "transfer-entry-83",
+        "rotationIndex": 3,
+        "weekday": 2,
+        "periodId": "f386196b-def4-4721-b9b0-1ff854a8fd04",
+        "subjectId": "a19ee8ce-a4e4-f1f7-e49e-3a2420849e38"
+      },
+      {
+        "id": "transfer-entry-84",
+        "rotationIndex": 3,
+        "weekday": 2,
+        "periodId": "f5e48c95-2a3e-7170-a8eb-960787d84d22",
+        "subjectId": "ca886375-0390-acb7-3333-508a9b69d7f3"
+      },
+      {
+        "id": "transfer-entry-85",
+        "rotationIndex": 3,
+        "weekday": 3,
+        "periodId": "33b91ab6-3a53-e0e8-4236-6d61e63baa29",
+        "subjectId": "eb61d5d5-a0b4-6c22-c03e-a0d46dfe88a5"
+      },
+      {
+        "id": "transfer-entry-86",
+        "rotationIndex": 3,
+        "weekday": 3,
+        "periodId": "e2841e5a-fe10-8571-19a8-1b2803049d39",
+        "subjectId": "bc023f01-3ec1-0fea-cf11-285ba817a4fe"
+      },
+      {
+        "id": "transfer-entry-87",
+        "rotationIndex": 3,
+        "weekday": 3,
+        "periodId": "bb7d3148-84b6-5375-5fe5-73339e1ea3f4",
+        "subjectId": "27199e0b-7e2a-2928-4c7a-d6c969126c52"
+      },
+      {
+        "id": "transfer-entry-88",
+        "rotationIndex": 3,
+        "weekday": 3,
+        "periodId": "f386196b-def4-4721-b9b0-1ff854a8fd04",
+        "subjectId": "a49168b3-f2dc-b881-233d-f6708a2e8102"
+      },
+      {
+        "id": "transfer-entry-89",
+        "rotationIndex": 3,
+        "weekday": 3,
+        "periodId": "f5e48c95-2a3e-7170-a8eb-960787d84d22",
+        "subjectId": "0dfc0fd1-8f4c-ba8b-1e97-9423422ac4f1"
+      },
+      {
+        "id": "transfer-entry-90",
+        "rotationIndex": 3,
+        "weekday": 4,
+        "periodId": "33b91ab6-3a53-e0e8-4236-6d61e63baa29",
+        "subjectId": "b7c48c02-14db-02d2-01e3-983cf3db3ab1"
+      },
+      {
+        "id": "transfer-entry-91",
+        "rotationIndex": 3,
+        "weekday": 4,
+        "periodId": "e2841e5a-fe10-8571-19a8-1b2803049d39",
+        "subjectId": "9a391d9b-6663-d727-a2c5-89cfc382e51f"
+      },
+      {
+        "id": "transfer-entry-92",
+        "rotationIndex": 3,
+        "weekday": 4,
+        "periodId": "bb7d3148-84b6-5375-5fe5-73339e1ea3f4",
+        "subjectId": "a19ee8ce-a4e4-f1f7-e49e-3a2420849e38"
+      },
+      {
+        "id": "transfer-entry-93",
+        "rotationIndex": 3,
+        "weekday": 4,
+        "periodId": "f386196b-def4-4721-b9b0-1ff854a8fd04",
+        "subjectId": "ca886375-0390-acb7-3333-508a9b69d7f3"
+      },
+      {
+        "id": "transfer-entry-94",
+        "rotationIndex": 3,
+        "weekday": 4,
+        "periodId": "f5e48c95-2a3e-7170-a8eb-960787d84d22",
+        "subjectId": "afdb6377-91eb-5ced-130c-b84f39b790a4"
+      },
+      {
+        "id": "transfer-entry-95",
+        "rotationIndex": 3,
+        "weekday": 5,
+        "periodId": "33b91ab6-3a53-e0e8-4236-6d61e63baa29",
+        "subjectId": "bc023f01-3ec1-0fea-cf11-285ba817a4fe"
+      },
+      {
+        "id": "transfer-entry-96",
+        "rotationIndex": 3,
+        "weekday": 5,
+        "periodId": "e2841e5a-fe10-8571-19a8-1b2803049d39",
+        "subjectId": "27199e0b-7e2a-2928-4c7a-d6c969126c52"
+      },
+      {
+        "id": "transfer-entry-97",
+        "rotationIndex": 3,
+        "weekday": 5,
+        "periodId": "bb7d3148-84b6-5375-5fe5-73339e1ea3f4",
+        "subjectId": "a49168b3-f2dc-b881-233d-f6708a2e8102"
+      },
+      {
+        "id": "transfer-entry-98",
+        "rotationIndex": 3,
+        "weekday": 5,
+        "periodId": "f386196b-def4-4721-b9b0-1ff854a8fd04",
+        "subjectId": "0dfc0fd1-8f4c-ba8b-1e97-9423422ac4f1"
+      },
+      {
+        "id": "transfer-entry-99",
+        "rotationIndex": 3,
+        "weekday": 5,
+        "periodId": "f5e48c95-2a3e-7170-a8eb-960787d84d22",
+        "subjectId": "eb61d5d5-a0b4-6c22-c03e-a0d46dfe88a5",
+        "notes": "Final lesson of Week D ✓"
+      }
+    ],
+    "setupComplete": true,
+    "setupStep": 6,
+    "createdAt": "2026-09-18T12:00:00.000Z",
+    "updatedAt": "2026-09-18T12:00:00.000Z"
+  }
+}
