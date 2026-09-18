@@ -195,6 +195,67 @@ test("year progress refreshes as lessons end and stays independent of the previe
   ]);
 });
 
+test.describe("automatic teaching week", () => {
+  test.use({ timezoneId: "America/Los_Angeles" });
+
+  test("opens the first unfinished school week, skipping holidays and respecting year boundaries", async ({
+    page,
+  }) => {
+    const timetable = structuredClone(project);
+    timetable.periods.at(-1)!.endTime = "16:00";
+    await seed(page, timetable);
+    await page.goto("./#preview");
+    for (const [now, monday] of [
+      ["2026-08-30T09:00:00Z", "2026-09-07"],
+      ["2026-09-09T09:00:00Z", "2026-09-07"],
+      ["2026-09-11T14:59:59Z", "2026-09-07"],
+      ["2026-09-11T15:00:00Z", "2026-09-14"],
+      ["2026-09-11T16:00:00Z", "2026-09-14"],
+      ["2026-10-23T15:00:00Z", "2026-11-02"],
+      ["2026-10-28T12:00:00Z", "2026-11-02"],
+      ["2027-08-01T12:00:00Z", "2027-07-12"],
+    ]) {
+      await page.clock.setFixedTime(new Date(now));
+      await page.reload();
+      await expect(
+        page.getByRole("combobox", { name: "Preview teaching week" }),
+        now,
+      ).toHaveValue(monday);
+    }
+  });
+
+  test("advances at the end of a partial week and preserves a manually chosen week", async ({
+    page,
+  }) => {
+    const timetable = structuredClone(project);
+    timetable.periods.at(-1)!.endTime = "16:00";
+    timetable.academicYear.exclusions.push({
+      id: "friday-off",
+      name: "Friday off",
+      startDate: "2026-09-11",
+      endDate: "2026-09-11",
+      resetRotationAfter: false,
+    });
+    await seed(page, timetable);
+    await page.clock.install({ time: new Date("2026-09-10T14:00:00Z") });
+    await page.clock.pauseAt(new Date("2026-09-10T14:59:45Z"));
+    await page.goto("./#preview");
+    const week = page.getByRole("combobox", { name: "Preview teaching week" });
+    await expect(week).toHaveValue("2026-09-07");
+    await page.clock.fastForward(30_000);
+    await expect(week).toHaveValue("2026-09-14");
+    await week.selectOption("2026-09-07");
+    await page.getByRole("checkbox", { name: /Include fixed periods/ }).check();
+    await page.clock.fastForward(60_000);
+    await expect(week).toHaveValue("2026-09-07");
+    await page.getByLabel("Jump to a date").fill("2026-09-23");
+    await page.clock.fastForward(60_000);
+    await expect(week).toHaveValue("2026-09-21");
+    await page.reload();
+    await expect(week).toHaveValue("2026-09-14");
+  });
+});
+
 test("unfinished setup can back up, restore and transfer without becoming complete", async ({
   page,
 }) => {

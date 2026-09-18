@@ -49,42 +49,43 @@ const STEPS = [
     name: "School year",
     icon: CalendarDays,
     title: "Let’s start with your school year.",
-    subtitle: "A few details now. A simpler school year ahead.",
+    subtitle: "Set your school dates, school days and time zone.",
   },
   {
     id: "rotation",
     name: "Timetable rotation",
     icon: RotateCcw,
-    title: "Every week has a rhythm.",
-    subtitle: "Set the pattern your school follows.",
+    title: "Set your timetable pattern.",
+    subtitle: "Choose a one- to four-week cycle and its starting week.",
   },
   {
     id: "holidays",
     name: "Holidays & days off",
     icon: Leaf,
     title: "Make room for the days off.",
-    subtitle: "Holidays, inset days, and a well-earned break.",
+    subtitle: "Add holidays, inset days and other dates without lessons.",
   },
   {
     id: "periods",
     name: "Lesson times",
     icon: Clock3,
     title: "A school day, your way.",
-    subtitle: "Build the daily structure for your timetable.",
+    subtitle:
+      "Set the start and end times for lessons, breaks and other periods.",
   },
   {
     id: "subjects",
     name: "Subjects",
     icon: BookOpen,
     title: "Bring your subjects together.",
-    subtitle: "One little library. Every lesson covered.",
+    subtitle: "Add subjects, colours, teachers and rooms for your lessons.",
   },
   {
     id: "timetable",
     name: "Build timetable",
     icon: Grid2X2,
     title: "Your week, taking shape.",
-    subtitle: "Pick a subject. Place it in your week. Make it yours.",
+    subtitle: "Choose a subject, then select the cells where it is taught.",
   },
   {
     id: "preview",
@@ -101,15 +102,14 @@ const EXTRA_PAGES = [
     name: "Export & share",
     title: "Take your timetable with you.",
     subtitle:
-      "Use your calendar, keep a backup, or continue on another device.",
+      "Download a calendar file, back up your settings or copy your timetable to another device.",
     icon: Share2,
   },
   {
     id: "print",
     name: "Print timetable",
-    title: "A timetable worth pinning up.",
-    subtitle:
-      "Make a copy for your wall, your folder, or wherever you need it.",
+    title: "Your timetable, ready to print.",
+    subtitle: "Choose a layout, then print your timetable or save it as a PDF.",
     icon: Printer,
   },
 ] as const;
@@ -352,12 +352,7 @@ export default function App() {
       `${window.location.pathname}${window.location.search}#${destination}`,
     );
   };
-  const title =
-    page === "print"
-      ? "A timetable worth pinning up."
-      : page === "timetable" && p.setupComplete
-        ? p.name
-        : step?.title;
+  const title = page === "timetable" && p.setupComplete ? p.name : step?.title;
   return (
     <div className="app-shell">
       <a className="skip-link" href="#main">
@@ -586,19 +581,8 @@ export default function App() {
         <main id="main" ref={main} tabIndex={-1}>
           <div className="page-heading">
             <div>
-              <span className="eyebrow">
-                {isSetup && stepIndex >= 0
-                  ? `STEP ${String(stepIndex + 1).padStart(2, "0")} OF 07`
-                  : page === "timetable"
-                    ? "A LITTLE STRUCTURE. A LOT LESS STRESS."
-                    : "YOUR SCHOOL YEAR, SIMPLIFIED"}
-              </span>
               <h1>{title}</h1>
-              <p>
-                {page === "print"
-                  ? "Make a copy for your wall, your folder, or wherever you need it."
-                  : step?.subtitle}
-              </p>
+              <p>{step?.subtitle}</p>
             </div>
             {page === "timetable" && (
               <div className="page-actions">

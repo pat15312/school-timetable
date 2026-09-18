@@ -1,32 +1,12 @@
-import { useEffect, useState } from "react";
-import type { TimetableProject } from "../domain/model";
-import type { Occurrence } from "../domain/occurrences";
-import type { TeachingWeek } from "../domain/rotation";
-import { getYearProgress } from "../domain/progress";
+import type { getYearProgress } from "../domain/progress";
 
 export function YearProgress({
-  project,
-  lessons,
-  weeks,
+  progress,
+  timezone,
 }: {
-  project: TimetableProject;
-  lessons: Occurrence[];
-  weeks: TeachingWeek[];
+  progress: NonNullable<ReturnType<typeof getYearProgress>>;
+  timezone: string;
 }) {
-  const [now, setNow] = useState(() => new Date());
-  useEffect(() => {
-    const refresh = () => setNow(new Date());
-    const timer = window.setInterval(refresh, 30_000);
-    window.addEventListener("focus", refresh);
-    document.addEventListener("visibilitychange", refresh);
-    return () => {
-      window.clearInterval(timer);
-      window.removeEventListener("focus", refresh);
-      document.removeEventListener("visibilitychange", refresh);
-    };
-  }, []);
-  const progress = getYearProgress(project, lessons, weeks, now);
-  if (!progress) return null;
   return (
     <section
       className="panel year-progress"
@@ -63,8 +43,7 @@ export function YearProgress({
         ))}
       </div>
       <p className="muted small">
-        Based on scheduled lesson and school-day end times in{" "}
-        {project.academicYear.timezone}.
+        Based on scheduled lesson and school-day end times in {timezone}.
       </p>
     </section>
   );

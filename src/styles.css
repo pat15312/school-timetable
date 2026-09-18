@@ -627,14 +627,6 @@
     gap: 24px;
     margin-bottom: var(--section-gap);
   }
-  .eyebrow {
-    display: block;
-    font-size: 9px;
-    font-weight: 650;
-    letter-spacing: 1.8px;
-    color: var(--muted);
-    margin-bottom: 11px;
-  }
   .page-heading p {
     color: var(--muted);
     font-size: 12px;
@@ -851,11 +843,6 @@
     border-radius: var(--radius);
     padding: 31px 27px 0;
     overflow: hidden;
-  }
-  .intro-card .eyebrow {
-    font-size: 8px;
-    letter-spacing: 1.2px;
-    margin-bottom: 17px;
   }
   .intro-card h2 {
     font-size: 30px;
@@ -2525,10 +2512,6 @@
     }
     .page-heading p {
       font-size: 12px;
-    }
-    .eyebrow {
-      font-size: 8px;
-      letter-spacing: 1.4px;
     }
     .setup-progress {
       max-width: none;

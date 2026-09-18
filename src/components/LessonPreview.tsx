@@ -3,7 +3,9 @@ import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import type { TimetableProject } from "../domain/model";
 import { formatDate, mondayOf, validDate } from "../domain/dates";
 import { getRotationLabel } from "../domain/rotation";
+import { getYearProgress } from "../domain/progress";
 import { useCalendar } from "../hooks/useCalendar";
+import { useNow } from "../hooks/useNow";
 import { CalendarOptions } from "./CalendarOptions";
 import { YearProgress } from "./YearProgress";
 import { Field, Notice } from "./ui";
@@ -22,23 +24,25 @@ export function LessonPreview({
   navigate: (page: string) => void;
 }) {
   const [selectedMonday, setSelectedMonday] = useState("");
+  const now = useNow();
   const { validation, occurrences, lessons, weeks } = useCalendar(
     p,
     includeFixedPeriods,
   );
-  const index = Math.max(
+  const progress = getYearProgress(p, lessons, weeks, now);
+  // Weeks are chronological: the completed count locates the next unfinished week.
+  const defaultIndex = Math.max(
     0,
-    weeks.findIndex((w) => w.startDate === selectedMonday),
+    Math.min(progress?.weeks.completed ?? 0, weeks.length - 1),
   );
+  const selectedIndex = weeks.findIndex((w) => w.startDate === selectedMonday);
+  const index = selectedIndex >= 0 ? selectedIndex : defaultIndex;
   const week = weeks[index];
   const events = occurrences.filter((e) => week?.dates.includes(e.date));
   return (
     <div className="lesson-preview-page page-stack">
-      <p className="muted">
-        For <strong>{p.name || "Untitled timetable"}</strong>
-      </p>
-      {!validation.errors.length && (
-        <YearProgress project={p} lessons={lessons} weeks={weeks} />
+      {!validation.errors.length && progress && (
+        <YearProgress progress={progress} timezone={p.academicYear.timezone} />
       )}
       {validation.errors.length > 0 && (
         <Notice>
@@ -53,7 +57,7 @@ export function LessonPreview({
           <div>
             <h2>A look at your lessons</h2>
             <p className="muted small">
-              Check any teaching week before you export.
+              Browse your lessons by week or jump to a date.
             </p>
           </div>
         </div>

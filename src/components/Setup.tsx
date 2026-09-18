@@ -136,31 +136,28 @@ export function SchoolYear({
       {isNew && (
         <aside className="setup-aside">
           <div className="intro-card">
-            <span className="eyebrow">
-              A little setup. A whole year sorted.
-            </span>
             <h2>
               Your school week,
               <br />
               <em>in your calendar.</em>
             </h2>
             <p>
-              Set up once. We'll take care of the weeks, holidays, and every
-              lesson in between.
+              Build your timetable, check lessons on actual dates, then export
+              them to your calendar app.
             </p>
             <ol className="benefits">
               <li>
                 <span>01</span>
                 <div>
-                  <strong>Make it yours</strong>
+                  <strong>Set up your school year</strong>
                   <small>Your subjects, lesson times, and school days.</small>
                 </div>
               </li>
               <li>
                 <span>02</span>
                 <div>
-                  <strong>Fill your week in minutes</strong>
-                  <small>Pick a subject. Tap to place it. Done.</small>
+                  <strong>Add your lessons</strong>
+                  <small>Pick a subject and select its timetable cells.</small>
                 </div>
               </li>
               <li>
@@ -173,7 +170,7 @@ export function SchoolYear({
             </ol>
             <div className="privacy-line">
               <ShieldCheck size={18} />
-              <span>Private by design. Saved on your device.</span>
+              <span>Your timetable is saved on this device.</span>
             </div>
           </div>
           {isNew && (
@@ -195,7 +192,7 @@ export function Rotation({ project: p, update }: SettingsProps) {
   return (
     <div className="settings-page">
       <section className="panel">
-        <h2>Your timetable rhythm</h2>
+        <h2>Your repeating weeks</h2>
         <fieldset className="field">
           <legend>How many weeks are in your timetable rotation?</legend>
           <div className="choice-grid">
@@ -762,7 +759,7 @@ export function Periods({ project: p, update }: SettingsProps) {
       {!periods.length ? (
         <div className="panel">
           <EmptyState
-            title="Every school day has its rhythm"
+            title="Add your lesson times"
             action="Use a standard school day"
             onAction={() => {
               setError("");

@@ -60,6 +60,8 @@ Reducing the cycle length or hiding a school day preserves its entries so they r
 
 **Lesson preview** shows lessons on actual dates: choose a teaching week, move backwards/forwards, or jump to a date. Holidays, disabled school days and empty timetable cells are excluded.
 
+The preview opens on the current teaching week until the last period on its final school day ends, then moves to the next teaching week. Holiday-only weeks are skipped. Before the year starts it shows the first week; after the year ends it shows the last. This follows the school's time zone and updates while the page is open. If you choose a week or jump to a date, your selection stays put until you leave or reload the page.
+
 The **Your year so far** summary shows total lessons and teaching weeks, completed counts, and the percentage done. A lesson counts as completed once its scheduled end time passes. A teaching week counts once the final period on its last school day ends; holiday-only weeks are excluded and partial weeks count as one teaching week. Progress uses the current time in the school's time zone, refreshes while the page is open, and stays the same when you browse another week. These are scheduled progress estimates, so they do not track attendance or cancellations that are not entered as days off.
 
 **Include fixed periods** also includes activities whose categories have **Allow subjects** switched off. This choice is shared between **Lesson preview** and **Export & share** while the app is open, so the preview matches the calendar file. It defaults to off when you reopen the app. Fixed periods do not increase the lesson total or its completion percentage.

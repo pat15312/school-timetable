@@ -106,9 +106,6 @@ export function ExportShare({
 
   return (
     <div className="export-share-page page-stack">
-      <p className="muted">
-        For <strong>{p.name || "Untitled timetable"}</strong>
-      </p>
       <section className="panel export-card">
         <div className="section-heading">
           <div>
