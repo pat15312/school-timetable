@@ -3,7 +3,6 @@ import {
   ArrowLeft,
   ArrowRight,
   BookOpen,
-  CalendarCheck2,
   CalendarDays,
   Check,
   CheckCircle2,
@@ -37,7 +36,6 @@ import {
   Subjects,
 } from "./components/Setup";
 import { Timetable } from "./components/Timetable";
-import { CalendarOverview } from "./components/CalendarOverview";
 import { LessonPreview } from "./components/LessonPreview";
 import { ExportShare } from "./components/ExportShare";
 import { PrintView } from "./components/PrintView";
@@ -89,15 +87,6 @@ const STEPS = [
     subtitle: "Pick a subject. Place it in your week. Make it yours.",
   },
   {
-    id: "overview",
-    name: "Calendar overview",
-    icon: CalendarCheck2,
-    title: "Your school year, sorted.",
-    subtitle: "See how your timetable fits across the school year.",
-  },
-] as const;
-const EXTRA_PAGES = [
-  {
     id: "preview",
     name: "Lesson preview",
     title: "Your lessons, on real dates.",
@@ -105,6 +94,8 @@ const EXTRA_PAGES = [
       "Check any teaching week, with holidays and days off taken into account.",
     icon: CalendarDays,
   },
+] as const;
+const EXTRA_PAGES = [
   {
     id: "export",
     name: "Export & share",
@@ -126,8 +117,9 @@ const validPages: string[] = [
   ...STEPS.map((step) => step.id),
   ...EXTRA_PAGES.map((page) => page.id),
 ];
-// Old bookmarks and saved setup steps still lead to the calendar overview.
-const resolvePage = (page: string) => (page === "review" ? "overview" : page);
+// Keep old bookmarks useful; the final saved setup-step index remains 6.
+const resolvePage = (page: string) =>
+  page === "review" || page === "overview" ? "preview" : page;
 type InstallPrompt = Event & {
   prompt: () => Promise<void>;
   userChoice: Promise<{ outcome: string }>;
@@ -182,7 +174,7 @@ export default function App() {
     if (
       trackSetup &&
       !p.setupComplete &&
-      next === "overview" &&
+      next === "preview" &&
       !validateProject(p).errors.length
     )
       update((p) => ({ ...p, setupComplete: true }));
@@ -494,11 +486,7 @@ export default function App() {
             <span className="nav-heading">YOUR TIMETABLE</span>
             {[
               { id: "timetable", name: "My timetable", icon: Grid2X2 },
-              {
-                id: "overview",
-                name: "Calendar overview",
-                icon: CalendarCheck2,
-              },
+              STEPS[6],
               ...EXTRA_PAGES,
             ].map((item) => (
               <button
@@ -731,9 +719,6 @@ export default function App() {
               navigate={navigate}
             />
           )}
-          {page === "overview" && (
-            <CalendarOverview project={p} navigate={navigate} />
-          )}
           {page === "preview" && (
             <LessonPreview
               project={p}
@@ -767,7 +752,7 @@ export default function App() {
               </button>
               <span>You can change these details anytime.</span>
               <button className="button primary" onClick={next}>
-                {page === "timetable" ? "Finish & view overview" : "Continue"}
+                {page === "timetable" ? "Finish & preview lessons" : "Continue"}
                 <ArrowRight size={17} />
               </button>
             </footer>
@@ -784,9 +769,6 @@ export default function App() {
             </div>
           )}
           <footer className="app-footer">
-            <span>
-              {BRAND.name} <i>·</i> A calmer school week.
-            </span>
             <button
               onClick={() => {
                 if (installPrompt)

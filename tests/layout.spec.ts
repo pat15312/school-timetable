@@ -164,8 +164,7 @@ test("pages share content edges and export stays in the main flow across screen 
     ["Subjects", ".subject-cards"],
     ["My timetable", ".editor-heading"],
     ["Print timetable", ".print-controls"],
-    ["Calendar overview", ".review-summary"],
-    ["Lesson preview", ".calendar-preview"],
+    ["Lesson preview", ".year-progress"],
     ["Export & share", ".export-card"],
   ];
   for (const [index, width] of (mobile ? [320, 768] : [1280, 1920]).entries()) {

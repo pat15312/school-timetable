@@ -12,7 +12,7 @@ New timetables start empty. **Try a sample** loads an editable example; check al
 4. **Lesson times:** enter the periods in your school day, including lessons and fixed activities such as registration and lunch.
 5. **Subjects:** add names, colours, teachers and rooms.
 6. **Build timetable:** select a subject and tap its cells.
-7. **Calendar overview:** finishing setup opens your lesson totals, teaching weeks, rotation and first/last lessons. **Lesson preview** and **Export & share** are optional next steps. **Print timetable** opens the paper preview.
+7. **Lesson preview:** finishing setup opens lessons on actual dates, with totals and progress for the year's lessons and teaching weeks. **Export & share** provides calendar downloads, backups and device transfers. **Print timetable** opens the paper preview.
 
 **Export & share** is also available during setup so you can back up or transfer an unfinished timetable.
 
@@ -58,11 +58,15 @@ Reducing the cycle length or hiding a school day preserves its entries so they r
 
 ## Export and share your calendar
 
-Use **Calendar overview** to review lesson totals and any setup issues. **Lesson preview** shows lessons on actual dates: choose a teaching week, move backwards/forwards, or jump to a date. Holidays, disabled school days and empty timetable cells are excluded.
+**Lesson preview** shows lessons on actual dates: choose a teaching week, move backwards/forwards, or jump to a date. Holidays, disabled school days and empty timetable cells are excluded.
 
-**Include fixed periods** also includes activities whose categories have **Allow subjects** switched off. This choice is shared between **Lesson preview** and **Export & share** while the app is open, so the preview matches the calendar file. It defaults to off when you reopen the app.
+The **Your year so far** summary shows total lessons and teaching weeks, completed counts, and the percentage done. A lesson counts as completed once its scheduled end time passes. A teaching week counts once the final period on its last school day ends; holiday-only weeks are excluded and partial weeks count as one teaching week. Progress uses the current time in the school's time zone, refreshes while the page is open, and stays the same when you browse another week. These are scheduled progress estimates, so they do not track attendance or cancellations that are not entered as days off.
+
+**Include fixed periods** also includes activities whose categories have **Allow subjects** switched off. This choice is shared between **Lesson preview** and **Export & share** while the app is open, so the preview matches the calendar file. It defaults to off when you reopen the app. Fixed periods do not increase the lesson total or its completion percentage.
 
 In **Export & share → Add to your calendar app**, choose **Download calendar**. Calendar export becomes available once the timetable is valid and has lessons on actual school days. The calendar-import instructions are expandable beneath the download controls.
+
+If calendar export is disabled, the page lists the setup issues with links to fix them. You need valid school dates, a school time zone, school days, lesson times, named subjects and at least one scheduled lesson on an actual school day. You do not need to fill every timetable cell, and warnings do not block export. Backups and device transfers remain available while you are setting up.
 
 Open `.ics` files with Apple Calendar or Outlook, or use Google Calendar's desktop **Settings → Import & export**. Where file sharing is supported, **Share calendar** opens the device's sharing menu to send the `.ics` file through another app. If the browser blocks sharing, **Download to share** saves the file so you can attach it yourself. Cancelling the sharing menu does not download anything.
 

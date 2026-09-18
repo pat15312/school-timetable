@@ -112,17 +112,18 @@ test("generated QR transfers every fixture field to a separate device and reflec
   expect(await decodeTransfer(new URL(updated).hash)).toEqual(edited);
 });
 
-test("overview, dated preview and export stay separate and share the fixed-period choice", async ({
+test("legacy overview links open the dated preview and export shares the fixed-period choice", async ({
   page,
 }) => {
+  await page.clock.setFixedTime(new Date("2026-09-18T16:00:00Z"));
   await seed(page);
   await page.goto("./#review"); // Existing bookmarks remain useful.
-  await expect(page.locator(".review-summary")).toBeVisible();
-  await expect(page.locator(".calendar-preview, .export-card")).toHaveCount(0);
-  await page
-    .getByRole("button", { name: "Preview lessons", exact: true })
-    .click();
-  await expect(page.locator(".review-summary, .export-card")).toHaveCount(0);
+  await expect(page.locator(".year-progress")).toBeVisible();
+  await expect(page.locator(".calendar-preview")).toBeVisible();
+  await expect(page.locator(".export-card")).toHaveCount(0);
+  await page.goto("./#overview");
+  await expect(page.locator(".year-progress")).toBeVisible();
+  const totals = await page.locator(".year-progress").innerText();
   await expect(
     page.locator(".preview-event").filter({ hasText: "Tutor time" }),
   ).toHaveCount(0);
@@ -130,8 +131,11 @@ test("overview, dated preview and export stay separate and share the fixed-perio
   await expect(
     page.locator(".preview-event").filter({ hasText: "Tutor time" }).first(),
   ).toBeVisible();
+  await expect(page.locator(".year-progress")).toHaveText(totals, {
+    useInnerText: true,
+  });
   await go(page, "Export & share");
-  await expect(page.locator(".review-summary, .calendar-preview")).toHaveCount(
+  await expect(page.locator(".year-progress, .calendar-preview")).toHaveCount(
     0,
   );
   await expect(
@@ -160,6 +164,37 @@ test("overview, dated preview and export stay separate and share the fixed-perio
   await expect(page.locator(".calendar-preview")).toBeVisible();
 });
 
+test("year progress refreshes as lessons end and stays independent of the previewed week", async ({
+  page,
+}) => {
+  await page.clock.install({ time: new Date("2026-09-07T08:00:00Z") });
+  await page.clock.pauseAt(new Date("2026-09-07T08:44:45Z"));
+  await seed(page);
+  await page.goto("./#preview");
+  const lessons = page.getByRole("progressbar", {
+    name: "Lessons completed",
+    exact: true,
+  });
+  const weeks = page.getByRole("progressbar", {
+    name: "Teaching weeks completed",
+    exact: true,
+  });
+  await expect(lessons).toHaveAttribute("max", "970");
+  await expect(lessons).toHaveAttribute("value", "0");
+  await expect(weeks).toHaveAttribute("value", "0");
+  await page.clock.fastForward(30_000);
+  await expect(lessons).toHaveAttribute("value", "1");
+  await page.getByRole("button", { name: "Next teaching week" }).click();
+  await expect(lessons).toHaveAttribute("value", "1");
+  await page.clock.setFixedTime(new Date("2027-07-16T14:00:00Z"));
+  await page.clock.fastForward(30_000);
+  await expect(lessons).toHaveAttribute("value", "970");
+  await expect(page.locator(".year-progress-total b")).toHaveText([
+    "100% done!",
+    "100% done!",
+  ]);
+});
+
 test("unfinished setup can back up, restore and transfer without becoming complete", async ({
   page,
 }) => {
@@ -172,6 +207,14 @@ test("unfinished setup can back up, restore and transfer without becoming comple
   await expect(
     page.getByRole("button", { name: "Download calendar", exact: true }),
   ).toBeDisabled();
+  await expect(
+    page.getByRole("alert").filter({
+      hasText: "A few things to finish before calendar export",
+    }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Check school year" }).first(),
+  ).toBeVisible();
   expect(await backup(page)).toEqual(draft);
   const received = await decodeTransfer(new URL(await scan(page)).hash);
   expect(received).toEqual(draft);
@@ -273,6 +316,47 @@ test("a browser without compression can still export and back up", async ({
     page.getByRole("button", { name: "Download calendar", exact: true }),
   ).toBeEnabled();
   expect(await backup(page)).toEqual(project);
+});
+
+test("calendar export explains an empty school year and keeps backups available", async ({
+  page,
+}) => {
+  const emptyYear = structuredClone(project);
+  emptyYear.academicYear.exclusions = [
+    {
+      id: "whole-year",
+      name: "All days off",
+      startDate: emptyYear.academicYear.startDate,
+      endDate: emptyYear.academicYear.endDate,
+      resetRotationAfter: false,
+    },
+  ];
+  await seed(page, emptyYear);
+  await page.goto("./#export");
+  await expect(
+    page.getByRole("button", { name: "Download calendar", exact: true }),
+  ).toBeDisabled();
+  await expect(
+    page.getByText(/No lessons fall on actual school days/),
+  ).toBeVisible();
+  expect(await backup(page)).toEqual(emptyYear);
+  await page.getByRole("button", { name: "Check school dates" }).click();
+  await expect(page).toHaveURL(/#year$/);
+});
+
+test("calendar warnings link to the relevant settings without blocking export", async ({
+  page,
+}) => {
+  const overlapping = structuredClone(project);
+  overlapping.periods[0].endTime = "09:00";
+  await seed(page, overlapping);
+  await page.goto("./#export");
+  await expect(page.getByText(/Some periods overlap/)).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Download calendar", exact: true }),
+  ).toBeEnabled();
+  await page.getByRole("button", { name: "Check lesson times" }).click();
+  await expect(page).toHaveURL(/#periods$/);
 });
 
 test("QR generation works offline after the app is cached", async ({

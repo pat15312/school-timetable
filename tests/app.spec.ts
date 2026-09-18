@@ -111,16 +111,13 @@ test("complete setup, holiday-aware review, both print layouts, and ICS download
     .click();
   await page
     .getByRole("button", {
-      name: "Finish & view overview",
+      name: "Finish & preview lessons",
       exact: true,
     })
     .click();
   await expect(
-    page.getByText("Ready to export", { exact: true }),
+    page.getByRole("heading", { name: "Your year so far" }),
   ).toBeVisible();
-  await page
-    .getByRole("button", { name: "Preview lessons", exact: true })
-    .click();
   await page.getByLabel("Jump to a date").fill("2026-11-02");
   await expect(page.locator(".preview-week-label")).toContainText("Week 2");
   await expect(page.locator('[data-date="2026-11-02"]')).toContainText(

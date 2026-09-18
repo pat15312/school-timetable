@@ -1785,92 +1785,64 @@
     color: var(--muted);
     margin-top: 2px;
   }
-  .review-summary {
-    margin-bottom: var(--section-gap);
+  .year-progress h2 {
+    font-size: 16px;
+    margin-bottom: 16px;
   }
-  .review-summary-title {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    border-bottom: 1px solid var(--line);
-    padding-bottom: 22px;
-  }
-  .summary-icon {
-    width: 52px;
-    height: 52px;
+  .year-progress-stats {
     display: grid;
-    place-items: center;
-    background: var(--accent-soft);
-    color: var(--primary);
-    border-radius: 12px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
   }
-  .review-summary-title > div {
-    flex: 1;
+  .year-progress-stat {
     min-width: 0;
   }
-  .review-summary-title .eyebrow {
-    margin: 0 0 5px;
-    font-size: 8px;
-  }
-  .review-summary-title h2 {
-    overflow-wrap: anywhere;
-  }
-  .review-summary-title p {
-    font-size: 11px;
-    color: var(--muted);
-    margin-top: 5px;
-  }
-  .review-stats {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    padding: 24px 0;
-    gap: 15px;
-  }
-  .review-stats > div {
+  .year-progress-total {
     display: flex;
-    flex-direction: column;
-    border-right: 1px solid var(--line);
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+    font-size: 12px;
   }
-  .review-stats > div:last-child {
-    border: 0;
-  }
-  .review-stats strong {
-    font-size: 30px;
-    letter-spacing: -0.7px;
-    font-weight: 540;
-    line-height: 1.3;
-  }
-  .review-stats strong small {
-    font-size: 13px;
-  }
-  .review-stats span {
-    font-size: 10px;
-    color: var(--muted);
-    margin-top: 7px;
-  }
-  .first-last {
-    border-top: 1px solid var(--line);
-    display: flex;
-    gap: 45px;
-    padding-top: 20px;
-  }
-  .first-last div {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-  }
-  .first-last span {
-    color: var(--muted);
-    font-size: 8px;
-    letter-spacing: 1px;
-  }
-  .first-last strong {
-    font-size: 11px;
+  .year-progress-total strong {
+    font-size: 28px;
     font-weight: 550;
+    letter-spacing: -0.7px;
   }
-  .first-last small {
-    font-size: 10px;
-    color: var(--muted);
+  .year-progress-total b {
+    color: var(--primary);
+    font-weight: 600;
+  }
+  .year-progress progress {
+    display: block;
+    appearance: none;
+    width: 100%;
+    height: 8px;
+    margin: 10px 0;
+    border: 0;
+    border-radius: 4px;
+    overflow: hidden;
+    background: var(--accent-soft);
+    color: var(--primary);
+    accent-color: var(--primary);
+  }
+  .year-progress progress::-webkit-progress-bar {
+    background: var(--accent-soft);
+  }
+  .year-progress progress::-webkit-progress-value {
+    background: var(--primary);
+    border-radius: 4px;
+  }
+  .year-progress progress::-moz-progress-bar {
+    background: var(--primary);
+    border-radius: 4px;
+  }
+  .year-progress-stat p {
+    margin: 0;
+  }
+  .year-progress > p {
+    margin: 16px 0 0;
   }
   .page-stack {
     display: grid;
@@ -1892,9 +1864,6 @@
   .backup-card > p,
   .transfer-card > p {
     margin: 16px 0 0;
-  }
-  .export-card > .notice {
-    margin-top: 20px;
   }
   .export-options .notice {
     margin-top: 16px;
@@ -2052,6 +2021,9 @@
   }
   .export-card .notice {
     margin: 0;
+  }
+  .export-card > .notice {
+    margin: 20px 0;
   }
   .export-share-help {
     font-size: 12px;
@@ -2228,15 +2200,11 @@
   .app-footer {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-end;
     padding: 29px 0 21px;
     color: var(--muted);
     font-size: 9px;
     gap: 10px;
-  }
-  .app-footer i {
-    font-style: normal;
-    margin: 0 5px;
   }
   .app-footer button {
     display: flex;
@@ -2933,42 +2901,9 @@
       flex-direction: column;
       gap: 0;
     }
-    .review-summary-title {
-      gap: 10px;
-      position: relative;
-      flex-wrap: wrap;
-    }
-    .review-summary-title > div {
-      min-width: 200px;
-    }
-    .review-summary-title h2 {
-      font-size: 18px;
-    }
-    .summary-icon {
-      width: 42px;
-      height: 42px;
-    }
-    .review-stats {
-      grid-template-columns: 1fr 1fr;
-      row-gap: 22px;
-    }
-    .review-stats > div:nth-child(2) {
-      border: 0;
-    }
-    .review-stats strong {
-      font-size: 28px;
-    }
-    .review-stats span {
-      font-size: 10px;
-    }
-    .first-last {
+    .year-progress-stats {
+      grid-template-columns: 1fr;
       gap: 20px;
-    }
-    .first-last strong {
-      font-size: 10px;
-    }
-    .first-last span {
-      font-size: 7px;
     }
     .preview-event strong {
       font-size: 13px;

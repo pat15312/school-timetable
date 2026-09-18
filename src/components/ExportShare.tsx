@@ -4,6 +4,7 @@ import type { TimetableProject } from "../domain/model";
 import { buildCalendar, safeFilename } from "../domain/calendar";
 import { useCalendar } from "../hooks/useCalendar";
 import { CalendarOptions } from "./CalendarOptions";
+import { CalendarStatus } from "./CalendarStatus";
 import { DeviceTransfer } from "./DeviceTransfer";
 import { downloadFile, Notice } from "./ui";
 
@@ -28,7 +29,7 @@ export function ExportShare({
   const [exportError, setExportError] = useState("");
   const [sharing, setSharing] = useState(false);
   const [shareUnavailable, setShareUnavailable] = useState(false);
-  const { validation, occurrences, valid } = useCalendar(
+  const { validation, occurrences, lessons, valid } = useCalendar(
     p,
     includeFixedPeriods,
   );
@@ -119,18 +120,12 @@ export function ExportShare({
           </div>
           <Download size={20} className="muted" />
         </div>
-        {validation.warnings.length > 0 && (
-          <Notice>
-            There are some timetable details to check.{" "}
-            <button
-              className="inline-link"
-              onClick={() => navigate("overview")}
-            >
-              Review calendar overview
-            </button>{" "}
-            before exporting.
-          </Notice>
-        )}
+        <CalendarStatus
+          project={p}
+          validation={validation}
+          hasLessons={!!lessons.length}
+          navigate={navigate}
+        />
         <div className="export-options">
           <div>
             <CalendarOptions
@@ -140,17 +135,6 @@ export function ExportShare({
                 setExported(false);
               }}
             />
-            {!valid && (
-              <Notice>
-                Finish your timetable before exporting a calendar.{" "}
-                <button
-                  className="inline-link"
-                  onClick={() => navigate("overview")}
-                >
-                  Check calendar overview
-                </button>
-              </Notice>
-            )}
           </div>
           <div className="export-actions">
             <div className="page-actions">
@@ -236,7 +220,7 @@ export function ExportShare({
           <div>
             <h2>Back up or restore</h2>
             <p className="muted">
-              Save a backup of your entire SchoolCal configuration
+              Save a backup of your entire SchoolCal configuration.
             </p>
           </div>
           <ShieldCheck size={20} className="muted" />

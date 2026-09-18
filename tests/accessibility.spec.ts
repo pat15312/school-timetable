@@ -36,7 +36,6 @@ for (const colourScheme of ["light", "dark"] as const) {
       "Holidays & days off",
       "Lesson times",
       "Subjects",
-      "Calendar overview",
       "Lesson preview",
       "Export & share",
     ]) {

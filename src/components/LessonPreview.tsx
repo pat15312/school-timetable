@@ -5,6 +5,7 @@ import { formatDate, mondayOf, validDate } from "../domain/dates";
 import { getRotationLabel } from "../domain/rotation";
 import { useCalendar } from "../hooks/useCalendar";
 import { CalendarOptions } from "./CalendarOptions";
+import { YearProgress } from "./YearProgress";
 import { Field, Notice } from "./ui";
 
 export function LessonPreview({
@@ -21,7 +22,7 @@ export function LessonPreview({
   navigate: (page: string) => void;
 }) {
   const [selectedMonday, setSelectedMonday] = useState("");
-  const { validation, occurrences, weeks } = useCalendar(
+  const { validation, occurrences, lessons, weeks } = useCalendar(
     p,
     includeFixedPeriods,
   );
@@ -36,11 +37,14 @@ export function LessonPreview({
       <p className="muted">
         For <strong>{p.name || "Untitled timetable"}</strong>
       </p>
+      {!validation.errors.length && (
+        <YearProgress project={p} lessons={lessons} weeks={weeks} />
+      )}
       {validation.errors.length > 0 && (
         <Notice>
           Finish setting up your timetable to see your lessons on actual dates.{" "}
-          <button className="inline-link" onClick={() => navigate("overview")}>
-            Check calendar overview
+          <button className="inline-link" onClick={() => navigate("export")}>
+            Check setup issues
           </button>
         </Notice>
       )}

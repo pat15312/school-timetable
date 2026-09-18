@@ -22,7 +22,7 @@ Use it in your browser on desktop or mobile. No account or installation needed.
 
 1. [Open the app](https://pat15312.github.io/school-timetable/) and follow the setup steps, or choose **Try a sample** to explore.
 2. Add your subjects and place them in the timetable.
-3. Check **Calendar overview** for statistics and **Lesson preview** for lessons on real dates.
+3. Open **Lesson preview** for lessons on real dates and a progress summary of your year's lessons and teaching weeks.
 4. Open **Export & share** to download a calendar, save or restore a backup, or copy your timetable to another device using a transfer link or QR code. **Print timetable** gives you a paper copy.
 
 ## Your timetable stays on your device
