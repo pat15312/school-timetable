@@ -70,15 +70,20 @@ Calendar imports are snapshots: later edits in SchoolCal do not update an import
 
 Lesson times follow the school time zone, including daylight-saving changes. Check the time zone in **School year** if the preview looks wrong.
 
-## Copy on another device
+## Copy to another device
 
-Open **Export & share → Copy on another device → Show QR code**. On your other device, scan the code with its camera and open the link in SchoolCal. Review the timetable summary, then choose **Use this timetable**. SchoolCal asks before replacing the timetable already on that device and offers a backup of it first.
+Open **Export & share → Copy to another device** and choose either option:
 
-The code contains the editable configuration, including subjects, times, holidays, lesson overrides and notes. Drafts resume at their saved setup step. Your devices do not need to share a network; the receiving device needs to be able to open SchoolCal. Nothing needs to be uploaded to create the code. The QR code and link contain your timetable, so share them only with someone you want to have a copy.
+- **Copy transfer link:** send the copied link to your other device and open it in SchoolCal. If automatic copying is unavailable, SchoolCal shows a selectable link.
+- **Show QR code:** scan the code with your other device’s camera and open the link in SchoolCal.
 
-This is a copy at the time you share it. Later changes do not synchronise. Open **Show QR code** again after editing to transfer the updated version.
+With either option, review the timetable summary, then choose **Use this timetable**. SchoolCal asks before replacing the timetable already on that device and offers a backup of it first.
 
-Some timetables are too large for a single QR code. **Copy transfer link** offers the same editable transfer as a link. If automatic copying is unavailable, SchoolCal shows a selectable link. For configurations too large for a link, download a JSON backup and import it on the other device.
+Both options contain the editable configuration, including subjects, times, holidays, lesson overrides and notes. Drafts resume at their saved setup step. Your devices do not need to share a network; the receiving device needs to be able to open SchoolCal. Nothing needs to be uploaded to create the link or code. Share them only with someone you want to have a copy.
+
+This is a copy at the time you share it. Later changes do not synchronise. Choose **Copy transfer link** or **Show QR code** again after editing to transfer the updated version.
+
+Some timetables are too large for a single QR code, but can still be copied using a transfer link. For configurations too large for a link, download a JSON backup and import it on the other device.
 
 ## Print or save a PDF
 

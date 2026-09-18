@@ -236,8 +236,7 @@ export function ExportShare({
           <div>
             <h2>Back up or restore</h2>
             <p className="muted">
-              Save an editable copy of all your settings and lessons, even while
-              you’re still setting up.
+              Save a backup of your entire SchoolCal configuration
             </p>
           </div>
           <ShieldCheck size={20} className="muted" />
@@ -257,10 +256,6 @@ export function ExportShare({
           timetable on this device.
         </p>
       </section>
-      <div className="privacy-line">
-        <ShieldCheck size={17} />
-        <span>Files and QR codes are created entirely on your device.</span>
-      </div>
     </div>
   );
 }

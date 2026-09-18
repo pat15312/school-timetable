@@ -111,11 +111,11 @@ export function DeviceTransfer({
     <section className="panel transfer-card">
       <div className="section-heading">
         <div>
-          <h2>Copy on another device</h2>
+          <h2>Copy to another device</h2>
           <p className="muted">
-            Take your editable timetable and settings with you. Scan a QR code
-            with your other device’s camera, then confirm the import in
-            SchoolCal.
+            Copy a transfer link to send to your other device, or scan a QR code
+            with its camera. Both options copy your timetable and settings so
+            you can continue editing in SchoolCal.
           </p>
         </div>
         <QrCode size={20} className="muted" />
@@ -123,19 +123,19 @@ export function DeviceTransfer({
       <div className="page-actions">
         <button
           className="button secondary"
-          disabled={!url || tooLarge}
-          onClick={() => setDialog("qr")}
-        >
-          <QrCode size={16} />
-          Show QR code
-        </button>
-        <button
-          className="button secondary"
           disabled={!url}
           onClick={() => void copyLink()}
         >
           <Copy size={16} />
           Copy transfer link
+        </button>
+        <button
+          className="button secondary"
+          disabled={!url || tooLarge}
+          onClick={() => setDialog("qr")}
+        >
+          <QrCode size={16} />
+          Show QR code
         </button>
       </div>
       {!current && (
