@@ -36,7 +36,9 @@ for (const colourScheme of ["light", "dark"] as const) {
       "Holidays & days off",
       "Lesson times",
       "Subjects",
-      "Calendar & export",
+      "Calendar overview",
+      "Lesson preview",
+      "Export & share",
     ]) {
       if (
         await page.getByRole("button", { name: "Open navigation" }).isVisible()
@@ -47,6 +49,14 @@ for (const colourScheme of ["light", "dark"] as const) {
         .getByRole("button", { name, exact: true })
         .click();
       await check(name);
+      if (name === "Export & share") {
+        await page.getByRole("button", { name: "Show QR code" }).click();
+        await expect(
+          page.getByRole("img", { name: /Scan to open/ }),
+        ).toBeVisible();
+        await check("Transfer QR code");
+        await page.getByRole("button", { name: "Close dialog" }).click();
+      }
     }
   });
 }

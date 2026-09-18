@@ -16,7 +16,10 @@ async function backup(page: Page) {
   const downloading = page.waitForEvent("download");
   await page
     .locator(".sidebar")
-    .getByRole("button", { name: /Back up project/ })
+    .getByRole("button", { name: "Export & share", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Download backup (.json)", exact: true })
     .click();
   return JSON.parse(
     await readFile((await (await downloading).path())!, "utf8"),

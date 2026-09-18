@@ -164,7 +164,9 @@ test("pages share content edges and export stays in the main flow across screen 
     ["Subjects", ".subject-cards"],
     ["My timetable", ".editor-heading"],
     ["Print timetable", ".print-controls"],
-    ["Calendar & export", ".review-summary"],
+    ["Calendar overview", ".review-summary"],
+    ["Lesson preview", ".calendar-preview"],
+    ["Export & share", ".export-card"],
   ];
   for (const [index, width] of (mobile ? [320, 768] : [1280, 1920]).entries()) {
     await page.setViewportSize({ width, height: 1000 });
@@ -207,18 +209,15 @@ test("pages share content edges and export stays in the main flow across screen 
         Math.abs(appearance.x + appearance.width - heading.x - heading.width),
       ).toBeLessThanOrEqual(1);
     }
-    for (const selector of [
-      ".export-card",
-      ".calendar-preview",
-      ".import-tips",
-    ]) {
+    for (const selector of [".export-card", ".transfer-card", ".backup-card"]) {
       const box = (await page.locator(selector).boundingBox())!;
       expect(Math.abs(box.x - heading.x)).toBeLessThanOrEqual(1);
       expect(Math.abs(box.width - heading.width)).toBeLessThanOrEqual(1);
     }
     const exportPanel = (await page.locator(".export-card").boundingBox())!;
-    const preview = (await page.locator(".calendar-preview").boundingBox())!;
+    const preview = (await page.locator(".transfer-card").boundingBox())!;
     expect(preview.y - exportPanel.y - exportPanel.height).toBeCloseTo(24, 0);
+    await go(page, "Lesson preview");
     const filters = await page
       .locator(".preview-filters .field")
       .evaluateAll((nodes) =>
@@ -258,9 +257,10 @@ test("pages share content edges and export stays in the main flow across screen 
       animations: "disabled",
     });
   }
+  await go(page, "Export & share");
   const download = page.waitForEvent("download");
   await page
-    .getByRole("button", { name: "Export Calendar (.ics)", exact: true })
+    .getByRole("button", { name: "Download .ics", exact: true })
     .click();
   expect((await download).suggestedFilename()).toMatch(/\.ics$/);
 });

@@ -35,12 +35,17 @@ function activeGrid(page: Page) {
 async function expectPrintRowsToFit(page: Page) {
   await page.emulateMedia({ media: "print" });
   await page.evaluate(() => window.dispatchEvent(new Event("beforeprint")));
-  const overflows = await page.locator(".print-table-wrap").evaluateAll((wrappers) =>
-    wrappers.map((wrapper) => {
-      const lastRow = wrapper.querySelector("tbody tr:last-child")!;
-      return lastRow.getBoundingClientRect().bottom - wrapper.getBoundingClientRect().bottom;
-    }),
-  );
+  const overflows = await page
+    .locator(".print-table-wrap")
+    .evaluateAll((wrappers) =>
+      wrappers.map((wrapper) => {
+        const lastRow = wrapper.querySelector("tbody tr:last-child")!;
+        return (
+          lastRow.getBoundingClientRect().bottom -
+          wrapper.getBoundingClientRect().bottom
+        );
+      }),
+    );
   expect(overflows.every((amount) => amount <= 1)).toBe(true);
   await page.emulateMedia({ media: null });
 }
@@ -106,13 +111,16 @@ test("complete setup, holiday-aware review, both print layouts, and ICS download
     .click();
   await page
     .getByRole("button", {
-      name: testInfo.project.name === "mobile-chromium" ? "Export calendar" : "Finish & review",
+      name: "Finish & view overview",
       exact: true,
     })
     .click();
   await expect(
     page.getByText("Ready to export", { exact: true }),
   ).toBeVisible();
+  await page
+    .getByRole("button", { name: "Preview lessons", exact: true })
+    .click();
   await page.getByLabel("Jump to a date").fill("2026-11-02");
   await expect(page.locator(".preview-week-label")).toContainText("Week 2");
   await expect(page.locator('[data-date="2026-11-02"]')).toContainText(
@@ -123,9 +131,10 @@ test("complete setup, holiday-aware review, both print layouts, and ICS download
   await expect(page.locator('[data-date="2027-01-04"]')).toContainText(
     "Mathematics",
   );
+  await go(page, "Export & share");
   const downloading = page.waitForEvent("download");
   await page
-    .getByRole("button", { name: "Export Calendar (.ics)", exact: true })
+    .getByRole("button", { name: "Download .ics", exact: true })
     .click();
   const download = await downloading;
   expect(download.suggestedFilename()).toBe("school-week-timetable.ics");
@@ -136,9 +145,11 @@ test("complete setup, holiday-aware review, both print layouts, and ICS download
     .map((component) => new ICAL.Event(component));
   expect(events.length).toBeGreaterThan(30);
   expect(calendarText).not.toContain("RRULE");
-  expect(events.every((e) => !["Registration", "Break", "Lunch"].includes(e.summary))).toBe(
-    true,
-  );
+  expect(
+    events.every(
+      (e) => !["Registration", "Break", "Lunch"].includes(e.summary),
+    ),
+  ).toBe(true);
   expect(
     events.find((e) => e.startDate.toString().startsWith("2026-11-02"))
       ?.summary,
@@ -296,7 +307,10 @@ test("painting, overrides, copy across weeks, erase, undo, duplication, and back
     }),
   ).toBeVisible();
   const downloading = page.waitForEvent("download");
-  await go(page, "Back up project");
+  await go(page, "Export & share");
+  await page
+    .getByRole("button", { name: "Download backup (.json)", exact: true })
+    .click();
   const backup = JSON.parse(
     await readFile((await (await downloading).path())!, "utf8"),
   );
@@ -350,13 +364,11 @@ test("invalid imports and corrupted storage do not overwrite recoverable data", 
   expect(
     await page.evaluate(() => localStorage.getItem("schoolcal.project.v1")),
   ).toBe("{broken");
-  await page
-    .getByLabel("Import project file")
-    .setInputFiles({
-      name: "invalid.json",
-      mimeType: "application/json",
-      buffer: Buffer.from('{"schemaVersion":999}'),
-    });
+  await page.getByLabel("Import project file").setInputFiles({
+    name: "invalid.json",
+    mimeType: "application/json",
+    buffer: Buffer.from('{"schemaVersion":999}'),
+  });
   await expect(
     page
       .getByRole("alert")
@@ -391,9 +403,9 @@ test("production app and saved timetable open offline from the configured base p
   await expect(
     page.getByRole("heading", { name: "Sample timetable", exact: true }),
   ).toBeVisible();
-  await go(page, "Calendar & export");
+  await go(page, "Export & share");
   await expect(
-    page.getByRole("button", { name: "Export Calendar (.ics)", exact: true }),
+    page.getByRole("button", { name: "Download .ics", exact: true }),
   ).toBeEnabled();
   expect(externalRequests).toEqual([]);
 });
@@ -424,13 +436,11 @@ test("restores a backup and keeps a four-week printout within its chosen pages",
   ).flat();
   await page.goto("./");
   page.once("dialog", (dialog) => dialog.accept());
-  await page
-    .getByLabel("Import project file")
-    .setInputFiles({
-      name: "timetable.json",
-      mimeType: "application/json",
-      buffer: Buffer.from(serializeProject(project)),
-    });
+  await page.getByLabel("Import project file").setInputFiles({
+    name: "timetable.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(serializeProject(project)),
+  });
   await expect(
     page.getByRole("heading", { name: project.name, exact: true }),
   ).toBeVisible();

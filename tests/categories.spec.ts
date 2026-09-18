@@ -31,7 +31,7 @@ async function saved(page: Page) {
 async function calendar(page: Page) {
   const downloading = page.waitForEvent("download");
   await page
-    .getByRole("button", { name: "Export Calendar (.ics)", exact: true })
+    .getByRole("button", { name: "Download .ics", exact: true })
     .click();
   const component = new ICAL.Component(
     ICAL.parse(await readFile((await (await downloading).path())!, "utf8")),
@@ -127,7 +127,7 @@ test("manage categories, apply their subject flag everywhere, restore lessons, a
   expect((await saved(page)).entries).toEqual(originalEntries);
   await go(page, "Print timetable");
   await expect(page.locator(".print-structural")).toHaveCount(10);
-  await go(page, "Calendar & export");
+  await go(page, "Export & share");
   const lessons = await calendar(page);
   expect(
     lessons.some((event) => event.startDate.toString().endsWith("T08:45:00")),
@@ -320,7 +320,10 @@ test("old backups upgrade, custom categories populate the dropdown, and their co
     ),
   ).toBe(true);
   const downloading = page.waitForEvent("download");
-  await go(page, "Back up project");
+  await go(page, "Export & share");
+  await page
+    .getByRole("button", { name: "Download backup (.json)", exact: true })
+    .click();
   const backup = JSON.parse(
     await readFile((await (await downloading).path())!, "utf8"),
   );
@@ -332,6 +335,7 @@ test("old backups upgrade, custom categories populate the dropdown, and their co
     ),
   ).toBe(true);
   expect(backup.timetable.entries).toEqual(original.entries);
+  await go(page, "My timetable");
   await page.reload();
   await expect(
     grid

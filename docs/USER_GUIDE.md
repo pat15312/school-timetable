@@ -12,7 +12,9 @@ New timetables start empty. **Try a sample** loads an editable example; check al
 4. **Lesson times:** enter the periods in your school day, including lessons and fixed activities such as registration and lunch.
 5. **Subjects:** add names, colours, teachers and rooms.
 6. **Build timetable:** select a subject and tap its cells.
-7. **Calendar & export:** preview your teaching weeks and export the lessons. **Print timetable** opens the paper preview.
+7. **Calendar overview:** finishing setup opens your lesson totals, teaching weeks, rotation and first/last lessons. **Lesson preview** and **Export & share** are optional next steps. **Print timetable** opens the paper preview.
+
+**Export & share** is also available during setup so you can back up or transfer an unfinished timetable.
 
 The menu button remains available as you scroll on mobile.
 
@@ -56,15 +58,27 @@ Reducing the cycle length or hiding a school day preserves its entries so they r
 
 ## Export and share your calendar
 
-In **Calendar & export**, review the lesson totals and preview any teaching week. Holidays, disabled school days and empty timetable cells are excluded. **Include fixed periods** also exports activities whose categories have **Allow subjects** switched off.
+Use **Calendar overview** to review lesson totals and any setup issues. **Lesson preview** shows lessons on actual dates: choose a teaching week, move backwards/forwards, or jump to a date. Holidays, disabled school days and empty timetable cells are excluded.
 
-Choose **Export Calendar (.ics)** to download the file.
+**Include fixed periods** also includes activities whose categories have **Allow subjects** switched off. This choice is shared between **Lesson preview** and **Export & share** while the app is open, so the preview matches the calendar file. It defaults to off when you reopen the app.
+
+In **Export & share → Add to your calendar**, choose **Download .ics**. Calendar export becomes available once the timetable is valid and has lessons on actual school days. The calendar-import instructions are expandable beneath the download controls.
 
 Open `.ics` files with Apple Calendar or Outlook, or use Google Calendar's desktop **Settings → Import & export**. Where file sharing is supported, **Share calendar file** opens the device's sharing menu to send the `.ics` file through another app. If the browser blocks sharing, **Download to share** saves the file so you can attach it yourself. Cancelling the sharing menu does not download anything.
 
 Calendar imports are snapshots: later edits in SchoolCal do not update an imported calendar. Use a dedicated school calendar and remove the previous import before replacing it to avoid duplicates. SchoolCal does not provide a calendar subscription or connect directly to a calendar account.
 
 Lesson times follow the school time zone, including daylight-saving changes. Check the time zone in **School year** if the preview looks wrong.
+
+## Continue on another device
+
+Open **Export & share → Continue on another device → Show QR code**. On your other device, scan the code with its camera and open the link in SchoolCal. Review the timetable summary, then choose **Use this timetable**. SchoolCal asks before replacing the timetable already on that device and offers a backup of it first.
+
+The code contains the editable configuration, including subjects, times, holidays, lesson overrides and notes. Drafts resume at their saved setup step. Your devices do not need to share a network; the receiving device needs to be able to open SchoolCal. Nothing needs to be uploaded to create the code. The QR code and link contain your timetable, so share them only with someone you want to have a copy.
+
+This is a copy at the time you share it. Later changes do not synchronise. Open **Show QR code** again after editing to transfer the updated version.
+
+Some timetables are too large for a single QR code. **Copy transfer link** offers the same editable transfer as a link. If automatic copying is unavailable, SchoolCal shows a selectable link. For configurations too large for a link, download a JSON backup and import it on the other device.
 
 ## Print or save a PDF
 
@@ -89,7 +103,7 @@ Editing and file creation happen on your device. SchoolCal does not upload your 
 
 After the app has loaded and cached successfully, it can open offline with your saved timetable. Updates prompt before reloading. Use **Install app** where supported; on iPhone, open SchoolCal in Safari and choose **Share → Add to Home Screen**.
 
-Your saved timetable belongs to the current browser and site address. Clearing website data, switching browsers or using a different device can leave you without your project. Private browsing or storage limits may prevent saving; the app shows an error and offers a backup. Keep a **Back up project** file for recovery or manual transfer; **Import project** checks the file and asks before replacing your timetable. Older SchoolCal backups upgrade automatically. Unreadable saved data can also be downloaded for recovery.
+Your saved timetable belongs to the current browser and site address. Clearing website data, switching browsers or using a different device can leave you without your project. Private browsing or storage limits may prevent saving; the app shows an error and offers a backup. Use **Export & share → Back up or restore → Download backup (.json)** for recovery or manual transfer; **Import backup (.json)** checks the file and asks before replacing your timetable. Older SchoolCal backups upgrade automatically. Unreadable saved data can also be downloaded for recovery.
 
 SchoolCal stores one timetable in the current browser. Use one editing tab at a time: timetable edits are not coordinated across tabs and there is no automatic cloud sync. A project backup lets you transfer work manually.
 

@@ -1,5 +1,12 @@
 # Release history
 
+## Unreleased
+
+- Separate Calendar overview, Lesson preview, and Export & share pages.
+- Generate a QR code or copy a transfer link to continue editing on another device, with JSON backup fallback for large timetables.
+- Keep backup and import controls together on Export & share, including during unfinished setup.
+- Share the fixed-period choice between lesson preview and calendar export, and preserve a restored draft's saved setup step.
+
 ## v1.0.0 — 18 September 2026
 
 The first stable release of SchoolCal: build a school timetable, account for holidays, and export it to your calendar or print it for the wall.

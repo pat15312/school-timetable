@@ -77,7 +77,8 @@ The exporter writes individual `VEVENT`s—**no `RRULE`**. Excluded dates, disab
 - School dates stay ISO **civil dates**, separate from times. UTC is used only as an internal arithmetic carrier for day addition, never to interpret user-entered school dates as instants.
 - Lesson `DTSTART`/`DTEND` use the school's IANA `TZID`. A self-contained `VTIMEZONE` contains explicit transitions across the academic year and an extra year on either side, using the browser's timezone data. There are no timezone recurrence rules either.
 - A London lesson entered as 09:00 stays at 09:00 through BST/GMT changes. The school's detected timezone can be edited in School year.
-- Export validates before creating the file. The preview shows totals, first/last lessons, and any selected teaching week.
+- Calendar overview shows totals, first/last lessons, and validation links. Lesson preview shows a selected teaching week. Export & share holds calendar export, JSON backups/import and device transfer. Preview and export share the fixed-period choice in app state. The legacy `#review` route opens the overview, and saved setup-step indices remain compatible.
+- QR generation uses the locally bundled `qrcode` encoder, loaded on demand and cached by the PWA. It encodes the current app URL (without its query string) and compressed transfer fragment in byte mode with medium error correction and a four-module white margin. Links above 2,331 UTF-8 bytes fall back to copy-link or JSON backup; encoding never drops timetable fields. The browser tests independently decode the generated image with `jsQR` and compare the received configuration with the full fixture.
 
 See [RFC 5545](https://www.rfc-editor.org/rfc/rfc5545) for the calendar format.
 

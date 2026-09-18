@@ -18,7 +18,7 @@ import {
   Printer,
   RotateCcw,
   ShieldCheck,
-  Upload,
+  Share2,
   X,
 } from "lucide-react";
 import { BRAND } from "./brand";
@@ -37,7 +37,9 @@ import {
   Subjects,
 } from "./components/Setup";
 import { Timetable } from "./components/Timetable";
-import { Review } from "./components/Review";
+import { CalendarOverview } from "./components/CalendarOverview";
+import { LessonPreview } from "./components/LessonPreview";
+import { ExportShare } from "./components/ExportShare";
 import { PrintView } from "./components/PrintView";
 import { ThemeControl } from "./components/ThemeControl";
 import { TransferImport } from "./components/TransferImport";
@@ -87,14 +89,45 @@ const STEPS = [
     subtitle: "Pick a subject. Place it in your week. Make it yours.",
   },
   {
-    id: "review",
-    name: "Review & export",
+    id: "overview",
+    name: "Calendar overview",
     icon: CalendarCheck2,
     title: "Your school year, sorted.",
-    subtitle: "Check the details, then take your timetable with you.",
+    subtitle: "See how your timetable fits across the school year.",
   },
 ] as const;
-const validPages = [...STEPS.map((step) => step.id), "print"];
+const EXTRA_PAGES = [
+  {
+    id: "preview",
+    name: "Lesson preview",
+    title: "Your lessons, on real dates.",
+    subtitle:
+      "Check any teaching week, with holidays and days off taken into account.",
+    icon: CalendarDays,
+  },
+  {
+    id: "export",
+    name: "Export & share",
+    title: "Take your timetable with you.",
+    subtitle:
+      "Use your calendar, keep a backup, or continue on another device.",
+    icon: Share2,
+  },
+  {
+    id: "print",
+    name: "Print timetable",
+    title: "A timetable worth pinning up.",
+    subtitle:
+      "Make a copy for your wall, your folder, or wherever you need it.",
+    icon: Printer,
+  },
+] as const;
+const validPages: string[] = [
+  ...STEPS.map((step) => step.id),
+  ...EXTRA_PAGES.map((page) => page.id),
+];
+// Old bookmarks and saved setup steps still lead to the calendar overview.
+const resolvePage = (page: string) => (page === "review" ? "overview" : page);
 type InstallPrompt = Event & {
   prompt: () => Promise<void>;
   userChoice: Promise<{ outcome: string }>;
@@ -104,13 +137,14 @@ export default function App() {
   const state = useProject(),
     { project: p, update, replace } = state;
   const [page, setPage] = useState<string>(() => {
-    const hash = window.location.hash.slice(1);
+    const hash = resolvePage(window.location.hash.slice(1));
     return validPages.includes(hash as (typeof validPages)[number])
       ? hash
       : p.setupComplete
         ? "timetable"
         : STEPS[p.setupStep].id;
   });
+  const [includeFixedPeriods, setIncludeFixedPeriods] = useState(false);
   const [mobileNav, setMobileNav] = useState(false);
   const [incomingTransfer, setIncomingTransfer] = useState<string | null>(() =>
     window.location.hash.startsWith("#transfer=") ? window.location.hash : null,
@@ -135,18 +169,20 @@ export default function App() {
     setToast(message);
     toastTimer.current = setTimeout(() => setToast(""), 4500);
   };
-  const navigate = (next: string) => {
+  const navigate = (destination: string, trackSetup = true) => {
+    const next = resolvePage(destination);
     if (!validPages.includes(next as (typeof validPages)[number])) return;
     setPage(next);
     setErrors([]);
     setMobileNav(false);
     window.location.hash = next;
     const index = STEPS.findIndex((step) => step.id === next);
-    if (!p.setupComplete && index >= 0)
+    if (trackSetup && !p.setupComplete && index >= 0)
       update((p) => ({ ...p, setupStep: index }));
     if (
+      trackSetup &&
       !p.setupComplete &&
-      ["review", "print"].includes(next) &&
+      next === "overview" &&
       !validateProject(p).errors.length
     )
       update((p) => ({ ...p, setupComplete: true }));
@@ -155,7 +191,7 @@ export default function App() {
   };
   useEffect(() => {
     const onHash = () => {
-      const next = window.location.hash.slice(1);
+      const next = resolvePage(window.location.hash.slice(1));
       if (next.startsWith("transfer=")) {
         setIncomingTransfer(window.location.hash);
         return;
@@ -222,7 +258,7 @@ export default function App() {
     };
   }, [mobileNav, narrow]);
   const stepIndex = STEPS.findIndex((step) => step.id === page),
-    step = STEPS[stepIndex];
+    step = STEPS[stepIndex] ?? EXTRA_PAGES.find((item) => item.id === page);
   const next = () => {
     let issues: string[] = [];
     if (page === "year") {
@@ -265,7 +301,7 @@ export default function App() {
     )
       return;
     replace(sampleProject());
-    navigate("timetable");
+    navigate("timetable", false);
     notify("Sample timetable loaded. All dates and lessons are editable.");
   };
   const backup = () => {
@@ -291,6 +327,7 @@ export default function App() {
       replace(imported);
       navigate(
         imported.setupComplete ? "timetable" : STEPS[imported.setupStep].id,
+        false,
       );
       notify("Project restored.");
     } catch (error) {
@@ -310,7 +347,7 @@ export default function App() {
       )
     ) {
       replace(createProject());
-      navigate("year");
+      navigate("year", false);
       notify("Ready for a new timetable.");
     }
   };
@@ -442,14 +479,27 @@ export default function App() {
                 {page === item.id && <ChevronRight size={15} />}
               </button>
             ))}
+            <span className="nav-heading settings-heading">KEEP A COPY</span>
+            <button
+              className={`nav-item ${page === "export" ? "active" : ""}`}
+              aria-current={page === "export" ? "page" : undefined}
+              onClick={() => navigate("export")}
+            >
+              <Share2 size={18} />
+              <span>Export &amp; share</span>
+            </button>
           </nav>
         ) : (
           <nav>
             <span className="nav-heading">YOUR TIMETABLE</span>
             {[
               { id: "timetable", name: "My timetable", icon: Grid2X2 },
-              { id: "review", name: "Calendar & export", icon: CalendarCheck2 },
-              { id: "print", name: "Print timetable", icon: Printer },
+              {
+                id: "overview",
+                name: "Calendar overview",
+                icon: CalendarCheck2,
+              },
+              ...EXTRA_PAGES,
             ].map((item) => (
               <button
                 className={`nav-item ${page === item.id ? "active" : ""}`}
@@ -487,17 +537,6 @@ export default function App() {
               No accounts. No uploads.
             </p>
           </div>
-          <button className="nav-item subtle" onClick={backup}>
-            <Download size={16} />
-            <span>Back up project</span>
-          </button>
-          <button
-            className="nav-item subtle"
-            onClick={() => fileInput.current?.click()}
-          >
-            <Upload size={16} />
-            <span>Import project</span>
-          </button>
           <div className="sidebar-utility">
             <button onClick={() => setHelp(true)}>
               <HelpCircle size={15} />
@@ -584,10 +623,10 @@ export default function App() {
                 </button>
                 <button
                   className="button primary"
-                  onClick={() => navigate("review")}
+                  onClick={() => navigate("export")}
                 >
                   <Download size={16} />
-                  Export calendar
+                  Export &amp; share
                 </button>
               </div>
             )}
@@ -692,7 +731,29 @@ export default function App() {
               navigate={navigate}
             />
           )}
-          {page === "review" && <Review project={p} notify={notify} />}
+          {page === "overview" && (
+            <CalendarOverview project={p} navigate={navigate} />
+          )}
+          {page === "preview" && (
+            <LessonPreview
+              project={p}
+              includeFixedPeriods={includeFixedPeriods}
+              onIncludeFixedPeriodsChange={setIncludeFixedPeriods}
+              notify={notify}
+              navigate={navigate}
+            />
+          )}
+          {page === "export" && (
+            <ExportShare
+              project={p}
+              includeFixedPeriods={includeFixedPeriods}
+              onIncludeFixedPeriodsChange={setIncludeFixedPeriods}
+              notify={notify}
+              navigate={navigate}
+              onBackup={backup}
+              onImport={() => fileInput.current?.click()}
+            />
+          )}
           {page === "print" && <PrintView project={p} />}
           {isSetup && stepIndex >= 0 && stepIndex < 6 && (
             <footer className="setup-footer">
@@ -706,7 +767,7 @@ export default function App() {
               </button>
               <span>You can change these details anytime.</span>
               <button className="button primary" onClick={next}>
-                {page === "timetable" ? "Finish & review" : "Continue"}
+                {page === "timetable" ? "Finish & view overview" : "Continue"}
                 <ArrowRight size={17} />
               </button>
             </footer>
@@ -767,8 +828,14 @@ export default function App() {
           key={incomingTransfer}
           hash={incomingTransfer}
           hasCurrent={
-            !!(p.name || p.subjects.length || p.entries.length ||
-              p.periods.length || p.academicYear.startDate || state.recoveryError)
+            !!(
+              p.name ||
+              p.subjects.length ||
+              p.entries.length ||
+              p.periods.length ||
+              p.academicYear.startDate ||
+              state.recoveryError
+            )
           }
           onBackup={() => {
             if (state.recoveryRaw && state.recoveryError)
@@ -789,7 +856,9 @@ export default function App() {
             setErrors([]);
             setMobileNav(false);
             dismissTransfer(destination);
-            notify("Timetable received. You can continue editing on this device.");
+            notify(
+              "Timetable received. You can continue editing on this device.",
+            );
           }}
         />
       )}
@@ -825,13 +894,20 @@ export default function App() {
             </p>
             <h3>Keep a backup</h3>
             <p>
-              “Back up project” saves an editable JSON file. “Export Calendar”
-              creates an .ics file for your calendar app. Calendar imports are
-              snapshots and don't update automatically.
+              Open “Export & share” to download an editable JSON backup, import
+              a backup, create a QR code for another device, or download an .ics
+              file for your calendar app. Transfers and calendar imports are
+              copies and don't update automatically.
             </p>
-            <button className="button secondary" onClick={backup}>
-              <Download size={16} />
-              Back up project
+            <button
+              className="button secondary"
+              onClick={() => {
+                setHelp(false);
+                navigate("export");
+              }}
+            >
+              <Share2 size={16} />
+              Export &amp; share
             </button>
           </div>
         </Modal>

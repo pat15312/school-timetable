@@ -17,7 +17,7 @@ async function go(page: Page, name: string) {
 async function downloadEvents(page: Page) {
   const downloading = page.waitForEvent("download");
   await page
-    .getByRole("button", { name: "Export Calendar (.ics)", exact: true })
+    .getByRole("button", { name: "Download .ics", exact: true })
     .click();
   const calendar = new ICAL.Component(
     ICAL.parse(await readFile((await (await downloading).path())!, "utf8")),
@@ -124,7 +124,7 @@ test("registration is fixed, renamed periods persist, and an afternoon break is 
     animations: "disabled",
   });
 
-  await go(page, "Calendar & export");
+  await go(page, "Export & share");
   const include = page.getByRole("checkbox", {
     name: /Include fixed periods/,
   });

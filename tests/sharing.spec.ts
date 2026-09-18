@@ -11,7 +11,7 @@ async function openExport(page: Page) {
   if (await menu.isVisible()) await menu.click();
   await page
     .locator(".sidebar")
-    .getByRole("button", { name: "Calendar & export", exact: true })
+    .getByRole("button", { name: "Export & share", exact: true })
     .click();
 }
 
@@ -80,7 +80,7 @@ test("sharing sends the same complete calendar file as download and respects exp
   );
   const downloading = page.waitForEvent("download");
   await page
-    .getByRole("button", { name: "Export Calendar (.ics)", exact: true })
+    .getByRole("button", { name: "Download .ics", exact: true })
     .click();
   const download = await downloading;
   expect(download.suggestedFilename()).toBe(updated.name);
@@ -147,7 +147,9 @@ test("cancelling sharing leaves the calendar available without downloading or re
     page.getByRole("button", { name: "Download to share", exact: true }),
   ).toHaveCount(0);
   await expect(
-    page.locator(".review-page .notice.success, .review-page .notice.error"),
+    page.locator(
+      ".export-share-page .notice.success, .export-share-page .notice.error",
+    ),
   ).toHaveCount(0);
   expect(downloads).toEqual([]);
 });
@@ -189,14 +191,14 @@ test("unsupported or failing sharing detection keeps export usable", async ({
     if (await menu.isVisible()) await menu.click();
     await page
       .locator(".sidebar")
-      .getByRole("button", { name: "Calendar & export", exact: true })
+      .getByRole("button", { name: "Export & share", exact: true })
       .click();
     await expect(
       page.getByRole("button", { name: "Share calendar file", exact: true }),
     ).toHaveCount(0);
     const downloading = page.waitForEvent("download");
     await page
-      .getByRole("button", { name: "Export Calendar (.ics)", exact: true })
+      .getByRole("button", { name: "Download .ics", exact: true })
       .click();
     expect((await downloading).suggestedFilename()).toMatch(/\.ics$/);
   }

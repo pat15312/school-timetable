@@ -122,11 +122,24 @@ test("custom light and dark palettes keep the appearance menu, timetable and exp
   ]) {
     await theme(page, mode);
     await pickColour(page, colour);
-    for (const view of ["Appearance", "My timetable", "Calendar & export"]) {
+    for (const view of ["Appearance", "My timetable", "Export & share"]) {
       if (view !== "Appearance") {
         await page.keyboard.press("Escape");
         await go(page, view);
       }
+      // Theme changes animate button backgrounds for 150 ms. Measure the
+      // settled palette rather than an intermediate light-to-dark frame.
+      await page.evaluate(async () => {
+        await Promise.all(
+          document
+            .getAnimations()
+            .filter(
+              (animation) =>
+                animation.effect?.getTiming().iterations !== Infinity,
+            )
+            .map((animation) => animation.finished.catch(() => {})),
+        );
+      });
       const result = await new AxeBuilder({ page })
         .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
         .analyze();

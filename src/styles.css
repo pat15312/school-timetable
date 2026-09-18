@@ -1872,13 +1872,63 @@
     font-size: 10px;
     color: var(--muted);
   }
-  .review-sections {
+  .page-stack {
     display: grid;
     gap: var(--section-gap);
     min-width: 0;
   }
-  .review-sections > .notice {
+  .page-stack > .notice,
+  .page-stack > p,
+  .page-stack > .panel {
     margin: 0;
+  }
+  .calendar-options {
+    margin-bottom: 20px;
+  }
+  .page-stack .page-actions,
+  .transfer-modal .page-actions {
+    flex-wrap: wrap;
+  }
+  .backup-card > p,
+  .transfer-card > p {
+    margin: 16px 0 0;
+  }
+  .export-card > .notice {
+    margin-top: 20px;
+  }
+  .export-options .notice {
+    margin-top: 16px;
+  }
+  .import-tips {
+    margin-top: 24px;
+    border-top: 1px solid var(--line);
+    padding-top: 16px;
+  }
+  .import-tips summary {
+    cursor: pointer;
+    font-weight: 550;
+    padding: 8px 0;
+  }
+  .import-tips .import-tip-grid {
+    margin: 16px 0 0;
+  }
+  .modal.transfer-modal {
+    width: min(700px, calc(100vw - 30px));
+  }
+  .transfer-qr {
+    display: block;
+    width: min(100%, 600px);
+    height: auto;
+    margin: 0 auto 20px;
+    image-rendering: pixelated;
+    background: white;
+  }
+  .transfer-modal .page-actions {
+    margin-bottom: 20px;
+  }
+  .transfer-link {
+    overflow-wrap: anywhere;
+    word-break: break-all;
   }
   .preview-filters .field {
     margin-bottom: 16px;
@@ -1981,19 +2031,20 @@
   }
   .export-options {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(240px, 320px);
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--section-gap);
     align-items: start;
   }
   .export-actions {
     display: grid;
+    justify-items: start;
     gap: 12px;
   }
   .export-file-note {
     display: block;
     font-size: 10px;
     color: var(--muted);
-    text-align: center;
+    text-align: left;
     margin: 0;
   }
   .export-card .notice {
@@ -2390,7 +2441,6 @@
     .year-fields {
       grid-template-columns: minmax(0, 1fr);
     }
-    .export-options,
     .preview-filters,
     .preview-days,
     .import-tip-grid {

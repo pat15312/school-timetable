@@ -27,7 +27,8 @@ export default defineConfig({
     },
     {
       name: "desktop-webkit",
-      testMatch: /(layout|subjects|periods|categories|appearance|sharing|transfer)\.spec\.ts/,
+      testMatch:
+        /(layout|subjects|periods|categories|appearance|sharing|transfer|export)\.spec\.ts/,
       use: {
         ...devices["Desktop Safari"],
         viewport: { width: 1440, height: 1050 },
@@ -35,7 +36,8 @@ export default defineConfig({
     },
     {
       name: "mobile-webkit",
-      testMatch: /(layout|subjects|periods|categories|appearance|sharing|transfer)\.spec\.ts/,
+      testMatch:
+        /(layout|subjects|periods|categories|appearance|sharing|transfer|export)\.spec\.ts/,
       use: { ...devices["iPhone 13"] },
     },
   ],

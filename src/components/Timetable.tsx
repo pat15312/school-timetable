@@ -520,9 +520,9 @@ export function Timetable({
         </p>
         <button
           className="button text-button"
-          onClick={() => navigate("review")}
+          onClick={() => navigate("overview")}
         >
-          Review your calendar <ArrowRight size={16} />
+          Calendar overview <ArrowRight size={16} />
         </button>
       </div>
       {addSubject && (
