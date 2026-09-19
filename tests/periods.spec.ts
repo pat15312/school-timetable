@@ -179,6 +179,8 @@ test("registration is fixed, renamed periods persist, and an afternoon break is 
 test("period form validates times, supports each fixed category, and fits mobile and desktop in dark mode", async ({
   page,
 }, testInfo) => {
+  // The full add/edit/delete flow runs for three categories on CI WebKit.
+  test.setTimeout(60_000);
   await page.emulateMedia({ colorScheme: "dark" });
   if (testInfo.project.name.startsWith("mobile"))
     await page.setViewportSize({ width: 320, height: 850 });

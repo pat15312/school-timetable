@@ -165,6 +165,8 @@ test("imports and incoming transfers add independent copies and cancellation kee
 test("switching resets editor history and uses the active timetable for preview, backup, calendar, transfer and print", async ({
   page,
 }) => {
+  // Multiple exports and repeated switches take over 30 seconds on CI WebKit.
+  test.setTimeout(60_000);
   await sample(page);
   const original = await savedProject(page);
   await (
