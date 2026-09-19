@@ -26,6 +26,12 @@ async function start(page: Page) {
   await expect(
     page.getByRole("heading", { name: "Edit in a spreadsheet" }),
   ).toBeVisible();
+  // The screen can paint before the initial legacy-data migration is persisted.
+  await expect
+    .poll(() =>
+      page.evaluate(() => localStorage.getItem("schoolcal.timetables.v1")),
+    )
+    .not.toBeNull();
 }
 async function upload(page: Page, buffer: Uint8Array) {
   await page.getByLabel("Import spreadsheet file").setInputFiles({
