@@ -2,6 +2,7 @@ import { expect, test, type Page } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 import ICAL from "ical.js";
 import { sampleProject } from "../src/domain/fixture";
+import { renameTimetable } from "./storage";
 import { serializeProject } from "../src/domain/persistence";
 
 async function go(page: Page, name: string) {
@@ -63,12 +64,11 @@ test("complete setup, holiday-aware review, both print layouts, and ICS download
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   await page.goto("./");
-  await expect(page.getByLabel("Timetable name")).toHaveValue("");
-  await page.getByLabel("Timetable name").fill("School week");
+  await expect(page.getByLabel("Timetable name")).toHaveCount(0);
+  await renameTimetable(page, "School week");
   await page.getByLabel("First day of school").fill("2026-09-07");
   await page.getByLabel("Last day of school").fill("2027-07-16");
   await page.getByLabel("School time zone").fill("Europe/London");
-  await continueSetup(page);
   await page.getByRole("button", { name: "2 week cycle", exact: true }).click();
   await page
     .getByRole("button", { name: "Numbers Week 1 · Week 2", exact: true })
@@ -357,7 +357,7 @@ test("invalid imports and corrupted storage do not overwrite recoverable data", 
   await expect(
     page.getByText(/Your saved timetable could not be opened/),
   ).toBeVisible();
-  await page.getByLabel("Timetable name").fill("Unsaved");
+  await page.getByLabel("First day of school").fill("2026-09-07");
   expect(
     await page.evaluate(() => localStorage.getItem("schoolcal.project.v1")),
   ).toBe("{broken");

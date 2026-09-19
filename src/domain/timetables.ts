@@ -115,6 +115,8 @@ function pristine(project: TimetableProject): boolean {
     serializeProject(project) ===
     serializeProject({
       ...blank,
+      // Older untouched starters had an empty name.
+      name: project.name === "" ? "" : blank.name,
       id: project.id,
       createdAt: project.createdAt,
       updatedAt: project.updatedAt,

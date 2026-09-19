@@ -437,8 +437,8 @@
   }
   .sidebar-utility {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
+    align-items: stretch;
     margin: 12px 4px 0;
     padding-top: 12px;
     border-top: 1px solid var(--line);
@@ -450,8 +450,14 @@
     border: 0;
     background: none;
     color: var(--muted);
-    font-size: 10px;
-    padding: 7px;
+    font-size: 11px;
+    padding: 10px 7px;
+    min-height: 44px;
+    border-radius: 7px;
+    text-align: left;
+  }
+  .sidebar-utility button:hover {
+    background: var(--soft);
   }
   .main-shell {
     margin-left: 234px;
@@ -793,22 +799,8 @@
   .setup-progress .done {
     background: var(--primary);
   }
-  .setup-columns {
-    display: grid;
-    grid-template-columns: minmax(340px, 1.35fr) minmax(270px, 1fr);
-    gap: 25px;
-    align-items: start;
-  }
   .year-form {
     padding-bottom: 0;
-  }
-  .year-fields {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: var(--section-gap);
-  }
-  .setup-columns .year-fields {
-    display: block;
   }
   .year-fields .form-grid {
     gap: 16px;
@@ -836,75 +828,6 @@
     border-color: var(--line-strong);
     color: var(--primary);
     font-weight: 650;
-  }
-  .intro-card {
-    background: var(--accent-soft);
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    padding: 31px 27px 0;
-    overflow: hidden;
-  }
-  .intro-card h2 {
-    font-size: 30px;
-    font-weight: 550;
-    line-height: 1.25;
-    letter-spacing: -1px;
-  }
-  .intro-card em {
-    font-family: Georgia, "Times New Roman", serif;
-    color: var(--primary);
-    font-weight: 400;
-  }
-  .intro-card > p {
-    margin-top: 16px;
-    font-size: 11px;
-    color: var(--muted);
-    max-width: 270px;
-  }
-  .benefits {
-    list-style: none;
-    padding: 0;
-    display: grid;
-    gap: 23px;
-    margin: 28px 0 30px;
-  }
-  .benefits li {
-    display: flex;
-    gap: 13px;
-  }
-  .benefits li > span {
-    border: 1px solid var(--line-strong);
-    border-radius: 50%;
-    height: 25px;
-    width: 25px;
-    flex-shrink: 0;
-    display: grid;
-    place-items: center;
-    font-size: 9px;
-    color: var(--muted);
-  }
-  .benefits strong {
-    display: block;
-    font-size: 12px;
-    font-weight: 600;
-  }
-  .benefits small {
-    display: block;
-    font-size: 10px;
-    color: var(--muted);
-    margin-top: 3px;
-  }
-  .privacy-line {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: var(--muted);
-    font-size: 10px;
-  }
-  .intro-card .privacy-line {
-    border-top: 1px solid var(--line);
-    margin: 0 -27px;
-    padding: 17px 27px;
   }
   .sample-link {
     border: 0;
@@ -2184,25 +2107,6 @@
     text-align: center;
     color: var(--muted);
   }
-  .app-footer {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    padding: 29px 0 21px;
-    color: var(--muted);
-    font-size: 9px;
-    gap: 10px;
-  }
-  .app-footer button {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    background: none;
-    border: 0;
-    font-size: 9px;
-    color: var(--muted);
-    padding: 8px 0;
-  }
   .modal {
     width: min(540px, calc(100vw - 30px));
     max-height: calc(100dvh - 40px);
@@ -2327,20 +2231,6 @@
       flex-direction: column;
       gap: 18px;
     }
-    .setup-columns {
-      gap: 18px;
-      grid-template-columns: minmax(310px, 1.2fr) minmax(240px, 1fr);
-    }
-    .intro-card {
-      padding: 26px 22px 0;
-    }
-    .intro-card h2 {
-      font-size: 27px;
-    }
-    .intro-card .privacy-line {
-      padding-inline: 22px;
-      margin-inline: -22px;
-    }
     .period-head,
     .period-row {
       grid-template-columns:
@@ -2382,12 +2272,6 @@
     }
   }
   @media (max-width: 1000px) {
-    .setup-columns {
-      grid-template-columns: minmax(0, 1fr);
-    }
-    .setup-aside .intro-card {
-      display: none;
-    }
     .editor-toolbar {
       align-items: flex-start;
       flex-direction: column;
@@ -2395,9 +2279,6 @@
     }
     .toolbar-buttons {
       gap: 16px;
-    }
-    .year-fields {
-      grid-template-columns: minmax(0, 1fr);
     }
     .preview-filters,
     .preview-days,
@@ -2929,9 +2810,6 @@
       grid-template-columns: 1fr;
       gap: 0;
     }
-    .app-footer {
-      font-size: 8px;
-    }
   }
   @media (prefers-reduced-motion: reduce) {
     *,
@@ -2973,7 +2851,6 @@
     .page-heading,
     .setup-progress,
     .setup-footer,
-    .app-footer,
     .print-controls,
     .print-help,
     .toast,
@@ -3212,6 +3089,33 @@
     }
     .timetable-actions {
       margin-left: auto;
+    }
+  }
+}
+
+@layer components {
+  .school-settings-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--section-gap);
+    align-items: start;
+  }
+  .school-settings-grid .panel {
+    min-width: 0;
+  }
+  .rotation-form .section-heading {
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 25px;
+  }
+  .school-settings .sample-link {
+    margin-top: 20px;
+  }
+}
+@layer responsive {
+  @media (max-width: 1100px) {
+    .school-settings-grid {
+      grid-template-columns: minmax(0, 1fr);
     }
   }
 }

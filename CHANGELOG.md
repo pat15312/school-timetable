@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Combine school-year and rotation settings into one setup page, keep timetable naming and creation in Your timetables, and move Install app into the sidebar. Existing drafts and rotation links still open the correct settings.
+
 - Save multiple timetables on one device, with a desktop/mobile switcher, separate setup progress, renaming, independent duplication and confirmed deletion.
 - Automatically migrate existing data; add JSON and QR/link imports without replacing saved timetables.
 - Persist the active selection and each timetable’s fixed-period choice, prevent stale-tab overwrites, and use the active timetable for previews, exports and printing.

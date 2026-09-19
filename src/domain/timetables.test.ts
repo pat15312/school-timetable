@@ -175,7 +175,7 @@ describe("timetable operations", () => {
     const empty = deleteTimetable(remaining, a.id);
     expect(empty.timetables).toHaveLength(1);
     expect(activeTimetable(empty)).toMatchObject({
-      name: "",
+      name: "Untitled timetable",
       entries: [],
       setupComplete: false,
       setupStep: 0,
@@ -188,7 +188,12 @@ describe("timetable operations", () => {
     expect(addTimetable(createLibrary(), received).timetables).toEqual([
       received,
     ]);
+    expect(
+      addTimetable(createLibrary({ ...createProject(), name: "" }), received)
+        .timetables,
+    ).toEqual([received]);
     for (const change of [
+      { name: "Named draft" },
       { setupStep: 2 },
       { cycleLength: 2 as const },
       {

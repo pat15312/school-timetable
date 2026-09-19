@@ -134,7 +134,7 @@ export function createProject(): TimetableProject {
   const now = new Date().toISOString();
   return {
     id: newId(),
-    name: "",
+    name: "Untitled timetable",
     academicYear: {
       startDate: "",
       endDate: "",

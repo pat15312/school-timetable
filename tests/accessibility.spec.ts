@@ -27,12 +27,11 @@ for (const colourScheme of ["light", "dark"] as const) {
     await page.getByRole("button", { name: "Appearance: Auto" }).click();
     await check("Appearance choices");
     await page.keyboard.press("Escape");
-    await check("School year");
+    await check("School year & rotation");
     await page.getByRole("button", { name: /Try a sample/ }).click();
     await check("Timetable");
     for (const name of [
-      "School year",
-      "Timetable rotation",
+      "School year & rotation",
       "Holidays & days off",
       "Lesson times",
       "Subjects",

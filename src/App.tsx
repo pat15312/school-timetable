@@ -14,9 +14,7 @@ import {
   HelpCircle,
   Leaf,
   Menu,
-  Plus,
   Printer,
-  RotateCcw,
   ShieldCheck,
   Share2,
   X,
@@ -32,8 +30,7 @@ import { useProject } from "./hooks/useProject";
 import {
   Holidays,
   Periods,
-  Rotation,
-  SchoolYear,
+  SchoolSettings,
   Subjects,
 } from "./components/Setup";
 import { Timetable } from "./components/Timetable";
@@ -48,20 +45,16 @@ import { Modal, Notice, downloadFile } from "./components/ui";
 const STEPS = [
   {
     id: "year",
-    name: "School year",
+    setupStep: 0,
+    name: "School year & rotation",
     icon: CalendarDays,
-    title: "Let’s start with your school year.",
-    subtitle: "Set your school dates, school days and time zone.",
-  },
-  {
-    id: "rotation",
-    name: "Timetable rotation",
-    icon: RotateCcw,
-    title: "Set your timetable pattern.",
-    subtitle: "Choose a one- to four-week cycle and its starting week.",
+    title: "Set up your school year and rotation.",
+    subtitle:
+      "Choose your school dates, school days, time zone and repeating weeks.",
   },
   {
     id: "holidays",
+    setupStep: 2,
     name: "Holidays & days off",
     icon: Leaf,
     title: "Make room for the days off.",
@@ -69,6 +62,7 @@ const STEPS = [
   },
   {
     id: "periods",
+    setupStep: 3,
     name: "Lesson times",
     icon: Clock3,
     title: "A school day, your way.",
@@ -77,6 +71,7 @@ const STEPS = [
   },
   {
     id: "subjects",
+    setupStep: 4,
     name: "Subjects",
     icon: BookOpen,
     title: "Bring your subjects together.",
@@ -84,6 +79,7 @@ const STEPS = [
   },
   {
     id: "timetable",
+    setupStep: 5,
     name: "Build timetable",
     icon: Grid2X2,
     title: "Your week, taking shape.",
@@ -91,6 +87,7 @@ const STEPS = [
   },
   {
     id: "preview",
+    setupStep: 6,
     name: "Lesson preview",
     title: "Your lessons, on real dates.",
     subtitle:
@@ -119,9 +116,15 @@ const validPages: string[] = [
   ...STEPS.map((step) => step.id),
   ...EXTRA_PAGES.map((page) => page.id),
 ];
-// Keep old bookmarks useful; the final saved setup-step index remains 6.
+// Stored setup steps keep their original numbers for existing backups and links.
+const setupPage = (savedStep: number) =>
+  STEPS.find((step) => step.setupStep === savedStep)?.id ?? "year";
 const resolvePage = (page: string) =>
-  page === "review" || page === "overview" ? "preview" : page;
+  page === "rotation"
+    ? "year"
+    : page === "review" || page === "overview"
+      ? "preview"
+      : page;
 type InstallPrompt = Event & {
   prompt: () => Promise<void>;
   userChoice: Promise<{ outcome: string }>;
@@ -136,7 +139,7 @@ export default function App() {
       ? hash
       : p.setupComplete
         ? "timetable"
-        : STEPS[p.setupStep].id;
+        : setupPage(p.setupStep);
   });
   const [timetablesOpen, setTimetablesOpen] = useState(false);
   const [mobileNav, setMobileNav] = useState(false);
@@ -164,6 +167,11 @@ export default function App() {
     toastTimer.current = setTimeout(() => setToast(""), 4500);
   };
   const navigate = (destination: string, trackSetup = true) => {
+    if (destination === "timetables") {
+      setMobileNav(false);
+      setTimetablesOpen(true);
+      return;
+    }
     const next = resolvePage(destination);
     if (!validPages.includes(next as (typeof validPages)[number])) return;
     setPage(next);
@@ -172,7 +180,7 @@ export default function App() {
     window.location.hash = next;
     const index = STEPS.findIndex((step) => step.id === next);
     if (trackSetup && !p.setupComplete && index >= 0)
-      update((p) => ({ ...p, setupStep: index }));
+      update((p) => ({ ...p, setupStep: STEPS[index].setupStep }));
     if (
       trackSetup &&
       !p.setupComplete &&
@@ -290,7 +298,7 @@ export default function App() {
     if (!project) return;
     setTimetablesOpen(false);
     navigate(
-      project.setupComplete ? "timetable" : STEPS[project.setupStep].id,
+      project.setupComplete ? "timetable" : setupPage(project.setupStep),
       false,
     );
   };
@@ -474,7 +482,7 @@ export default function App() {
             <span className="nav-heading">YOUR TIMETABLE</span>
             {[
               { id: "timetable", name: "My timetable", icon: Grid2X2 },
-              STEPS[6],
+              STEPS[STEPS.length - 1],
               ...EXTRA_PAGES,
             ].map((item) => (
               <button
@@ -488,7 +496,7 @@ export default function App() {
               </button>
             ))}
             <span className="nav-heading settings-heading">SETTINGS</span>
-            {STEPS.slice(0, 5).map((item) => (
+            {STEPS.slice(0, -2).map((item) => (
               <button
                 className={`nav-item ${page === item.id ? "active" : ""}`}
                 aria-current={page === item.id ? "page" : undefined}
@@ -514,16 +522,27 @@ export default function App() {
             </p>
           </div>
           <div className="sidebar-utility">
-            <button onClick={() => setHelp(true)}>
-              <HelpCircle size={15} />
-              Help & privacy
+            <button
+              onClick={() => {
+                setMobileNav(false);
+                if (installPrompt)
+                  void installPrompt
+                    .prompt()
+                    .then(() => setInstallPrompt(null));
+                else setInstallHelp(true);
+              }}
+            >
+              <Download size={15} />
+              Install app
             </button>
             <button
-              aria-label="New timetable"
-              title="New timetable"
-              onClick={() => openTimetable(state.add())}
+              onClick={() => {
+                setMobileNav(false);
+                setHelp(true);
+              }}
             >
-              <Plus size={18} />
+              <HelpCircle size={15} />
+              Help & privacy
             </button>
           </div>
         </div>
@@ -611,7 +630,7 @@ export default function App() {
               role="progressbar"
               aria-label="Timetable setup"
               aria-valuemin={0}
-              aria-valuemax={7}
+              aria-valuemax={STEPS.length}
               aria-valuenow={stepIndex + 1}
             >
               {STEPS.map((s, i) => (
@@ -679,21 +698,33 @@ export default function App() {
             <Notice kind="error">
               <ul>
                 {errors.map((error) => (
-                  <li key={error}>{error}</li>
+                  <li key={error}>
+                    {error}
+                    {error === "Give your timetable a name." && (
+                      <>
+                        {" "}
+                        <button
+                          className="inline-link"
+                          onClick={showTimetables}
+                        >
+                          Name timetable
+                        </button>
+                      </>
+                    )}
+                  </li>
                 ))}
               </ul>
             </Notice>
           )}
           <Fragment key={p.id}>
             {page === "year" && (
-              <SchoolYear
+              <SchoolSettings
                 project={p}
                 update={update}
                 sample={loadSample}
                 isNew={isSetup}
               />
             )}
-            {page === "rotation" && <Rotation project={p} update={update} />}
             {page === "holidays" && <Holidays project={p} update={update} />}
             {page === "periods" && <Periods project={p} update={update} />}
             {page === "subjects" && <Subjects project={p} update={update} />}
@@ -730,7 +761,7 @@ export default function App() {
             )}
             {page === "print" && <PrintView project={p} />}
           </Fragment>
-          {isSetup && stepIndex >= 0 && stepIndex < 6 && (
+          {isSetup && stepIndex >= 0 && stepIndex < STEPS.length - 1 && (
             <footer className="setup-footer">
               <button
                 className="button text-button"
@@ -747,7 +778,7 @@ export default function App() {
               </button>
             </footer>
           )}
-          {!isSetup && stepIndex >= 0 && stepIndex < 5 && (
+          {!isSetup && stepIndex >= 0 && stepIndex < STEPS.length - 2 && (
             <div className="settings-footer">
               <button
                 className="button primary"
@@ -758,20 +789,6 @@ export default function App() {
               </button>
             </div>
           )}
-          <footer className="app-footer">
-            <button
-              onClick={() => {
-                if (installPrompt)
-                  void installPrompt
-                    .prompt()
-                    .then(() => setInstallPrompt(null));
-                else setInstallHelp(true);
-              }}
-            >
-              <Download size={13} />
-              Install app
-            </button>
-          </footer>
         </main>
       </div>
       <input
@@ -823,7 +840,7 @@ export default function App() {
           onImport={(imported) => {
             const destination = imported.setupComplete
               ? "timetable"
-              : STEPS[imported.setupStep].id;
+              : setupPage(imported.setupStep);
             const added = state.add(imported);
             if (!added) return;
             setPage(destination);

@@ -24,7 +24,10 @@ export function TimetableSwitcher({
   onDelete: (id: string) => void;
   onClose: () => void;
 }) {
-  const [renaming, setRenaming] = useState<string | null>(null);
+  const [renaming, setRenaming] = useState<string | null>(
+    () =>
+      timetables.find((p) => p.id === activeId && !p.name.trim())?.id ?? null,
+  );
   const [name, setName] = useState("");
   return (
     <Modal

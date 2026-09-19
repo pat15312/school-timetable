@@ -17,7 +17,7 @@ test("date and time controls fit their forms at mobile and desktop widths", asyn
   await page.getByRole("button", { name: /Try a sample/ }).click();
   for (const width of mobile ? [320, 390, 430, 768] : [1024, 1280, 1440]) {
     await page.setViewportSize({ width, height: 900 });
-    await go(page, "School year");
+    await go(page, "School year & rotation");
     for (const date of ["", "2026-09-07"]) {
       await page.getByLabel("First day of school").fill(date);
       const datesFit = await page
@@ -129,9 +129,9 @@ test("navigation stays reachable while scrolling and subject outlines are not cl
     ).toBeVisible();
     await page
       .locator(".sidebar")
-      .getByRole("button", { name: "School year", exact: true })
+      .getByRole("button", { name: "School year & rotation", exact: true })
       .click();
-    await expect(page.getByLabel("Timetable name")).toBeVisible();
+    await expect(page.getByLabel("First day of school")).toBeVisible();
   }
   await page.getByRole("button", { name: /^Appearance:/ }).click();
   await page.getByRole("button", { name: "Dark theme", exact: true }).click();
@@ -157,8 +157,7 @@ test("pages share content edges and export stays in the main flow across screen 
   await page.goto("./");
   await page.getByRole("button", { name: /Try a sample/ }).click();
   const pages = [
-    ["School year", ".year-form"],
-    ["Timetable rotation", ".settings-page > .panel"],
+    ["School year & rotation", ".school-settings-grid"],
     ["Holidays & days off", ".holiday-list"],
     ["Lesson times", ".periods-panel"],
     ["Subjects", ".subject-cards"],
@@ -176,11 +175,7 @@ test("pages share content edges and export stays in the main flow across screen 
       const heading = (await page.locator(".page-heading").boundingBox())!;
       const content = (await page.locator(selector).boundingBox())!;
       sharedEdges ??= heading;
-      for (const box of [
-        heading,
-        content,
-        (await page.locator(".app-footer").boundingBox())!,
-      ]) {
+      for (const box of [heading, content]) {
         expect(
           Math.abs(box.x - sharedEdges.x),
           `${name}: left edge at ${width}px`,
@@ -274,7 +269,7 @@ test("short and long pages keep the same position when the document scrollbar ap
   await page.setViewportSize({ width: 1440, height: 1050 });
   await page.goto("./");
   await page.getByRole("button", { name: /Try a sample/ }).click();
-  await go(page, "School year");
+  await go(page, "School year & rotation");
   const measure = () =>
     page.evaluate(() => {
       const heading = document
@@ -298,6 +293,6 @@ test("short and long pages keep the same position when the document scrollbar ap
   const long = await measure();
   expect(long.scrolling).toBe(true);
   expect({ ...long, scrolling: false }).toEqual(short);
-  await go(page, "School year");
+  await go(page, "School year & rotation");
   expect(await measure()).toEqual(short);
 });

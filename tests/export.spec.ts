@@ -1,4 +1,4 @@
-import { savedProject as saved } from "./storage";
+import { renameTimetable, savedProject as saved } from "./storage";
 import { expect, test, type Page } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
@@ -99,8 +99,7 @@ test("generated QR transfers every fixture field to a separate device and reflec
     await receiver.close();
   }
   await page.getByRole("button", { name: "Close dialog" }).click();
-  await go(page, "School year");
-  await page.getByLabel("Timetable name").fill("Updated timetable");
+  await renameTimetable(page, "Updated timetable");
   const edited = await saved(page);
   await go(page, "Export & share");
   const updated = await scan(page);

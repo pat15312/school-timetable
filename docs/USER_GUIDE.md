@@ -14,15 +14,14 @@ Existing single-timetable data upgrades automatically. Backups and incoming tran
 
 ## Set up your timetable
 
-New timetables start empty. **Try a sample** loads an editable example; check all example dates against your school's calendar before using it.
+New timetables start empty as **Untitled timetable**. Rename them in **Your timetables**. **Try a sample** loads an editable example; check all example dates against your school's calendar before using it.
 
-1. **School year:** name the timetable, enter its first and last dates, choose school days, and check the school time zone. Choose School year in the navigation to return here.
-2. **Timetable rotation:** choose a cycle of one to four weeks, letters or numbers for week labels, and the starting week.
-3. **Holidays & days off:** add holidays, inset days and other exclusions, choosing whether each break continues the rotation or resets it to the first week.
-4. **Lesson times:** enter the periods in your school day, including lessons and fixed activities such as registration and lunch.
-5. **Subjects:** add names, colours, teachers and rooms.
-6. **Build timetable:** select a subject and tap its cells.
-7. **Lesson preview:** finishing setup opens lessons on actual dates, with totals and progress for the year's lessons and teaching weeks. **Export & share** provides calendar downloads, backups and device transfers. **Print timetable** opens the paper preview.
+1. **School year & rotation:** enter the first and last school dates, choose school days, and check the school time zone. Choose a cycle of one to four weeks, letters or numbers for week labels, and the starting week. Return to these settings from the navigation.
+2. **Holidays & days off:** add holidays, inset days and other exclusions, choosing whether each break continues the rotation or resets it to the first week.
+3. **Lesson times:** enter the periods in your school day, including lessons and fixed activities such as registration and lunch.
+4. **Subjects:** add names, colours, teachers and rooms.
+5. **Build timetable:** select a subject and tap its cells.
+6. **Lesson preview:** finishing setup opens lessons on actual dates, with totals and progress for the year's lessons and teaching weeks. **Export & share** provides calendar downloads, backups and device transfers. **Print timetable** opens the paper preview.
 
 **Export & share** is also available during setup so you can back up or transfer an unfinished timetable.
 
@@ -74,7 +73,7 @@ The preview opens on the current teaching week until the last period on its fina
 
 The **Your year so far** summary shows total lessons and teaching weeks, completed counts, and the percentage done. A lesson counts as completed once its scheduled end time passes. A teaching week counts once the final period on its last school day ends; holiday-only weeks are excluded and partial weeks count as one teaching week. Progress uses the current time in the school's time zone, refreshes while the page is open, and stays the same when you browse another week. These are scheduled progress estimates, so they do not track attendance or cancellations that are not entered as days off.
 
-**Include fixed periods** also includes activities whose categories have **Allow subjects** switched off. This choice is shared between **Lesson preview** and **Export & share** while the app is open, so the preview matches the calendar file. It defaults to off when you reopen the app. Fixed periods do not increase the lesson total or its completion percentage.
+**Include fixed periods** also includes activities whose categories have **Allow subjects** switched off. This choice is shared between **Lesson preview** and **Export & share** and saved separately for each timetable, so the preview matches the calendar file. Fixed periods do not increase the lesson total or its completion percentage.
 
 In **Export & share → Add to your calendar app**, choose **Download calendar**. Calendar export becomes available once the timetable is valid and has lessons on actual school days. The calendar-import instructions are expandable beneath the download controls.
 
@@ -84,7 +83,7 @@ Open `.ics` files with Apple Calendar or Outlook, or use Google Calendar's deskt
 
 Calendar imports are snapshots: later edits in SchoolCal do not update an imported calendar. Use a dedicated school calendar and remove the previous import before replacing it to avoid duplicates. SchoolCal does not provide a calendar subscription or connect directly to a calendar account.
 
-Lesson times follow the school time zone, including daylight-saving changes. Check the time zone in **School year** if the preview looks wrong.
+Lesson times follow the school time zone, including daylight-saving changes. Check the time zone in **School year & rotation** if the preview looks wrong.
 
 ## Copy to another device
 
@@ -122,7 +121,7 @@ Choose a single **App colour** and SchoolCal generates matching shades for both 
 
 Editing and file creation happen on your device. SchoolCal does not upload your timetable; choosing to share a calendar hands that file to the app you select. The hosting provider may keep ordinary website access logs when you load the app; those requests contain no timetable data.
 
-After the app has loaded and cached successfully, it can open offline with your saved timetable. Updates prompt before reloading. Use **Install app** where supported; on iPhone, open SchoolCal in Safari and choose **Share → Add to Home Screen**.
+After the app has loaded and cached successfully, it can open offline with your saved timetable. Updates prompt before reloading. Choose **Install app** in the sidebar, above **Help & privacy**, where supported; on iPhone, open SchoolCal in Safari and choose **Share → Add to Home Screen**.
 
 Your saved timetable belongs to the current browser and site address. Clearing website data, switching browsers or using a different device can leave you without your project. Private browsing or storage limits may prevent saving; the app shows an error and offers a backup. Use **Export & share → Back up or restore → Download backup (.json)** for recovery or manual transfer; **Import backup (.json)** checks the file and asks before adding a separate timetable. Download a backup for each timetable you want to keep. Older SchoolCal backups upgrade automatically. Unreadable saved data can also be downloaded for recovery.
 

@@ -21,9 +21,10 @@ export function CalendarStatus({
       )
     )
       return ["holidays", "Check holidays"];
-    if (/timetable week/.test(message)) return ["rotation", "Check rotation"];
+    if (/timetable a name/.test(message)) return ["timetables", "Name timetable"];
+    if (/timetable week/.test(message)) return ["year", "Check rotation"];
     if (
-      /school year|school day|school time zone|timetable a name/.test(message)
+      /school year|school day|school time zone/.test(message)
     )
       return ["year", "Check school year"];
     if (/period|category|categories|label|must end/.test(message))

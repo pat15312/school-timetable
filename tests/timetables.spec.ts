@@ -5,7 +5,7 @@ import { sampleProject } from "../src/domain/fixture";
 import { serializeProject, STORAGE_KEY } from "../src/domain/persistence";
 import { encodeTransfer } from "../src/domain/transfer";
 import { TIMETABLES_KEY } from "../src/domain/timetables";
-import { savedLibrary, savedProject } from "./storage";
+import { renameTimetable, savedLibrary, savedProject } from "./storage";
 
 async function manage(page: Page) {
   await page.getByRole("button", { name: /^Switch timetable:/ }).click();
@@ -48,10 +48,9 @@ test("create, switch, resume setup, rename and duplicate without changing the or
   )
     .getByRole("button", { name: "New timetable", exact: true })
     .click();
-  await page.getByLabel("Timetable name").fill("Another school");
+  await renameTimetable(page, "Another school");
   await page.getByLabel("First day of school").fill("2026-09-07");
   await page.getByLabel("Last day of school").fill("2027-07-16");
-  await page.getByRole("button", { name: "Continue", exact: true }).click();
   await page.getByRole("button", { name: "3 week cycle", exact: true }).click();
   await page.getByRole("button", { name: "Continue", exact: true }).click();
   const draft = await savedProject(page);
@@ -76,8 +75,7 @@ test("create, switch, resume setup, rename and duplicate without changing the or
   expect(copy.id).not.toBe(draft.id);
   expect(copy.name).toBe("My draft (copy)");
   expect(copy.setupStep).toBe(2);
-  await go(page, "School year");
-  await page.getByLabel("Timetable name").fill("Independent copy");
+  await renameTimetable(page, "Independent copy");
   await select(page, "My draft");
   expect((await savedProject(page)).name).toBe("My draft");
   expect((await savedLibrary(page)).timetables[0]).toEqual(original);
@@ -112,7 +110,8 @@ test("confirms deletion, keeps inactive work, and opens a blank setup after dele
       exact: true,
     })
     .click();
-  await expect(page.getByLabel("Timetable name")).toHaveValue("");
+  await expect(page.getByLabel("First day of school")).toHaveValue("");
+  expect((await savedProject(page)).name).toBe("Untitled timetable");
   await expect(page).toHaveURL(/#year$/);
   await page.reload();
   expect((await savedLibrary(page)).timetables).toHaveLength(1);
@@ -256,7 +255,7 @@ test("failed saves block switching and preserve both saved work and unsaved edit
   )
     .getByRole("button", { name: "New timetable", exact: true })
     .click();
-  await page.getByLabel("Timetable name").fill("Saved draft");
+  await renameTimetable(page, "Saved draft");
   const before = await savedLibrary(page);
   await page.evaluate((key) => {
     const originalSet = Storage.prototype.setItem;
@@ -265,13 +264,15 @@ test("failed saves block switching and preserve both saved work and unsaved edit
       originalSet.call(this, name, value);
     };
   }, TIMETABLES_KEY);
-  await page.getByLabel("Timetable name").fill("Unsaved edits");
+  await page.getByLabel("School time zone").fill("America/New_York");
   const dialog = await manage(page);
   await dialog.getByRole("button", { name: /^Sample timetable Ready/ }).click();
   await expect(dialog.getByRole("alert")).toContainText("could not save");
   expect(await savedLibrary(page)).toEqual(before);
   await dialog.getByRole("button", { name: "Close dialog" }).click();
-  await expect(page.getByLabel("Timetable name")).toHaveValue("Unsaved edits");
+  await expect(page.getByLabel("School time zone")).toHaveValue(
+    "America/New_York",
+  );
   expect((await savedLibrary(page)).timetables[0]).toEqual(original);
 });
 
@@ -367,18 +368,20 @@ test("another tab cannot overwrite saved work with stale edits", async ({
   await expect(
     other.getByRole("heading", { name: "Sample timetable", exact: true }),
   ).toBeVisible();
-  await go(page, "School year");
-  await page.getByLabel("Timetable name").fill("Saved in the first tab");
+  await go(page, "School year & rotation");
+  await page.getByLabel("School time zone").fill("America/New_York");
   const before = await savedLibrary(page);
-  await go(other, "School year");
-  await other.getByLabel("Timetable name").fill("Unsaved in the second tab");
+  await go(other, "School year & rotation");
+  await other.getByLabel("School time zone").fill("Australia/Sydney");
   await expect(other.getByRole("alert")).toContainText(
     "changed in another tab",
   );
   expect(await savedLibrary(other)).toEqual(before);
-  expect((await savedProject(page)).name).toBe("Saved in the first tab");
-  await expect(other.getByLabel("Timetable name")).toHaveValue(
-    "Unsaved in the second tab",
+  expect((await savedProject(page)).academicYear.timezone).toBe(
+    "America/New_York",
+  );
+  await expect(other.getByLabel("School time zone")).toHaveValue(
+    "Australia/Sydney",
   );
 });
 
@@ -393,16 +396,12 @@ test("damaged collection stays recoverable through edits, invalid imports and an
   await expect(page.getByRole("alert")).toContainText(
     "saved timetable could not be opened",
   );
-  await page
-    .getByLabel("Timetable name")
-    .fill("Not saved over the damaged data");
-  await page
-    .getByLabel("Import project file")
-    .setInputFiles({
-      name: "bad.json",
-      mimeType: "application/json",
-      buffer: Buffer.from("{}"),
-    });
+  await page.getByLabel("First day of school").fill("2026-09-07");
+  await page.getByLabel("Import project file").setInputFiles({
+    name: "bad.json",
+    mimeType: "application/json",
+    buffer: Buffer.from("{}"),
+  });
   await expect(
     page.getByRole("alert").filter({ hasText: "not a supported SchoolCal" }),
   ).toBeVisible();
@@ -413,7 +412,8 @@ test("damaged collection stays recoverable through edits, invalid imports and an
   expect(downloaded).toBe("{damaged collection");
   page.once("dialog", (d) => d.accept());
   await page.getByRole("button", { name: "Start again", exact: true }).click();
-  await expect(page.getByLabel("Timetable name")).toHaveValue("");
+  await expect(page.getByLabel("First day of school")).toHaveValue("");
+  expect((await savedProject(page)).name).toBe("Untitled timetable");
   expect(
     await page.evaluate(() =>
       localStorage.getItem("schoolcal.timetables.recovery"),

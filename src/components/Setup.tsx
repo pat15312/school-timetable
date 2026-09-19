@@ -11,7 +11,6 @@ import {
   Plus,
   RotateCcw,
   Settings2,
-  ShieldCheck,
   Trash2,
   X,
 } from "lucide-react";
@@ -45,7 +44,7 @@ const timezones = [
   ]),
 ].sort();
 
-export function SchoolYear({
+export function SchoolSettings({
   project: p,
   update,
   sample,
@@ -55,228 +54,178 @@ export function SchoolYear({
   const change = (patch: Partial<typeof a>) =>
     update((p) => ({ ...p, academicYear: { ...p.academicYear, ...patch } }));
   return (
-    <div className={isNew ? "setup-columns" : "settings-page"}>
-      <section className="panel year-form">
-        <div className="section-heading">
-          <h2>Your school year</h2>
-          <CalendarDays size={20} className="muted" />
-        </div>
-        <div className="year-fields">
-          <Field
-            label="Timetable name"
-            hint="Something you'll recognise in your calendar."
-          >
-            <input
-              autoComplete="off"
-              maxLength={120}
-              placeholder="e.g. My school timetable"
-              value={p.name}
-              onChange={(e) => update((p) => ({ ...p, name: e.target.value }))}
-            />
-          </Field>
-          <div className="form-grid">
-            <Field label="First day of school">
+    <div className="school-settings settings-page">
+      <div className="school-settings-grid">
+        <section className="panel year-form">
+          <div className="section-heading">
+            <h2>Your school year</h2>
+            <CalendarDays size={20} className="muted" />
+          </div>
+          <div className="year-fields">
+            <div className="form-grid">
+              <Field label="First day of school">
+                <input
+                  type="date"
+                  min="1900-01-01"
+                  max="2200-12-31"
+                  value={a.startDate}
+                  onChange={(e) => change({ startDate: e.target.value })}
+                />
+              </Field>
+              <Field label="Last day of school">
+                <input
+                  type="date"
+                  min={a.startDate || "1900-01-01"}
+                  max="2200-12-31"
+                  value={a.endDate}
+                  onChange={(e) => change({ endDate: e.target.value })}
+                />
+              </Field>
+            </div>
+            <fieldset className="field">
+              <legend>Which days do you go to school?</legend>
+              <div className="weekday-options">
+                {WEEKDAYS.map((day) => (
+                  <button
+                    type="button"
+                    key={day}
+                    aria-pressed={a.schoolWeekdays.includes(day)}
+                    className={a.schoolWeekdays.includes(day) ? "selected" : ""}
+                    onClick={() =>
+                      change({
+                        schoolWeekdays: a.schoolWeekdays.includes(day)
+                          ? a.schoolWeekdays.filter((d) => d !== day)
+                          : [...a.schoolWeekdays, day],
+                      })
+                    }
+                  >
+                    {DAY_NAMES[day].slice(0, 3)}
+                  </button>
+                ))}
+              </div>
+            </fieldset>
+            <Field
+              label="School time zone"
+              hint="Lesson times stay the same when the clocks change."
+            >
               <input
-                type="date"
-                min="1900-01-01"
-                max="2200-12-31"
-                value={a.startDate}
-                onChange={(e) => change({ startDate: e.target.value })}
+                list="timezones"
+                value={a.timezone}
+                onChange={(e) => change({ timezone: e.target.value })}
               />
-            </Field>
-            <Field label="Last day of school">
-              <input
-                type="date"
-                min={a.startDate || "1900-01-01"}
-                max="2200-12-31"
-                value={a.endDate}
-                onChange={(e) => change({ endDate: e.target.value })}
-              />
+              <datalist id="timezones">
+                {timezones.map((zone) => (
+                  <option key={zone} value={zone} />
+                ))}
+              </datalist>
             </Field>
           </div>
-          <fieldset className="field">
-            <legend>Which days do you go to school?</legend>
-            <div className="weekday-options">
-              {WEEKDAYS.map((day) => (
-                <button
-                  type="button"
-                  key={day}
-                  aria-pressed={a.schoolWeekdays.includes(day)}
-                  className={a.schoolWeekdays.includes(day) ? "selected" : ""}
-                  onClick={() =>
-                    change({
-                      schoolWeekdays: a.schoolWeekdays.includes(day)
-                        ? a.schoolWeekdays.filter((d) => d !== day)
-                        : [...a.schoolWeekdays, day],
-                    })
-                  }
-                >
-                  {DAY_NAMES[day].slice(0, 3)}
-                </button>
-              ))}
-            </div>
-          </fieldset>
-          <Field
-            label="School time zone"
-            hint="Lesson times stay the same when the clocks change."
-          >
-            <input
-              list="timezones"
-              value={a.timezone}
-              onChange={(e) => change({ timezone: e.target.value })}
-            />
-            <datalist id="timezones">
-              {timezones.map((zone) => (
-                <option key={zone} value={zone} />
-              ))}
-            </datalist>
-          </Field>
-        </div>
-      </section>
+        </section>
+        <Rotation project={p} update={update} />
+      </div>
       {isNew && (
-        <aside className="setup-aside">
-          <div className="intro-card">
-            <h2>
-              Your school week,
-              <br />
-              <em>in your calendar.</em>
-            </h2>
-            <p>
-              Build your timetable, check lessons on actual dates, then export
-              them to your calendar app.
-            </p>
-            <ol className="benefits">
-              <li>
-                <span>01</span>
-                <div>
-                  <strong>Set up your school year</strong>
-                  <small>Your subjects, lesson times, and school days.</small>
-                </div>
-              </li>
-              <li>
-                <span>02</span>
-                <div>
-                  <strong>Add your lessons</strong>
-                  <small>Pick a subject and select its timetable cells.</small>
-                </div>
-              </li>
-              <li>
-                <span>03</span>
-                <div>
-                  <strong>Take it with you</strong>
-                  <small>Print a copy or add it to your calendar.</small>
-                </div>
-              </li>
-            </ol>
-            <div className="privacy-line">
-              <ShieldCheck size={18} />
-              <span>Your timetable is saved on this device.</span>
-            </div>
-          </div>
-          {isNew && (
-            <button className="sample-link" onClick={sample}>
-              Want to have a look first?{" "}
-              <strong>
-                Try a sample <ArrowRight size={15} />
-              </strong>
-            </button>
-          )}
-        </aside>
+        <button className="sample-link" onClick={sample}>
+          Want to have a look first?{" "}
+          <strong>
+            Try a sample <ArrowRight size={15} />
+          </strong>
+        </button>
       )}
     </div>
   );
 }
 
-export function Rotation({ project: p, update }: SettingsProps) {
+function Rotation({ project: p, update }: SettingsProps) {
   const label = (i: number) => getRotationLabel(i, p.rotationLabelStyle);
   return (
-    <div className="settings-page">
-      <section className="panel">
+    <section className="panel rotation-form">
+      <div className="section-heading">
         <h2>Your repeating weeks</h2>
-        <fieldset className="field">
-          <legend>How many weeks are in your timetable rotation?</legend>
-          <div className="choice-grid">
-            {([1, 2, 3, 4] as const).map((length) => (
-              <button
-                key={length}
-                className={`choice ${p.cycleLength === length ? "selected" : ""}`}
-                aria-pressed={p.cycleLength === length}
-                onClick={() =>
-                  update((p) => ({
-                    ...p,
-                    cycleLength: length,
-                    initialRotationIndex: Math.min(
-                      p.initialRotationIndex,
-                      length - 1,
-                    ),
-                  }))
-                }
-              >
-                <strong>{length}</strong>
-                <span>{length === 1 ? "Same every week" : "week cycle"}</span>
-                {p.cycleLength === length && <Check size={15} />}
-              </button>
-            ))}
-          </div>
-        </fieldset>
-        <fieldset className="field">
-          <legend>How does your school name the weeks?</legend>
-          <div className="form-grid">
-            {(["numbers", "letters"] as const).map((style) => (
-              <button
-                key={style}
-                className={`label-choice ${p.rotationLabelStyle === style ? "selected" : ""}`}
-                aria-pressed={p.rotationLabelStyle === style}
-                onClick={() =>
-                  update((p) => ({ ...p, rotationLabelStyle: style }))
-                }
-              >
-                <span>{style === "numbers" ? "Numbers" : "Letters"}</span>
-                <strong>
-                  {Array.from({ length: p.cycleLength }, (_, i) =>
-                    getRotationLabel(i, style),
-                  ).join(" · ")}
-                </strong>
-              </button>
-            ))}
-          </div>
-        </fieldset>
-        <Field
-          label="Which timetable week is the first week of school?"
-          hint="Even if term starts midweek, those first few days use this week."
-        >
-          <select
-            value={p.initialRotationIndex}
-            onChange={(e) =>
-              update((p) => ({ ...p, initialRotationIndex: +e.target.value }))
-            }
-          >
-            {Array.from({ length: p.cycleLength }, (_, i) => (
-              <option key={i} value={i}>
-                {label(i)}
-              </option>
-            ))}
-          </select>
-        </Field>
-        <Notice>
-          Only weeks with school days move your rotation forward. A full week
-          off doesn't use up a timetable week.
-        </Notice>
-        <div className="rotation-illustration" aria-label="Rotation example">
-          <span>{label(p.initialRotationIndex)}</span>
-          <ArrowRight size={17} />
-          <span className="holiday-chip">Holiday</span>
-          <ArrowRight size={17} />
-          <span>{label((p.initialRotationIndex + 1) % p.cycleLength)}</span>
+        <RotateCcw size={20} className="muted" />
+      </div>
+      <fieldset className="field">
+        <legend>How many weeks are in your timetable rotation?</legend>
+        <div className="choice-grid">
+          {([1, 2, 3, 4] as const).map((length) => (
+            <button
+              key={length}
+              className={`choice ${p.cycleLength === length ? "selected" : ""}`}
+              aria-pressed={p.cycleLength === length}
+              onClick={() =>
+                update((p) => ({
+                  ...p,
+                  cycleLength: length,
+                  initialRotationIndex: Math.min(
+                    p.initialRotationIndex,
+                    length - 1,
+                  ),
+                }))
+              }
+            >
+              <strong>{length}</strong>
+              <span>{length === 1 ? "Same every week" : "week cycle"}</span>
+              {p.cycleLength === length && <Check size={15} />}
+            </button>
+          ))}
         </div>
-      </section>
+      </fieldset>
+      <fieldset className="field">
+        <legend>How does your school name the weeks?</legend>
+        <div className="form-grid">
+          {(["numbers", "letters"] as const).map((style) => (
+            <button
+              key={style}
+              className={`label-choice ${p.rotationLabelStyle === style ? "selected" : ""}`}
+              aria-pressed={p.rotationLabelStyle === style}
+              onClick={() =>
+                update((p) => ({ ...p, rotationLabelStyle: style }))
+              }
+            >
+              <span>{style === "numbers" ? "Numbers" : "Letters"}</span>
+              <strong>
+                {Array.from({ length: p.cycleLength }, (_, i) =>
+                  getRotationLabel(i, style),
+                ).join(" · ")}
+              </strong>
+            </button>
+          ))}
+        </div>
+      </fieldset>
+      <Field
+        label="Which timetable week is the first week of school?"
+        hint="Even if term starts midweek, those first few days use this week."
+      >
+        <select
+          value={p.initialRotationIndex}
+          onChange={(e) =>
+            update((p) => ({ ...p, initialRotationIndex: +e.target.value }))
+          }
+        >
+          {Array.from({ length: p.cycleLength }, (_, i) => (
+            <option key={i} value={i}>
+              {label(i)}
+            </option>
+          ))}
+        </select>
+      </Field>
+      <Notice>
+        Only weeks with school days move your rotation forward. A full week off
+        doesn't use up a timetable week.
+      </Notice>
+      <div className="rotation-illustration" aria-label="Rotation example">
+        <span>{label(p.initialRotationIndex)}</span>
+        <ArrowRight size={17} />
+        <span className="holiday-chip">Holiday</span>
+        <ArrowRight size={17} />
+        <span>{label((p.initialRotationIndex + 1) % p.cycleLength)}</span>
+      </div>
       {p.entries.some((e) => e.rotationIndex >= p.cycleLength) && (
         <Notice>
           Lessons in hidden rotation weeks are kept. Increase the cycle again to
           bring them back.
         </Notice>
       )}
-    </div>
+    </section>
   );
 }
 
