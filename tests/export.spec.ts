@@ -1,3 +1,4 @@
+import { savedProject as saved } from "./storage";
 import { expect, test, type Page } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
@@ -31,12 +32,7 @@ async function go(page: Page, name: string) {
     .getByRole("button", { name, exact: true })
     .click();
 }
-async function saved(page: Page) {
-  return page.evaluate(
-    (key) => JSON.parse(localStorage.getItem(key)!).timetable,
-    STORAGE_KEY,
-  );
-}
+
 async function backup(page: Page) {
   const downloading = page.waitForEvent("download");
   await page

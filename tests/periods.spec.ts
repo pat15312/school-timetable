@@ -1,3 +1,4 @@
+import { savedProject } from "./storage";
 import { test, expect, type Page } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 import ICAL from "ical.js";
@@ -60,12 +61,7 @@ test("registration is fixed, renamed periods persist, and an afternoon break is 
   await page.getByRole("button", { name: "Maths", exact: true }).click();
   await fixed.getByText("Registration", { exact: true }).last().click();
   await expect(fixed).toHaveCount(3);
-  expect(
-    await page.evaluate(
-      (key) => JSON.parse(localStorage.getItem(key)!).timetable.entries,
-      STORAGE_KEY,
-    ),
-  ).toEqual(project.entries);
+  expect((await savedProject(page)).entries).toEqual(project.entries);
 
   await go(page, "Lesson times");
   await page.getByLabel("Period 1 label", { exact: true }).fill("Tutor period");

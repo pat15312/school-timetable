@@ -1,3 +1,4 @@
+import { savedProject } from "./storage";
 import { expect, test, type Page } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 import fixture from "./fixtures/qr-transfer-project.json" with { type: "json" };
@@ -49,14 +50,7 @@ test("scanned timetable opens, saves, reloads, and exports every fixture field",
   await expect(
     page.getByRole("tab", { name: "Week D", exact: true }),
   ).toBeVisible();
-  await expect
-    .poll(async () =>
-      page.evaluate(
-        (key) => JSON.parse(localStorage.getItem(key)!),
-        STORAGE_KEY,
-      ),
-    )
-    .toEqual(fixture);
+  await expect.poll(async () => savedProject(page)).toEqual(project);
   await page.reload();
   await expect(
     page.getByRole("heading", { name: project.name, exact: true }),
@@ -81,7 +75,7 @@ test("cancelled and damaged transfers preserve an existing timetable", async ({
   );
   await page.goto(`./${await encodeTransfer(project)}`);
   const dialog = page.getByRole("dialog");
-  await expect(dialog).toContainText("This replaces the timetable");
+  await expect(dialog).toContainText("This adds a separate timetable");
   const downloading = page.waitForEvent("download");
   await dialog
     .getByRole("button", { name: "Back up current timetable" })
@@ -103,12 +97,7 @@ test("cancelled and damaged transfers preserve an existing timetable", async ({
   await expect(
     page.getByRole("button", { name: "Use this timetable" }),
   ).toHaveCount(0);
-  expect(
-    await page.evaluate(
-      (key) => JSON.parse(localStorage.getItem(key)!).timetable,
-      STORAGE_KEY,
-    ),
-  ).toEqual(existing);
+  expect(await savedProject(page)).toEqual(existing);
 });
 
 test("an unfinished timetable resumes at its saved setup step", async ({
@@ -118,10 +107,5 @@ test("an unfinished timetable resumes at its saved setup step", async ({
   await page.goto(`./${await encodeTransfer(draft)}`);
   await page.getByRole("button", { name: "Use this timetable" }).click();
   await expect(page).toHaveURL(/#subjects$/);
-  expect(
-    await page.evaluate(
-      (key) => JSON.parse(localStorage.getItem(key)!).timetable,
-      STORAGE_KEY,
-    ),
-  ).toEqual(draft);
+  expect(await savedProject(page)).toEqual(draft);
 });

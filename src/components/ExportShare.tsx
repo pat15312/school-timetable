@@ -217,7 +217,8 @@ export function ExportShare({
           <div>
             <h2>Back up or restore</h2>
             <p className="muted">
-              Save a backup of your entire SchoolCal configuration.
+              Save a backup of the active timetable, including its settings and
+              lessons.
             </p>
           </div>
           <ShieldCheck size={20} className="muted" />
@@ -233,8 +234,8 @@ export function ExportShare({
           </button>
         </div>
         <p className="muted small">
-          Importing a backup asks for confirmation before replacing the
-          timetable on this device.
+          Importing a backup adds a separate timetable and keeps your saved
+          work. Download a backup for each timetable you want to keep.
         </p>
       </section>
     </div>

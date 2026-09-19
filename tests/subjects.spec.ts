@@ -1,13 +1,10 @@
+import { savedProject as saved } from "./storage";
 import { test, expect, type Page } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 import ICAL from "ical.js";
 import AxeBuilder from "@axe-core/playwright";
 import { sampleProject } from "../src/domain/fixture";
-import {
-  parseProject,
-  serializeProject,
-  STORAGE_KEY,
-} from "../src/domain/persistence";
+import { serializeProject, STORAGE_KEY } from "../src/domain/persistence";
 
 async function go(page: Page, name: string) {
   const menu = page.getByRole("button", { name: "Open navigation" });
@@ -16,12 +13,6 @@ async function go(page: Page, name: string) {
     .locator(".sidebar")
     .getByRole("button", { name, exact: true })
     .click();
-}
-
-async function saved(page: Page) {
-  return parseProject(
-    await page.evaluate((key) => localStorage.getItem(key)!, STORAGE_KEY),
-  );
 }
 
 test("duplicate and reorder subjects independently, persist their order, and place and export both teachers", async ({

@@ -9,8 +9,10 @@ export function TransferImport({
   onImport,
   onBackup,
   onClose,
+  saveError,
 }: {
   hash: string;
+  saveError: string;
   hasCurrent: boolean;
   onImport: (project: TimetableProject) => void;
   onBackup: () => void;
@@ -41,6 +43,7 @@ export function TransferImport({
   }, [hash]);
   return (
     <Modal title="Continue with this timetable?" onClose={onClose}>
+      {saveError && <Notice kind="error">{saveError}</Notice>}
       {error && <Notice kind="error">{error}</Notice>}
       {!project && !error && (
         <p role="status">Opening the timetable from your link…</p>
@@ -58,8 +61,8 @@ export function TransferImport({
           </p>
           {hasCurrent && (
             <Notice>
-              This replaces the timetable currently saved in this browser. Back
-              it up first if you want to keep it.
+              This adds a separate timetable. Your saved timetables will be
+              kept.
               <div className="notice-actions">
                 <button className="button secondary" onClick={onBackup}>
                   Back up current timetable

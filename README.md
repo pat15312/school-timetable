@@ -10,6 +10,7 @@ Use it in your browser on desktop or mobile. No account or installation needed.
 
 ## What you can do
 
+- **Keep multiple timetables:** create, switch, rename, duplicate and delete timetables, with separate settings and setup progress.
 - **Plan your school year:** set term dates, school days, holidays and days off, with a repeating cycle of one to four weeks.
 - **Make it your timetable:** add subjects, teachers and rooms; duplicate subjects for different classes; and customise lessons, registration, breaks and other periods.
 - **Add lessons to your calendar:** export a holiday-aware `.ics` file for Apple Calendar, Google Calendar, Outlook and other calendar apps.
@@ -27,7 +28,7 @@ Use it in your browser on desktop or mobile. No account or installation needed.
 
 ## Your timetable stays on your device
 
-SchoolCal saves your work in your current browser. There are no accounts, ads or analytics, and no automatic cloud sync. Use **Export & share → Download backup (.json)** to keep an editable copy. To continue on another device, choose **Copy transfer link** or **Show QR code**. Clearing browser data can remove your saved timetable.
+SchoolCal saves your work in your current browser. There are no accounts, ads or analytics, and no automatic cloud sync. Use **Export & share → Download backup (.json)** to keep an editable copy. To continue on another device, choose **Copy transfer link** or **Show QR code**. Backups and transfers copy the active timetable; imports keep your existing work. Save a backup for each timetable. Clearing browser data can remove your saved timetables.
 
 ## Find out more
 

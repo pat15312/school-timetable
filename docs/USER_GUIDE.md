@@ -2,11 +2,21 @@
 
 [Open SchoolCal](https://pat15312.github.io/school-timetable/) · [Back to the overview](../README.md)
 
+## Manage your timetables
+
+Select the active timetable name in the sidebar, or in the top bar on mobile, to open **Your timetables**. Choose **New timetable** to start the setup flow. Select any saved timetable to resume it, including its unfinished setup.
+
+Use **Rename**, **Duplicate** or **Delete** beside a timetable. A duplicate has independent settings, subjects and lessons, plus a new identity for calendar exports. Deleting asks for confirmation. If you delete the active timetable, another opens; deleting the last opens a new, empty setup.
+
+SchoolCal remembers the active timetable when you reopen it. Each timetable keeps its own fixed-period choice for preview and calendar export. App appearance is shared. Preview, JSON backup, QR/link transfer, calendar export and printing all use the active timetable.
+
+Existing single-timetable data upgrades automatically. Backups and incoming transfers add a separate timetable after confirmation, keeping saved work. An untouched empty starter may be reused. If the received timetable's identity already exists on this device, the new copy receives a fresh one.
+
 ## Set up your timetable
 
 New timetables start empty. **Try a sample** loads an editable example; check all example dates against your school's calendar before using it.
 
-1. **School year:** name the timetable, enter its first and last dates, choose school days, and check the school time zone. Click the timetable name or icon in the sidebar to return here.
+1. **School year:** name the timetable, enter its first and last dates, choose school days, and check the school time zone. Choose School year in the navigation to return here.
 2. **Timetable rotation:** choose a cycle of one to four weeks, letters or numbers for week labels, and the starting week.
 3. **Holidays & days off:** add holidays, inset days and other exclusions, choosing whether each break continues the rotation or resets it to the first week.
 4. **Lesson times:** enter the periods in your school day, including lessons and fixed activities such as registration and lunch.
@@ -31,7 +41,7 @@ In **Subjects**, choose **Duplicate** to create another version with the same na
 - Escape: stop painting / clear selection
 - Arrow keys: move through editable grid cells
 
-Visible buttons provide the same actions for touch. Undo keeps the last 80 entry edits in memory and resets when a project is replaced or the page is reloaded. Week replacement requires an explicit confirmation in the copy dialog.
+Visible buttons provide the same actions for touch. Undo keeps the last 80 entry edits in memory and resets when you switch timetables or reload the page. Week replacement requires an explicit confirmation in the copy dialog.
 
 ## Periods and categories
 
@@ -83,7 +93,7 @@ Open **Export & share → Copy to another device** and choose either option:
 - **Copy transfer link:** send the copied link to your other device and open it in SchoolCal. If automatic copying is unavailable, SchoolCal shows a selectable link.
 - **Show QR code:** scan the code with your other device’s camera and open the link in SchoolCal.
 
-With either option, review the timetable summary, then choose **Use this timetable**. SchoolCal asks before replacing the timetable already on that device and offers a backup of it first.
+With either option, review the timetable summary, then choose **Use this timetable**. SchoolCal adds it as a separate timetable and keeps any saved work on that device.
 
 Both options contain the editable configuration, including subjects, times, holidays, lesson overrides and notes. Drafts resume at their saved setup step. Your devices do not need to share a network; the receiving device needs to be able to open SchoolCal. Nothing needs to be uploaded to create the link or code. Share them only with someone you want to have a copy.
 
@@ -114,8 +124,8 @@ Editing and file creation happen on your device. SchoolCal does not upload your 
 
 After the app has loaded and cached successfully, it can open offline with your saved timetable. Updates prompt before reloading. Use **Install app** where supported; on iPhone, open SchoolCal in Safari and choose **Share → Add to Home Screen**.
 
-Your saved timetable belongs to the current browser and site address. Clearing website data, switching browsers or using a different device can leave you without your project. Private browsing or storage limits may prevent saving; the app shows an error and offers a backup. Use **Export & share → Back up or restore → Download backup (.json)** for recovery or manual transfer; **Import backup (.json)** checks the file and asks before replacing your timetable. Older SchoolCal backups upgrade automatically. Unreadable saved data can also be downloaded for recovery.
+Your saved timetable belongs to the current browser and site address. Clearing website data, switching browsers or using a different device can leave you without your project. Private browsing or storage limits may prevent saving; the app shows an error and offers a backup. Use **Export & share → Back up or restore → Download backup (.json)** for recovery or manual transfer; **Import backup (.json)** checks the file and asks before adding a separate timetable. Download a backup for each timetable you want to keep. Older SchoolCal backups upgrade automatically. Unreadable saved data can also be downloaded for recovery.
 
-SchoolCal stores one timetable in the current browser. Use one editing tab at a time: timetable edits are not coordinated across tabs and there is no automatic cloud sync. A project backup lets you transfer work manually.
+SchoolCal stores your timetables in the current browser. Use one editing tab at a time: if another tab saves a change, SchoolCal blocks stale saves and asks you to back up your edits and reload. There is no automatic cloud sync. A project backup lets you transfer one timetable at a time.
 
 For technical limits, browser testing and deployment details, see the [development guide](DEVELOPMENT.md).

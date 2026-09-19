@@ -1,9 +1,10 @@
+import { savedProject as saved } from "./storage";
 import { test, expect, type Page } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 import ICAL from "ical.js";
 import AxeBuilder from "@axe-core/playwright";
 import { sampleProject } from "../src/domain/fixture";
-import { STORAGE_KEY, parseProject } from "../src/domain/persistence";
+import { STORAGE_KEY } from "../src/domain/persistence";
 
 // These journeys cover editing, timetable placement, print/export and recovery.
 // WebKit on the shared CI runner needs more than the default 30 seconds.
@@ -23,11 +24,7 @@ async function manage(page: Page) {
     .getByRole("button", { name: "Edit categories", exact: true })
     .click();
 }
-async function saved(page: Page) {
-  return parseProject(
-    await page.evaluate((key) => localStorage.getItem(key)!, STORAGE_KEY),
-  );
-}
+
 async function calendar(page: Page) {
   const downloading = page.waitForEvent("download");
   await page

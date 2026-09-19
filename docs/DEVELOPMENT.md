@@ -34,6 +34,8 @@ Period checks cover existing Registration assignments, renamed tutor periods, ex
 
 Category checks cover creating and renaming dropdown choices, switching subjects on and off across all assigned periods, restoring saved lessons, replacing used categories before deletion, version 1 upgrades, version 2 backups, and mobile/desktop accessibility.
 
+Timetable collection checks cover legacy migration, active selection and setup progress, independent copies and calendar UIDs, confirmed deletion, additive JSON/link imports, failed saves, mobile/light/dark accessibility, active exports in Chromium and WebKit, plus offline reopening in Chromium.
+
 To exercise date handling in a different host timezone:
 
 ```sh
@@ -62,9 +64,9 @@ The palette generator lives in `public/colours.js`; `public/theme.js` applies pr
 
 ## Persistence and backup compatibility
 
-The app version and backup schema version are independent. **App version 1.0.0 uses backup schema version 2.** The localStorage key remains `schoolcal.project.v1` for compatibility. JSON backups contain a `schemaVersion` and a `timetable` object; the importer accepts schemas 1 and 2.
+The app version and backup schema version are independent. **App version 1.0.0 uses backup schema version 2.** The collection is stored under `schoolcal.timetables.v1`, with all timetables, the active ID and per-timetable preview/export preferences in one atomic write. The old `schoolcal.project.v1` key is read only when no collection exists and is retained untouched after migration. JSON backups contain a `schemaVersion` and a `timetable` object; the importer accepts schemas 1 and 2.
 
-Zod checks the shape before references and duplicate IDs/cells are checked. Imports are validated before replacing the current project. Appearance preferences are stored separately from the timetable backup.
+Zod checks the shape before references and duplicate IDs/cells are checked. Imports are validated before adding a timetable. Matching project IDs receive a fresh identity on the receiving device; otherwise their calendar identity is retained. Duplication always creates a new identity and deep-copies nested data. Appearance preferences and the fixed-period display choice are stored separately from the timetable backup. Saves happen inside edits. Switching, adding, renaming, duplicating and deleting only commit in memory after successful storage writes. Switching remounts timetable-specific views and clears undo history. Unreadable data blocks autosaving; explicit recovery retains a damaged collection under `schoolcal.timetables.recovery`.
 
 ## Rotation and calendar details
 
@@ -106,7 +108,7 @@ BASE_PATH=/school-timetable/ npm run test:e2e
 
 ## Scope and limitations
 
-- One project per browser/origin; no cloud sync or coordination between multiple open editing tabs. Use one editing tab and keep backups.
+- Multiple timetables per browser/origin, subject to browser storage limits; no cloud sync. Saves check for changes made by another tab and block stale writes. Use one editing tab and keep a JSON backup of each timetable.
 - Supports modern browsers, same-day periods, and one shared period structure across enabled school days. Overnight lessons and different bell schedules per weekday are outside this release.
 - Bounds keep malformed imports and accidental huge calendars manageable: dates from 1900–2200, up to three years per project, 40 periods, 40 period categories, 100 subjects, 200 exclusions, and 2 MB backups. Normal school years are much smaller.
 - Sample holidays are illustrative and must be checked against the actual school calendar. They are not a source of official term dates.

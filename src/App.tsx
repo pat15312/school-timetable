@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -7,6 +7,7 @@ import {
   Check,
   CheckCircle2,
   ChevronRight,
+  ChevronsUpDown,
   Clock3,
   Download,
   Grid2X2,
@@ -21,7 +22,7 @@ import {
   X,
 } from "lucide-react";
 import { BRAND } from "./brand";
-import { createProject } from "./domain/model";
+import type { TimetableProject } from "./domain/model";
 import { sampleProject } from "./domain/fixture";
 import { daysBetween, validDate, validTimezone } from "./domain/dates";
 import { safeFilename } from "./domain/calendar";
@@ -40,6 +41,7 @@ import { LessonPreview } from "./components/LessonPreview";
 import { ExportShare } from "./components/ExportShare";
 import { PrintView } from "./components/PrintView";
 import { ThemeControl } from "./components/ThemeControl";
+import { TimetableSwitcher } from "./components/TimetableSwitcher";
 import { TransferImport } from "./components/TransferImport";
 import { Modal, Notice, downloadFile } from "./components/ui";
 
@@ -127,7 +129,7 @@ type InstallPrompt = Event & {
 
 export default function App() {
   const state = useProject(),
-    { project: p, update, replace } = state;
+    { project: p, update, includeFixedPeriods, setIncludeFixedPeriods } = state;
   const [page, setPage] = useState<string>(() => {
     const hash = resolvePage(window.location.hash.slice(1));
     return validPages.includes(hash as (typeof validPages)[number])
@@ -136,7 +138,7 @@ export default function App() {
         ? "timetable"
         : STEPS[p.setupStep].id;
   });
-  const [includeFixedPeriods, setIncludeFixedPeriods] = useState(false);
+  const [timetablesOpen, setTimetablesOpen] = useState(false);
   const [mobileNav, setMobileNav] = useState(false);
   const [incomingTransfer, setIncomingTransfer] = useState<string | null>(() =>
     window.location.hash.startsWith("#transfer=") ? window.location.hash : null,
@@ -284,17 +286,23 @@ export default function App() {
     }
     navigate(STEPS[Math.min(stepIndex + 1, STEPS.length - 1)].id);
   };
+  const openTimetable = (project: TimetableProject | null) => {
+    if (!project) return;
+    setTimetablesOpen(false);
+    navigate(
+      project.setupComplete ? "timetable" : STEPS[project.setupStep].id,
+      false,
+    );
+  };
+  const showTimetables = () => {
+    setMobileNav(false);
+    setTimetablesOpen(true);
+  };
   const loadSample = () => {
-    if (
-      (p.name || p.entries.length) &&
-      !window.confirm(
-        "Replace this timetable with the sample? Back up your current project first if you want to keep it.",
-      )
-    )
-      return;
-    replace(sampleProject());
-    navigate("timetable", false);
-    notify("Sample timetable loaded. All dates and lessons are editable.");
+    const added = state.add(sampleProject());
+    if (!added) return;
+    openTimetable(added);
+    notify("Sample timetable added. All dates and lessons are editable.");
   };
   const backup = () => {
     downloadFile(
@@ -312,16 +320,14 @@ export default function App() {
       const imported = parseProject(await file.text());
       if (
         !window.confirm(
-          `Restore “${imported.name || "Untitled timetable"}”? This replaces the timetable on this device.`,
+          `Add “${imported.name || "Untitled timetable"}” as a timetable? Your saved timetables will be kept.`,
         )
       )
         return;
-      replace(imported);
-      navigate(
-        imported.setupComplete ? "timetable" : STEPS[imported.setupStep].id,
-        false,
-      );
-      notify("Project restored.");
+      const added = state.add(imported);
+      if (!added) return;
+      openTimetable(added);
+      notify("Timetable added from backup.");
     } catch (error) {
       setErrors([
         error instanceof Error
@@ -332,16 +338,13 @@ export default function App() {
       if (fileInput.current) fileInput.current.value = "";
     }
   };
-  const deleteProject = () => {
+  const restartAfterRecovery = () => {
     if (
       window.confirm(
-        "Delete this timetable and start again? Download a project backup first if you want to keep it.",
+        "Start again with an empty timetable? Download the saved data first if you need to recover it.",
       )
-    ) {
-      replace(createProject());
-      navigate("year", false);
-      notify("Ready for a new timetable.");
-    }
+    )
+      openTimetable(state.restart());
   };
   const isSetup = !p.setupComplete;
   const dismissTransfer = (destination = page) => {
@@ -418,31 +421,21 @@ export default function App() {
         >
           <X size={20} />
         </button>
-        <a
+        <button
           className="project-label"
-          href="#year"
-          aria-label={`School year for ${p.name || "My school timetable"}`}
-          onClick={(e) => {
-            e.preventDefault();
-            navigate("year");
-          }}
+          onClick={showTimetables}
+          aria-label={`Switch timetable: ${p.name || "Untitled timetable"}`}
+          aria-haspopup="dialog"
         >
           <span className="project-avatar" aria-hidden="true">
-            {p.name ? (
-              p.name.trim().slice(0, 1).toUpperCase()
-            ) : (
-              <BookOpen size={18} />
-            )}
+            <BookOpen size={18} />
           </span>
-          <div>
-            <strong>{p.name || "My school timetable"}</strong>
-            <small>
-              {p.academicYear.startDate && p.academicYear.endDate
-                ? `${p.academicYear.startDate.slice(0, 4)} – ${p.academicYear.endDate.slice(0, 4)}`
-                : "Let’s make it yours"}
-            </small>
-          </div>
-        </a>
+          <span className="project-name">
+            <strong>{p.name || "Untitled timetable"}</strong>
+            <small>Active · {state.timetables.length} saved</small>
+          </span>
+          <ChevronsUpDown size={16} aria-hidden="true" />
+        </button>
         {isSetup ? (
           <nav className="setup-nav">
             <span className="nav-heading">LET’S GET YOU SET UP</span>
@@ -526,9 +519,9 @@ export default function App() {
               Help & privacy
             </button>
             <button
-              aria-label="Start again"
-              title="Start again"
-              onClick={deleteProject}
+              aria-label="New timetable"
+              title="New timetable"
+              onClick={() => openTimetable(state.add())}
             >
               <Plus size={18} />
             </button>
@@ -546,6 +539,15 @@ export default function App() {
               onClick={() => setMobileNav(true)}
             >
               <Menu size={22} />
+            </button>
+            <button
+              className="mobile-timetable-switch"
+              onClick={showTimetables}
+              aria-haspopup="dialog"
+              aria-label={`Switch timetable: ${p.name || "Untitled timetable"}`}
+            >
+              <span>{p.name || "Untitled timetable"}</span>
+              <ChevronsUpDown size={15} aria-hidden="true" />
             </button>
             <span className="breadcrumb">
               {isSetup ? "New timetable" : "My workspace"}
@@ -641,7 +643,10 @@ export default function App() {
                 >
                   Restore backup
                 </button>
-                <button className="button secondary" onClick={deleteProject}>
+                <button
+                  className="button secondary"
+                  onClick={restartAfterRecovery}
+                >
                   Start again
                 </button>
               </div>
@@ -649,12 +654,11 @@ export default function App() {
           )}
           {state.saveState === "error" && (
             <Notice kind="error">
-              Your browser could not save this timetable. Keep this page open
-              and{" "}
+              {state.saveError}{" "}
               <button className="inline-link" onClick={backup}>
                 download a project backup
               </button>{" "}
-              before leaving.
+              to keep a copy.
             </Notice>
           )}
           {updateReady && (
@@ -680,50 +684,52 @@ export default function App() {
               </ul>
             </Notice>
           )}
-          {page === "year" && (
-            <SchoolYear
-              project={p}
-              update={update}
-              sample={loadSample}
-              isNew={isSetup}
-            />
-          )}
-          {page === "rotation" && <Rotation project={p} update={update} />}
-          {page === "holidays" && <Holidays project={p} update={update} />}
-          {page === "periods" && <Periods project={p} update={update} />}
-          {page === "subjects" && <Subjects project={p} update={update} />}
-          {page === "timetable" && (
-            <Timetable
-              project={p}
-              update={update}
-              editEntries={state.editEntries}
-              undo={state.undo}
-              canUndo={state.canUndo}
-              notify={notify}
-              navigate={navigate}
-            />
-          )}
-          {page === "preview" && (
-            <LessonPreview
-              project={p}
-              includeFixedPeriods={includeFixedPeriods}
-              onIncludeFixedPeriodsChange={setIncludeFixedPeriods}
-              notify={notify}
-              navigate={navigate}
-            />
-          )}
-          {page === "export" && (
-            <ExportShare
-              project={p}
-              includeFixedPeriods={includeFixedPeriods}
-              onIncludeFixedPeriodsChange={setIncludeFixedPeriods}
-              notify={notify}
-              navigate={navigate}
-              onBackup={backup}
-              onImport={() => fileInput.current?.click()}
-            />
-          )}
-          {page === "print" && <PrintView project={p} />}
+          <Fragment key={p.id}>
+            {page === "year" && (
+              <SchoolYear
+                project={p}
+                update={update}
+                sample={loadSample}
+                isNew={isSetup}
+              />
+            )}
+            {page === "rotation" && <Rotation project={p} update={update} />}
+            {page === "holidays" && <Holidays project={p} update={update} />}
+            {page === "periods" && <Periods project={p} update={update} />}
+            {page === "subjects" && <Subjects project={p} update={update} />}
+            {page === "timetable" && (
+              <Timetable
+                project={p}
+                update={update}
+                editEntries={state.editEntries}
+                undo={state.undo}
+                canUndo={state.canUndo}
+                notify={notify}
+                navigate={navigate}
+              />
+            )}
+            {page === "preview" && (
+              <LessonPreview
+                project={p}
+                includeFixedPeriods={includeFixedPeriods}
+                onIncludeFixedPeriodsChange={setIncludeFixedPeriods}
+                notify={notify}
+                navigate={navigate}
+              />
+            )}
+            {page === "export" && (
+              <ExportShare
+                project={p}
+                includeFixedPeriods={includeFixedPeriods}
+                onIncludeFixedPeriodsChange={setIncludeFixedPeriods}
+                notify={notify}
+                navigate={navigate}
+                onBackup={backup}
+                onImport={() => fileInput.current?.click()}
+              />
+            )}
+            {page === "print" && <PrintView project={p} />}
+          </Fragment>
           {isSetup && stepIndex >= 0 && stepIndex < 6 && (
             <footer className="setup-footer">
               <button
@@ -812,12 +818,14 @@ export default function App() {
               );
             else backup();
           }}
+          saveError={state.saveError}
           onClose={() => dismissTransfer()}
           onImport={(imported) => {
             const destination = imported.setupComplete
               ? "timetable"
               : STEPS[imported.setupStep].id;
-            replace(imported);
+            const added = state.add(imported);
+            if (!added) return;
             setPage(destination);
             setErrors([]);
             setMobileNav(false);
@@ -825,6 +833,22 @@ export default function App() {
             notify(
               "Timetable received. You can continue editing on this device.",
             );
+          }}
+        />
+      )}
+      {timetablesOpen && (
+        <TimetableSwitcher
+          timetables={state.timetables}
+          activeId={p.id}
+          error={state.saveError || state.recoveryError || ""}
+          onClose={() => setTimetablesOpen(false)}
+          onSelect={(id) => openTimetable(state.select(id))}
+          onCreate={() => openTimetable(state.add())}
+          onRename={(id, name) => !!state.rename(id, name)}
+          onDuplicate={(id) => openTimetable(state.duplicate(id))}
+          onDelete={(id) => {
+            const selected = state.remove(id);
+            if (selected && id === p.id) openTimetable(selected);
           }}
         />
       )}
