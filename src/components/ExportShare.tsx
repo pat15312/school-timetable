@@ -6,6 +6,7 @@ import { useCalendar } from "../hooks/useCalendar";
 import { CalendarOptions } from "./CalendarOptions";
 import { CalendarStatus } from "./CalendarStatus";
 import { DeviceTransfer } from "./DeviceTransfer";
+import { SpreadsheetTools } from "./SpreadsheetTools";
 import { downloadFile, Notice } from "./ui";
 
 export function ExportShare({
@@ -16,6 +17,8 @@ export function ExportShare({
   navigate,
   onBackup,
   onImport,
+  onSpreadsheetImport,
+  saveError,
 }: {
   project: TimetableProject;
   includeFixedPeriods: boolean;
@@ -24,6 +27,8 @@ export function ExportShare({
   navigate: (page: string) => void;
   onBackup: () => void;
   onImport: () => void;
+  onSpreadsheetImport: (project: TimetableProject) => void;
+  saveError: string;
 }) {
   const [exported, setExported] = useState(false);
   const [exportError, setExportError] = useState("");
@@ -212,6 +217,12 @@ export function ExportShare({
       </section>
 
       <DeviceTransfer project={p} notify={notify} onBackup={onBackup} />
+      <SpreadsheetTools
+        project={p}
+        onImport={onSpreadsheetImport}
+        saveError={saveError}
+        notify={notify}
+      />
       <section className="panel backup-card">
         <div className="section-heading">
           <div>

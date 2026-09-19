@@ -3119,3 +3119,80 @@
     }
   }
 }
+
+@layer components {
+  .spreadsheet-card > p {
+    margin-top: 1rem;
+  }
+  .spreadsheet-help {
+    padding: 0.4rem 0 0.8rem;
+  }
+  .spreadsheet-help p + p {
+    margin-top: 0.75rem;
+  }
+  .modal.spreadsheet-modal {
+    width: min(850px, calc(100% - 24px));
+  }
+  .spreadsheet-modal .notice {
+    margin: 1rem 0;
+  }
+  .spreadsheet-filename,
+  .spreadsheet-issues,
+  .spreadsheet-modal h3 {
+    overflow-wrap: anywhere;
+  }
+  .spreadsheet-issues {
+    max-height: 35vh;
+    overflow-y: auto;
+  }
+  .spreadsheet-summary {
+    display: grid;
+    gap: 0.5rem 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
+    margin: 1rem 0;
+  }
+  .spreadsheet-summary dt {
+    font-weight: 600;
+  }
+  .spreadsheet-summary dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+  .spreadsheet-week {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1rem 0;
+  }
+  .spreadsheet-week select {
+    width: auto;
+  }
+  .spreadsheet-preview {
+    overflow-x: auto;
+    max-height: 40vh;
+    margin: 1rem 0;
+  }
+  .spreadsheet-preview table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+  }
+  .spreadsheet-preview caption {
+    text-align: left;
+    font-weight: 600;
+    padding-bottom: 0.5rem;
+  }
+  .spreadsheet-preview th,
+  .spreadsheet-preview td {
+    padding: 0.5rem;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+    overflow-wrap: anywhere;
+    min-width: 75px;
+    max-width: 300px;
+  }
+  .spreadsheet-preview small {
+    display: block;
+    white-space: pre-wrap;
+  }
+}

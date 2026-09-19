@@ -154,6 +154,7 @@ export function useProject() {
     canUndo: historyLength > 0,
     saveState,
     saveError,
+    save: () => persist(current.current),
     recoveryError,
     recoveryRaw: initial.raw,
     select: (id: string) => commit(selectTimetable(current.current, id)),

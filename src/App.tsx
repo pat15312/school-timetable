@@ -1,4 +1,11 @@
-import { Fragment, useEffect, useRef, useState } from "react";
+import {
+  Fragment,
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
+import { appUpdates } from "./lib/appUpdate";
 import {
   ArrowLeft,
   ArrowRight,
@@ -156,7 +163,10 @@ export default function App() {
   const [installPrompt, setInstallPrompt] = useState<InstallPrompt | null>(
     null,
   );
-  const [updateReady, setUpdateReady] = useState(false);
+  const appUpdate = useSyncExternalStore(
+    appUpdates.subscribe,
+    appUpdates.getSnapshot,
+  );
   const fileInput = useRef<HTMLInputElement>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const main = useRef<HTMLElement>(null);
@@ -208,14 +218,11 @@ export default function App() {
       event.preventDefault();
       setInstallPrompt(event as InstallPrompt);
     };
-    const onUpdate = () => setUpdateReady(true);
     window.addEventListener("hashchange", onHash);
     window.addEventListener("beforeinstallprompt", onInstall);
-    window.addEventListener("schoolcal:update-ready", onUpdate);
     return () => {
       window.removeEventListener("hashchange", onHash);
       window.removeEventListener("beforeinstallprompt", onInstall);
-      window.removeEventListener("schoolcal:update-ready", onUpdate);
     };
   }, []);
   useEffect(() => {
@@ -680,18 +687,21 @@ export default function App() {
               to keep a copy.
             </Notice>
           )}
-          {updateReady && (
+          {appUpdate.ready && (
             <Notice>
               A new version is ready.{" "}
               <button
                 className="inline-link"
-                disabled={state.saveState !== "saved" || !!state.recoveryError}
-                onClick={() =>
-                  window.dispatchEvent(new Event("schoolcal:apply-update"))
+                disabled={
+                  appUpdate.applying ||
+                  state.saveState !== "saved" ||
+                  !!state.recoveryError
                 }
+                onClick={() => appUpdates.apply(state.save)}
               >
-                Save and reload
+                {appUpdate.applying ? "Updating…" : "Save and reload"}
               </button>
+              {appUpdate.error && <p role="alert">{appUpdate.error}</p>}
             </Notice>
           )}
           {errors.length > 0 && (
@@ -757,6 +767,13 @@ export default function App() {
                 navigate={navigate}
                 onBackup={backup}
                 onImport={() => fileInput.current?.click()}
+                saveError={state.saveError}
+                onSpreadsheetImport={(project) => {
+                  const added = state.add(project);
+                  if (!added) return;
+                  openTimetable(added);
+                  notify("Spreadsheet added as a new timetable.");
+                }}
               />
             )}
             {page === "print" && <PrintView project={p} />}

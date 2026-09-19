@@ -2,6 +2,7 @@ import { Component, type ErrorInfo, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import { registerSW } from "virtual:pwa-register";
 import App from "./App";
+import { appUpdates } from "./lib/appUpdate";
 import { BRAND } from "./brand";
 import "./styles.css";
 
@@ -42,12 +43,16 @@ createRoot(document.getElementById("root")!).render(
     <App />
   </ErrorBoundary>,
 );
-const updateSW = registerSW({
+registerSW({
   onNeedRefresh() {
-    window.dispatchEvent(new Event("schoolcal:update-ready"));
+    appUpdates.ready();
   },
+  onRegisteredSW(_url, registration) {
+    if (registration) appUpdates.register(registration);
+  },
+  // Reloading is managed after an explicit, successful save in this tab.
+  onNeedReload() {},
   onRegisterError(error) {
     console.warn("Offline installation is unavailable", error);
   },
 });
-window.addEventListener("schoolcal:apply-update", () => void updateSW(true));

@@ -85,6 +85,21 @@ Calendar imports are snapshots: later edits in SchoolCal do not update an import
 
 Lesson times follow the school time zone, including daylight-saving changes. Check the time zone in **School year & rotation** if the preview looks wrong.
 
+## Edit in Excel or Google Sheets
+
+In **Export & share → Edit in a spreadsheet**, choose **Download template (.xlsx)** to start, or **Export spreadsheet (.xlsx)** to edit the active timetable. This is also available during setup.
+
+1. Open the workbook in Excel or Google Sheets. The **Read me** sheet explains the format. Replace the example subjects and check the example lesson times in a new template.
+2. Fill in **Settings**, **Periods** and **Subjects**. Enter dates as `YYYY-MM-DD` and times as `HH:mm` using the 24-hour clock. Excel date/time cells also work. Give each subject and period a unique code; keep codes unchanged when renaming existing items.
+3. Put subject codes in the **Week 1–4** grids, using the dropdowns or copy/paste. Week 1 is Week A when using letter labels. Leave free cells empty. All four weeks and all seven days are kept, even when hidden by your settings.
+4. Add **Holidays** if needed. **Categories** controls fixed periods. **Lesson details** optionally overrides a lesson's title, teacher, room or notes; set its override column to Yes to use that value. An empty teacher or room with Yes deliberately clears the subject default.
+5. Save as `.xlsx`. In Google Sheets, choose **File → Download → Microsoft Excel (.xlsx)**.
+6. Choose **Import spreadsheet (.xlsx)** in SchoolCal. Review the settings, lesson list and warnings, then choose **Add timetable**. If there are errors, SchoolCal identifies the sheet and cell to fix. Cancel leaves your saved work unchanged.
+
+Imports always receive a new timetable identity and keep saved work. They become the active timetable after saving. Valid unfinished files remain drafts and resume setup. Subject and period order follows the spreadsheet rows. If you import the same file again, it creates another copy. Keep JSON backups when you need an exact copy of a timetable's original identity.
+
+Use SchoolCal's template or its exported workbook: arbitrary school spreadsheets, CSV, formulas, merged cells and photos are not supported. Keep the sheet names and headings. Extra sheets are ignored with a warning; template data in extra columns is rejected to avoid silently losing it. Limits are 2 MB, 40 periods, 100 subjects, 40 categories, 200 holidays and four rotation weeks. Processing happens on your device and works offline once the app is cached. Google Sheets itself requires using Google's service; SchoolCal has no account connection or automatic spreadsheet sync.
+
 ## Copy to another device
 
 Open **Export & share → Copy to another device** and choose either option:
@@ -126,5 +141,7 @@ After the app has loaded and cached successfully, it can open offline with your 
 Your saved timetable belongs to the current browser and site address. Clearing website data, switching browsers or using a different device can leave you without your project. Private browsing or storage limits may prevent saving; the app shows an error and offers a backup. Use **Export & share → Back up or restore → Download backup (.json)** for recovery or manual transfer; **Import backup (.json)** checks the file and asks before adding a separate timetable. Download a backup for each timetable you want to keep. Older SchoolCal backups upgrade automatically. Unreadable saved data can also be downloaded for recovery.
 
 SchoolCal stores your timetables in the current browser. Use one editing tab at a time: if another tab saves a change, SchoolCal blocks stale saves and asks you to back up your edits and reload. There is no automatic cloud sync. A project backup lets you transfer one timetable at a time.
+
+When an app update is ready, choose **Save and reload**. SchoolCal saves first and reloads once the new version takes control. If saving fails, the page stays open with your edits. Updates installed by another tab also wait for you to choose reload.
 
 For technical limits, browser testing and deployment details, see the [development guide](DEVELOPMENT.md).

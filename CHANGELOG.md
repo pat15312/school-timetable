@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Add Excel/Google Sheets template download, active timetable spreadsheet export, and validated imports with a lesson preview. Imports create independent timetables and preserve saved work, including offline.
+- Fix Save and reload for waiting updates and updates installed by another tab; verify saving before activation and reload.
+
 - Combine school-year and rotation settings into one setup page, keep timetable naming and creation in Your timetables, and move Install app into the sidebar. Existing drafts and rotation links still open the correct settings.
 
 - Save multiple timetables on one device, with a desktop/mobile switcher, separate setup progress, renaming, independent duplication and confirmed deletion.
